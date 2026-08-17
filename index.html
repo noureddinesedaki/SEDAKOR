@@ -24,9 +24,13 @@
         <p>Organisez vos tâches simplement.</p>
     </header>
 
+
     <main>
 
-        <!-- Ajouter une tâche -->
+        <!-- =========================
+             AJOUTER UNE TÂCHE
+        ========================== -->
+
         <section id="ajout-tache">
 
             <h2>Ajouter une tâche</h2>
@@ -77,10 +81,16 @@
         </section>
 
 
-        <!-- Liste des tâches -->
+        <!-- =========================
+             LISTE DES TÂCHES
+        ========================== -->
+
         <section id="liste-taches">
 
             <h2>Mes tâches</h2>
+
+
+            <!-- Recherche -->
 
             <input
                 type="text"
@@ -88,6 +98,9 @@
                 placeholder="Rechercher une tâche..."
                 autocomplete="off"
             >
+
+
+            <!-- Filtres -->
 
             <div id="filtres">
 
@@ -114,6 +127,44 @@
 
             </div>
 
+
+            <!-- Tri -->
+
+            <div id="tri">
+
+                <label for="tri-taches">
+                    Trier par :
+                </label>
+
+                <select id="tri-taches">
+
+                    <option value="recentes">
+                        Plus récentes
+                    </option>
+
+                    <option value="anciennes">
+                        Plus anciennes
+                    </option>
+
+                    <option value="priorite-haute">
+                        Priorité haute → basse
+                    </option>
+
+                    <option value="priorite-basse">
+                        Priorité basse → haute
+                    </option>
+
+                    <option value="echeance">
+                        Échéance la plus proche
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Liste -->
+
             <div id="taches">
                 <!-- Les tâches seront ajoutées avec JavaScript -->
             </div>
@@ -121,7 +172,8 @@
         </section>
 
     </main>
-    
+
+
     <script src="js/script.js"></script>
 
 </body>

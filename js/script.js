@@ -6,10 +6,12 @@ const listeTaches = document.querySelector("#taches");
 const recherche = document.querySelector("#recherche");
 const boutonsFiltres = document.querySelectorAll("#filtres button");
 const compteurTaches = document.querySelector("#compteur-taches");
+const triTaches = document.querySelector("#tri-taches");
 
 
 let taches = [];
 let filtreActuel = "toutes";
+let triActuel = "recentes";
 
 
 // =========================
@@ -20,10 +22,16 @@ const tachesSauvegardees =
     localStorage.getItem("taches");
 
 if (tachesSauvegardees) {
+
     try {
-        taches = JSON.parse(tachesSauvegardees);
+
+        taches =
+            JSON.parse(tachesSauvegardees);
+
     } catch (erreur) {
+
         taches = [];
+
     }
 }
 
@@ -32,14 +40,24 @@ if (tachesSauvegardees) {
 // CRÉER UNE TÂCHE
 // =========================
 
-function creerTache(texte, niveauPriorite, date) {
+function creerTache(
+    texte,
+    niveauPriorite,
+    date
+) {
 
     return {
+
         id: Date.now(),
+
         texte: texte,
+
         terminee: false,
+
         priorite: niveauPriorite,
+
         dateEcheance: date
+
     };
 }
 
@@ -54,6 +72,7 @@ function sauvegarderTaches() {
         "taches",
         JSON.stringify(taches)
     );
+
 }
 
 
@@ -63,28 +82,40 @@ function sauvegarderTaches() {
 
 function mettreAJourCompteur() {
 
-    const nombreTotal = taches.length;
+    const nombreTotal =
+        taches.length;
+
 
     const nombreTerminees =
-        taches.filter(function (tache) {
-            return tache.terminee;
-        }).length;
+        taches.filter(
+            function (tache) {
+
+                return tache.terminee;
+
+            }
+        ).length;
+
 
     const nombreEnCours =
-        nombreTotal - nombreTerminees;
+        nombreTotal -
+        nombreTerminees;
+
 
     const texteTaches =
         nombreTotal <= 1
             ? "tâche"
             : "tâches";
 
+
     const texteTerminees =
         nombreTerminees <= 1
             ? "terminée"
             : "terminées";
 
+
     compteurTaches.textContent =
-        nombreTotal + " " +
+        nombreTotal +
+        " " +
         texteTaches +
         " • " +
         nombreEnCours +
@@ -93,6 +124,7 @@ function mettreAJourCompteur() {
         nombreTerminees +
         " " +
         texteTerminees;
+
 }
 
 
@@ -102,18 +134,28 @@ function mettreAJourCompteur() {
 
 function mettreAJourFiltres() {
 
-    boutonsFiltres.forEach(function (bouton) {
+    boutonsFiltres.forEach(
+        function (bouton) {
 
-        bouton.classList.remove("actif");
+            bouton.classList.remove(
+                "actif"
+            );
 
-        if (
-            bouton.dataset.filtre ===
-            filtreActuel
-        ) {
-            bouton.classList.add("actif");
+
+            if (
+                bouton.dataset.filtre ===
+                filtreActuel
+            ) {
+
+                bouton.classList.add(
+                    "actif"
+                );
+
+            }
+
         }
+    );
 
-    });
 }
 
 
@@ -124,14 +166,24 @@ function mettreAJourFiltres() {
 function formaterDate(date) {
 
     if (!date) {
+
         return "";
+
     }
 
-    const morceaux = date.split("-");
 
-    if (morceaux.length !== 3) {
+    const morceaux =
+        date.split("-");
+
+
+    if (
+        morceaux.length !== 3
+    ) {
+
         return date;
+
     }
+
 
     return (
         morceaux[2] +
@@ -140,6 +192,7 @@ function formaterDate(date) {
         "/" +
         morceaux[0]
     );
+
 }
 
 
@@ -153,10 +206,15 @@ function dateEstEnRetard(tache) {
         !tache.dateEcheance ||
         tache.terminee
     ) {
+
         return false;
+
     }
 
-    const aujourdHui = new Date();
+
+    const aujourdHui =
+        new Date();
+
 
     aujourdHui.setHours(
         0,
@@ -165,12 +223,180 @@ function dateEstEnRetard(tache) {
         0
     );
 
-    const dateLimite = new Date(
-        tache.dateEcheance +
-        "T00:00:00"
+
+    const dateLimite =
+        new Date(
+            tache.dateEcheance +
+            "T00:00:00"
+        );
+
+
+    return (
+        dateLimite <
+        aujourdHui
     );
 
-    return dateLimite < aujourdHui;
+}
+
+
+// =========================
+// PRIORITÉ
+// =========================
+
+function valeurPriorite(tache) {
+
+    if (
+        tache.priorite === "haute"
+    ) {
+
+        return 3;
+
+    }
+
+
+    if (
+        tache.priorite === "moyenne"
+    ) {
+
+        return 2;
+
+    }
+
+
+    return 1;
+
+}
+
+
+// =========================
+// TRI DES TÂCHES
+// =========================
+
+function trierTaches(tachesATrier) {
+
+    const copie =
+        [...tachesATrier];
+
+
+    if (
+        triActuel === "recentes"
+    ) {
+
+        copie.sort(
+            function (a, b) {
+
+                return b.id - a.id;
+
+            }
+        );
+
+    }
+
+
+    if (
+        triActuel === "anciennes"
+    ) {
+
+        copie.sort(
+            function (a, b) {
+
+                return a.id - b.id;
+
+            }
+        );
+
+    }
+
+
+    if (
+        triActuel ===
+        "priorite-haute"
+    ) {
+
+        copie.sort(
+            function (a, b) {
+
+                return (
+                    valeurPriorite(b) -
+                    valeurPriorite(a)
+                );
+
+            }
+        );
+
+    }
+
+
+    if (
+        triActuel ===
+        "priorite-basse"
+    ) {
+
+        copie.sort(
+            function (a, b) {
+
+                return (
+                    valeurPriorite(a) -
+                    valeurPriorite(b)
+                );
+
+            }
+        );
+
+    }
+
+
+    if (
+        triActuel ===
+        "echeance"
+    ) {
+
+        copie.sort(
+            function (a, b) {
+
+                // Les tâches sans date vont à la fin
+
+                if (
+                    !a.dateEcheance &&
+                    !b.dateEcheance
+                ) {
+
+                    return 0;
+
+                }
+
+
+                if (!a.dateEcheance) {
+
+                    return 1;
+
+                }
+
+
+                if (!b.dateEcheance) {
+
+                    return -1;
+
+                }
+
+
+                return (
+                    new Date(
+                        a.dateEcheance
+                    ) -
+                    new Date(
+                        b.dateEcheance
+                    )
+                );
+
+            }
+        );
+
+    }
+
+
+    return copie;
+
 }
 
 
@@ -183,7 +409,10 @@ function afficherTache(tache) {
     const nouvelleTache =
         document.createElement("div");
 
-    nouvelleTache.classList.add("tache");
+
+    nouvelleTache.classList.add(
+        "tache"
+    );
 
 
     // =========================
@@ -193,15 +422,19 @@ function afficherTache(tache) {
     const texteElement =
         document.createElement("span");
 
+
     texteElement.textContent =
         tache.texte;
+
 
     if (tache.terminee) {
 
         texteElement.classList.add(
             "tache-terminee"
         );
+
     }
+
 
     nouvelleTache.appendChild(
         texteElement
@@ -215,6 +448,7 @@ function afficherTache(tache) {
     const informations =
         document.createElement("div");
 
+
     informations.classList.add(
         "tache-infos"
     );
@@ -227,11 +461,15 @@ function afficherTache(tache) {
     if (tache.priorite) {
 
         const badgePriorite =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
+
 
         badgePriorite.classList.add(
             "priorite"
         );
+
 
         badgePriorite.classList.add(
             "priorite-" +
@@ -246,14 +484,20 @@ function afficherTache(tache) {
             badgePriorite.textContent =
                 "Basse";
 
-        } else if (
+        }
+
+
+        if (
             tache.priorite === "moyenne"
         ) {
 
             badgePriorite.textContent =
                 "Moyenne";
 
-        } else if (
+        }
+
+
+        if (
             tache.priorite === "haute"
         ) {
 
@@ -262,31 +506,41 @@ function afficherTache(tache) {
 
         }
 
+
         informations.appendChild(
             badgePriorite
         );
+
     }
 
 
     // =========================
-    // DATE D'ÉCHÉANCE
+    // DATE
     // =========================
 
-    if (tache.dateEcheance) {
+    if (
+        tache.dateEcheance
+    ) {
 
         const dateElement =
-            document.createElement("span");
+            document.createElement(
+                "span"
+            );
+
 
         dateElement.classList.add(
             "date-echeance"
         );
 
 
-        if (dateEstEnRetard(tache)) {
+        if (
+            dateEstEnRetard(tache)
+        ) {
 
             dateElement.classList.add(
                 "date-en-retard"
             );
+
 
             dateElement.textContent =
                 "En retard • " +
@@ -301,22 +555,26 @@ function afficherTache(tache) {
                 formaterDate(
                     tache.dateEcheance
                 );
+
         }
 
 
         informations.appendChild(
             dateElement
         );
+
     }
 
 
     if (
-        informations.children.length > 0
+        informations.children.length >
+        0
     ) {
 
         nouvelleTache.appendChild(
             informations
         );
+
     }
 
 
@@ -327,6 +585,7 @@ function afficherTache(tache) {
     const actions =
         document.createElement("div");
 
+
     actions.classList.add(
         "tache-actions"
     );
@@ -335,10 +594,14 @@ function afficherTache(tache) {
     // Modifier
 
     const boutonModifier =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
+
 
     boutonModifier.textContent =
         "Modifier";
+
 
     boutonModifier.classList.add(
         "modifier"
@@ -348,10 +611,14 @@ function afficherTache(tache) {
     // Supprimer
 
     const boutonSupprimer =
-        document.createElement("button");
+        document.createElement(
+            "button"
+        );
+
 
     boutonSupprimer.textContent =
         "Supprimer";
+
 
     boutonSupprimer.classList.add(
         "supprimer"
@@ -362,9 +629,11 @@ function afficherTache(tache) {
         boutonModifier
     );
 
+
     actions.appendChild(
         boutonSupprimer
     );
+
 
     nouvelleTache.appendChild(
         actions
@@ -380,19 +649,28 @@ function afficherTache(tache) {
         function (event) {
 
             if (
-                event.target.tagName === "BUTTON" ||
-                event.target.tagName === "INPUT" ||
-                event.target.tagName === "SELECT"
+                event.target.tagName ===
+                "BUTTON" ||
+                event.target.tagName ===
+                "INPUT" ||
+                event.target.tagName ===
+                "SELECT"
             ) {
+
                 return;
+
             }
+
 
             tache.terminee =
                 !tache.terminee;
 
+
             sauvegarderTaches();
 
+
             afficherTaches();
+
         }
     );
 
@@ -408,15 +686,16 @@ function afficherTache(tache) {
             event.stopPropagation();
 
 
-            // Empêcher plusieurs éditions
-
             if (
                 nouvelleTache.classList.contains(
                     "edition"
                 )
             ) {
+
                 return;
+
             }
+
 
             nouvelleTache.classList.add(
                 "edition"
@@ -426,13 +705,18 @@ function afficherTache(tache) {
             // Champ texte
 
             const champModification =
-                document.createElement("input");
+                document.createElement(
+                    "input"
+                );
+
 
             champModification.type =
                 "text";
 
+
             champModification.value =
                 tache.texte;
+
 
             champModification.classList.add(
                 "champ-modification"
@@ -445,12 +729,13 @@ function afficherTache(tache) {
             );
 
 
-            // =========================
-            // SELECT PRIORITÉ
-            // =========================
+            // Select priorité
 
             const selectModification =
-                document.createElement("select");
+                document.createElement(
+                    "select"
+                );
+
 
             selectModification.classList.add(
                 "champ-priorite-modification"
@@ -458,18 +743,22 @@ function afficherTache(tache) {
 
 
             const optionsPriorite = [
+
                 {
                     valeur: "basse",
                     texte: "Priorité basse"
                 },
+
                 {
                     valeur: "moyenne",
                     texte: "Priorité moyenne"
                 },
+
                 {
                     valeur: "haute",
                     texte: "Priorité haute"
                 }
+
             ];
 
 
@@ -481,8 +770,10 @@ function afficherTache(tache) {
                             "option"
                         );
 
+
                     element.value =
                         option.valeur;
+
 
                     element.textContent =
                         option.texte;
@@ -498,100 +789,110 @@ function afficherTache(tache) {
 
                         element.selected =
                             true;
+
                     }
 
 
                     selectModification.appendChild(
                         element
                     );
+
                 }
             );
 
 
-            // =========================
-            // DATE MODIFICATION
-            // =========================
+            // Date
 
             const dateModification =
-                document.createElement("input");
+                document.createElement(
+                    "input"
+                );
+
 
             dateModification.type =
                 "date";
 
+
             dateModification.value =
-                tache.dateEcheance || "";
+                tache.dateEcheance ||
+                "";
+
 
             dateModification.classList.add(
                 "date-modification"
             );
 
 
-            // =========================
-            // INFORMATIONS
-            // =========================
+            // Informations
 
-            informations.innerHTML = "";
+            informations.innerHTML =
+                "";
+
 
             informations.appendChild(
                 selectModification
             );
+
 
             informations.appendChild(
                 dateModification
             );
 
 
-            // =========================
-            // BOUTON ENREGISTRER
-            // =========================
+            // Bouton enregistrer
 
             const boutonEnregistrer =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
+
 
             boutonEnregistrer.textContent =
                 "Enregistrer";
+
 
             boutonEnregistrer.classList.add(
                 "enregistrer"
             );
 
 
-            // =========================
-            // BOUTON ANNULER
-            // =========================
+            // Bouton annuler
 
             const boutonAnnuler =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
+
 
             boutonAnnuler.textContent =
                 "Annuler";
+
 
             boutonAnnuler.classList.add(
                 "annuler"
             );
 
 
-            actions.innerHTML = "";
+            actions.innerHTML =
+                "";
+
 
             actions.appendChild(
                 boutonEnregistrer
             );
+
 
             actions.appendChild(
                 boutonAnnuler
             );
 
 
-            // Focus
-
             champModification.focus();
 
             champModification.select();
 
 
-            // =========================
-            // ANNULER
-            // =========================
+            // Annuler
 
             boutonAnnuler.addEventListener(
                 "click",
@@ -600,13 +901,12 @@ function afficherTache(tache) {
                     event.stopPropagation();
 
                     afficherTaches();
+
                 }
             );
 
 
-            // =========================
-            // ENREGISTRER
-            // =========================
+            // Enregistrer
 
             boutonEnregistrer.addEventListener(
                 "click",
@@ -626,14 +926,17 @@ function afficherTache(tache) {
                         champModification.focus();
 
                         return;
+
                     }
 
 
                     tache.texte =
                         nouveauTexte;
 
+
                     tache.priorite =
                         selectModification.value;
+
 
                     tache.dateEcheance =
                         dateModification.value;
@@ -641,35 +944,41 @@ function afficherTache(tache) {
 
                     sauvegarderTaches();
 
+
                     afficherTaches();
+
                 }
             );
 
 
-            // =========================
-            // CLAVIER
-            // =========================
+            // Entrée / Échap
 
             champModification.addEventListener(
                 "keydown",
                 function (event) {
 
                     if (
-                        event.key === "Enter"
+                        event.key ===
+                        "Enter"
                     ) {
 
                         boutonEnregistrer.click();
+
                     }
 
 
                     if (
-                        event.key === "Escape"
+                        event.key ===
+                        "Escape"
                     ) {
 
                         boutonAnnuler.click();
+
                     }
+
                 }
             );
+
         }
     );
 
@@ -693,13 +1002,16 @@ function afficherTache(tache) {
                             tacheActuelle.id !==
                             tache.id
                         );
+
                     }
                 );
 
 
             sauvegarderTaches();
 
+
             afficherTaches();
+
         }
     );
 
@@ -707,6 +1019,7 @@ function afficherTache(tache) {
     listeTaches.appendChild(
         nouvelleTache
     );
+
 }
 
 
@@ -723,6 +1036,8 @@ function afficherTaches() {
         recherche.value.toLowerCase();
 
 
+    // Recherche
+
     let tachesFiltrees =
         taches.filter(
             function (tache) {
@@ -732,14 +1047,16 @@ function afficherTaches() {
                     .includes(
                         valeurRecherche
                     );
+
             }
         );
 
 
-    // En cours
+    // Filtre en cours
 
     if (
-        filtreActuel === "en-cours"
+        filtreActuel ===
+        "en-cours"
     ) {
 
         tachesFiltrees =
@@ -747,15 +1064,18 @@ function afficherTaches() {
                 function (tache) {
 
                     return !tache.terminee;
+
                 }
             );
+
     }
 
 
-    // Terminées
+    // Filtre terminées
 
     if (
-        filtreActuel === "terminees"
+        filtreActuel ===
+        "terminees"
     ) {
 
         tachesFiltrees =
@@ -763,20 +1083,37 @@ function afficherTaches() {
                 function (tache) {
 
                     return tache.terminee;
+
                 }
             );
+
     }
 
 
-    listeTaches.innerHTML = "";
+    // Tri
 
+    tachesFiltrees =
+        trierTaches(
+            tachesFiltrees
+        );
+
+
+    // Effacer
+
+    listeTaches.innerHTML =
+        "";
+
+
+    // Afficher
 
     tachesFiltrees.forEach(
         function (tache) {
 
             afficherTache(tache);
+
         }
     );
+
 }
 
 
@@ -811,55 +1148,41 @@ formulaire.addEventListener(
             champTache.focus();
 
             return;
+
         }
 
-
-        // Récupérer les valeurs
-
-        const niveauPriorite =
-            priorite.value;
-
-        const date =
-            dateEcheance.value;
-
-
-        // Créer la tâche
 
         const nouvelleTache =
             creerTache(
                 texteTache,
-                niveauPriorite,
-                date
+                priorite.value,
+                dateEcheance.value
             );
 
-
-        // Ajouter au tableau
 
         taches.push(
             nouvelleTache
         );
 
 
-        // Sauvegarder
-
         sauvegarderTaches();
 
 
-        // Réinitialiser le formulaire
-
-        champTache.value = "";
+        champTache.value =
+            "";
 
         priorite.value =
             "moyenne";
 
-        dateEcheance.value = "";
+        dateEcheance.value =
+            "";
 
-
-        // Actualiser
 
         afficherTaches();
 
+
         champTache.focus();
+
     }
 );
 
@@ -873,6 +1196,7 @@ recherche.addEventListener(
     function () {
 
         afficherTaches();
+
     }
 );
 
@@ -891,10 +1215,32 @@ boutonsFiltres.forEach(
                 filtreActuel =
                     bouton.dataset.filtre;
 
+
                 mettreAJourFiltres();
 
+
                 afficherTaches();
+
             }
         );
+
+    }
+);
+
+
+// =========================
+// TRI
+// =========================
+
+triTaches.addEventListener(
+    "change",
+    function () {
+
+        triActuel =
+            triTaches.value;
+
+
+        afficherTaches();
+
     }
 );
