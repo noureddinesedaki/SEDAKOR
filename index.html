@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
+
+    <!-- Indispensable pour le responsive mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>TaskFlow - Gestionnaire de tâches</title>
@@ -16,8 +19,10 @@
         <p>Organisez vos tâches simplement.</p>
     </header>
 
+
     <main>
 
+        <!-- Section ajout -->
         <section id="ajout-tache">
 
             <h2>Ajouter une tâche</h2>
@@ -26,10 +31,11 @@
 
             <form id="formulaire-tache">
 
-                <input 
-                    type="text" 
+                <input
+                    type="text"
                     id="tache"
                     placeholder="Ex : Apprendre JavaScript"
+                    autocomplete="off"
                 >
 
                 <button type="submit">
@@ -41,33 +47,58 @@
         </section>
 
 
+        <!-- Section liste -->
         <section id="liste-taches">
 
             <h2>Mes tâches</h2>
 
             <input
-    type="text"
-    id="recherche"
-    placeholder="Rechercher une tâche..."
->
+                type="text"
+                id="recherche"
+                placeholder="Rechercher une tâche..."
+                autocomplete="off"
+            >
 
+
+            <!-- Filtres -->
             <div id="filtres">
 
-    <button type="button" data-filtre="toutes">Toutes</button>
-    <button type="button" data-filtre="en-cours">En cours</button>
-    <button type="button" data-filtre="terminees">Terminées</button>
+                <button
+                    type="button"
+                    data-filtre="toutes"
+                >
+                    Toutes
+                </button>
 
-</div>
+                <button
+                    type="button"
+                    data-filtre="en-cours"
+                >
+                    En cours
+                </button>
 
+                <button
+                    type="button"
+                    data-filtre="terminees"
+                >
+                    Terminées
+                </button>
+
+            </div>
+
+
+            <!-- Liste des tâches -->
             <div id="taches">
-                <!-- Les tâches seront ajoutées ici avec JavaScript -->
+                <!-- Les tâches sont ajoutées avec JavaScript -->
             </div>
 
         </section>
 
     </main>
 
+
     <script src="js/script.js"></script>
 
 </body>
+
 </html>

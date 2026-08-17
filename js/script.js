@@ -8,6 +8,11 @@ const compteurTaches = document.querySelector("#compteur-taches");
 let taches = [];
 let filtreActuel = "toutes";
 
+
+// =========================
+// CHARGER LES TÂCHES
+// =========================
+
 const tachesSauvegardees = localStorage.getItem("taches");
 
 if (tachesSauvegardees) {
@@ -15,17 +20,25 @@ if (tachesSauvegardees) {
 }
 
 
-// Créer une nouvelle tâche
+// =========================
+// CRÉER UNE TÂCHE
+// =========================
+
 function creerTache(texte) {
+
     return {
         id: Date.now(),
         texte: texte,
         terminee: false
     };
+
 }
 
 
-// Mettre à jour le compteur
+// =========================
+// COMPTEUR
+// =========================
+
 function mettreAJourCompteur() {
 
     const nombreTotal = taches.length;
@@ -36,17 +49,25 @@ function mettreAJourCompteur() {
 
     const nombreEnCours = nombreTotal - nombreTerminees;
 
-    const texteTaches = nombreTotal <= 1 ? "tâche" : "tâches";
-    const texteTerminees = nombreTerminees <= 1 ? "terminée" : "terminées";
+    const texteTaches =
+        nombreTotal <= 1 ? "tâche" : "tâches";
+
+    const texteTerminees =
+        nombreTerminees <= 1 ? "terminée" : "terminées";
+
 
     compteurTaches.textContent =
         nombreTotal + " " + texteTaches +
         " • " + nombreEnCours + " en cours" +
         " • " + nombreTerminees + " " + texteTerminees;
+
 }
 
 
-// Mettre à jour le bouton de filtre actif
+// =========================
+// FILTRE ACTIF
+// =========================
+
 function mettreAJourFiltres() {
 
     boutonsFiltres.forEach(function (bouton) {
@@ -54,295 +75,544 @@ function mettreAJourFiltres() {
         bouton.classList.remove("actif");
 
         if (bouton.dataset.filtre === filtreActuel) {
+
             bouton.classList.add("actif");
+
         }
 
     });
+
 }
 
 
-// Afficher une tâche
+// =========================
+// AFFICHER UNE TÂCHE
+// =========================
+
 function afficherTache(tache) {
 
     const nouvelleTache = document.createElement("div");
+
     nouvelleTache.classList.add("tache");
 
 
-    // Texte de la tâche
+    // =========================
+    // TEXTE
+    // =========================
+
     const texteElement = document.createElement("span");
+
     texteElement.textContent = tache.texte;
 
     nouvelleTache.appendChild(texteElement);
 
 
-    // Marquer la tâche comme terminée
-    nouvelleTache.addEventListener("click", function () {
+    // Si la tâche est terminée
+
+    if (tache.terminee) {
+
+        texteElement.classList.add("tache-terminee");
+
+    }
+
+
+    // =========================
+    // CONTENEUR DES BOUTONS
+    // =========================
+
+    const actions = document.createElement("div");
+
+    actions.classList.add("tache-actions");
+
+
+    // =========================
+    // BOUTON MODIFIER
+    // =========================
+
+    const boutonModifier = document.createElement("button");
+
+    boutonModifier.textContent = "Modifier";
+
+    boutonModifier.classList.add("modifier");
+
+
+    // =========================
+    // BOUTON SUPPRIMER
+    // =========================
+
+    const boutonSupprimer = document.createElement("button");
+
+    boutonSupprimer.textContent = "Supprimer";
+
+    boutonSupprimer.classList.add("supprimer");
+
+
+    // Ajouter les boutons
+
+    actions.appendChild(boutonModifier);
+    actions.appendChild(boutonSupprimer);
+
+    nouvelleTache.appendChild(actions);
+
+
+    // =========================
+    // TERMINER / RÉACTIVER
+    // =========================
+
+    nouvelleTache.addEventListener("click", function (event) {
+
+        // Ne pas déclencher si on clique sur un bouton ou un input
+
+        if (
+            event.target.tagName === "BUTTON" ||
+            event.target.tagName === "INPUT"
+        ) {
+            return;
+        }
+
 
         tache.terminee = !tache.terminee;
+
 
         localStorage.setItem(
             "taches",
             JSON.stringify(taches)
         );
 
+
         afficherTaches();
+
     });
 
 
-    // Bouton Modifier
-    const boutonModifier = document.createElement("button");
-
-    boutonModifier.textContent = "Modifier";
-    boutonModifier.classList.add("modifier");
-
+    // =========================
+    // MODIFIER
+    // =========================
 
     boutonModifier.addEventListener("click", function (event) {
 
         event.stopPropagation();
 
-        // Créer le champ de modification
-        const champModification = document.createElement("input");
+
+        // Éviter de lancer plusieurs éditions
+
+        if (nouvelleTache.classList.contains("edition")) {
+            return;
+        }
+
+
+        nouvelleTache.classList.add("edition");
+
+
+        // Champ de modification
+
+        const champModification =
+            document.createElement("input");
 
         champModification.type = "text";
+
         champModification.value = tache.texte;
-        champModification.classList.add("champ-modification");
+
+        champModification.classList.add(
+            "champ-modification"
+        );
+
 
         // Remplacer le texte par le champ
+
         nouvelleTache.replaceChild(
             champModification,
             texteElement
         );
 
+
+        // Bouton Enregistrer
+
+        const boutonEnregistrer =
+            document.createElement("button");
+
+        boutonEnregistrer.textContent =
+            "Enregistrer";
+
+        boutonEnregistrer.classList.add(
+            "enregistrer"
+        );
+
+
+        // Bouton Annuler
+
+        const boutonAnnuler =
+            document.createElement("button");
+
+        boutonAnnuler.textContent =
+            "Annuler";
+
+        boutonAnnuler.classList.add(
+            "annuler"
+        );
+
+
+        // Vider les boutons actuels
+
+        actions.innerHTML = "";
+
+
+        // Ajouter les nouveaux boutons
+
+        actions.appendChild(boutonEnregistrer);
+        actions.appendChild(boutonAnnuler);
+
+
+        // Focus automatique
+
         champModification.focus();
 
 
-        // Créer le bouton Enregistrer
-        const boutonEnregistrer = document.createElement("button");
+        // Sélectionner le texte
 
-        boutonEnregistrer.textContent = "Enregistrer";
-        boutonEnregistrer.classList.add("enregistrer");
+        champModification.select();
 
 
-        // Créer le bouton Annuler
-        const boutonAnnuler = document.createElement("button");
+        // =========================
+        // ANNULER
+        // =========================
 
-        boutonAnnuler.textContent = "Annuler";
-        boutonAnnuler.classList.add("annuler");
+        boutonAnnuler.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
 
 
-        // Annuler la modification
-        boutonAnnuler.addEventListener("click", function (event) {
+                nouvelleTache.replaceChild(
+                    texteElement,
+                    champModification
+                );
+
+
+                actions.innerHTML = "";
+
+                actions.appendChild(boutonModifier);
+                actions.appendChild(boutonSupprimer);
+
+
+                nouvelleTache.classList.remove(
+                    "edition"
+                );
+
+            }
+        );
+
+
+        // =========================
+        // ENREGISTRER
+        // =========================
+
+        boutonEnregistrer.addEventListener(
+            "click",
+            function (event) {
+
+                event.stopPropagation();
+
+
+                const nouveauTexte =
+                    champModification.value.trim();
+
+
+                // Empêcher une tâche vide
+
+                if (nouveauTexte === "") {
+
+                    champModification.focus();
+
+                    return;
+
+                }
+
+
+                // Modifier la tâche
+
+                tache.texte = nouveauTexte;
+
+
+                // Sauvegarder
+
+                localStorage.setItem(
+                    "taches",
+                    JSON.stringify(taches)
+                );
+
+
+                // Actualiser l'affichage
+
+                afficherTaches();
+
+            }
+        );
+
+
+        // =========================
+        // ENTRÉE CLAVIER
+        // =========================
+
+        champModification.addEventListener(
+            "keydown",
+            function (event) {
+
+                // Entrée = enregistrer
+
+                if (event.key === "Enter") {
+
+                    boutonEnregistrer.click();
+
+                }
+
+
+                // Échap = annuler
+
+                if (event.key === "Escape") {
+
+                    boutonAnnuler.click();
+
+                }
+
+            }
+        );
+
+    });
+
+
+    // =========================
+    // SUPPRIMER
+    // =========================
+
+    boutonSupprimer.addEventListener(
+        "click",
+        function (event) {
 
             event.stopPropagation();
 
-            nouvelleTache.replaceChild(
-                texteElement,
-                champModification
+
+            taches = taches.filter(
+                function (tacheActuelle) {
+
+                    return (
+                        tacheActuelle.id !== tache.id
+                    );
+
+                }
             );
 
-            boutonEnregistrer.remove();
-            boutonAnnuler.remove();
-        });
 
-
-        // Enregistrer la modification
-        boutonEnregistrer.addEventListener("click", function (event) {
-
-            event.stopPropagation();
-
-            const nouveauTexte = champModification.value.trim();
-
-            // Empêcher un texte vide
-            if (nouveauTexte === "") {
-                return;
-            }
-
-            // Modifier la tâche
-            tache.texte = nouveauTexte;
-
-            // Sauvegarder
             localStorage.setItem(
                 "taches",
                 JSON.stringify(taches)
             );
 
-            // Mettre à jour le texte affiché
-            texteElement.textContent = nouveauTexte;
 
-            // Remplacer le champ par le texte
-            nouvelleTache.replaceChild(
-                texteElement,
-                champModification
+            afficherTaches();
+
+        }
+    );
+
+
+    // Ajouter la tâche à la liste
+
+    listeTaches.appendChild(nouvelleTache);
+
+}
+
+
+// =========================
+// AFFICHER LES TÂCHES
+// =========================
+
+function afficherTaches() {
+
+    mettreAJourCompteur();
+
+
+    const valeurRecherche =
+        recherche.value.toLowerCase();
+
+
+    // =========================
+    // RECHERCHE
+    // =========================
+
+    let tachesFiltrees =
+        taches.filter(function (tache) {
+
+            return tache.texte
+                .toLowerCase()
+                .includes(valeurRecherche);
+
+        });
+
+
+    // =========================
+    // FILTRE EN COURS
+    // =========================
+
+    if (filtreActuel === "en-cours") {
+
+        tachesFiltrees =
+            tachesFiltrees.filter(
+                function (tache) {
+
+                    return !tache.terminee;
+
+                }
             );
 
-            // Supprimer les boutons d'édition
-            boutonEnregistrer.remove();
-            boutonAnnuler.remove();
-        });
+    }
 
 
-        // Ajouter les boutons d'édition
-        nouvelleTache.appendChild(boutonEnregistrer);
-        nouvelleTache.appendChild(boutonAnnuler);
+    // =========================
+    // FILTRE TERMINÉES
+    // =========================
 
-    });
+    if (filtreActuel === "terminees") {
+
+        tachesFiltrees =
+            tachesFiltrees.filter(
+                function (tache) {
+
+                    return tache.terminee;
+
+                }
+            );
+
+    }
 
 
-    // Bouton Supprimer
-    const boutonSupprimer = document.createElement("button");
+    // =========================
+    // EFFACER LA LISTE
+    // =========================
 
-    boutonSupprimer.textContent = "Supprimer";
-    boutonSupprimer.classList.add("supprimer");
+    listeTaches.innerHTML = "";
 
 
-    boutonSupprimer.addEventListener("click", function (event) {
+    // =========================
+    // AFFICHER LES TÂCHES
+    // =========================
 
-        event.stopPropagation();
+    tachesFiltrees.forEach(
+        function (tache) {
 
-        taches = taches.filter(function (tacheActuelle) {
+            afficherTache(tache);
 
-            return tacheActuelle.id !== tache.id;
+        }
+    );
 
-        });
+}
+
+
+// =========================
+// CHARGEMENT INITIAL
+// =========================
+
+afficherTaches();
+
+mettreAJourFiltres();
+
+
+// =========================
+// AJOUTER UNE TÂCHE
+// =========================
+
+formulaire.addEventListener(
+    "submit",
+    function (event) {
+
+        event.preventDefault();
+
+
+        const texteTache =
+            champTache.value.trim();
+
+
+        // Empêcher une tâche vide
+
+        if (texteTache === "") {
+
+            champTache.focus();
+
+            return;
+
+        }
+
+
+        // Créer la tâche
+
+        const nouvelleTache =
+            creerTache(texteTache);
+
+
+        // Ajouter au tableau
+
+        taches.push(nouvelleTache);
+
+
+        // Sauvegarder
 
         localStorage.setItem(
             "taches",
             JSON.stringify(taches)
         );
 
-        afficherTaches();
-    });
+
+        // Vider le champ
+
+        champTache.value = "";
 
 
-    // Ajouter les boutons à la tâche
-    nouvelleTache.appendChild(boutonModifier);
-    nouvelleTache.appendChild(boutonSupprimer);
-
-    listeTaches.appendChild(nouvelleTache);
-
-
-    // Si la tâche était déjà terminée
-    if (tache.terminee) {
-        texteElement.classList.add("tache-terminee");
-    }
-}
-
-
-// Afficher les tâches selon la recherche et le filtre
-function afficherTaches() {
-
-    mettreAJourCompteur();
-
-    const valeurRecherche = recherche.value.toLowerCase();
-
-
-    // Recherche
-    let tachesFiltrees = taches.filter(function (tache) {
-
-        return tache.texte
-            .toLowerCase()
-            .includes(valeurRecherche);
-
-    });
-
-
-    // Filtre "En cours"
-    if (filtreActuel === "en-cours") {
-
-        tachesFiltrees = tachesFiltrees.filter(function (tache) {
-
-            return !tache.terminee;
-
-        });
-    }
-
-
-    // Filtre "Terminées"
-    if (filtreActuel === "terminees") {
-
-        tachesFiltrees = tachesFiltrees.filter(function (tache) {
-
-            return tache.terminee;
-
-        });
-    }
-
-
-    // Effacer l'affichage actuel
-    listeTaches.innerHTML = "";
-
-
-    // Afficher les tâches filtrées
-    tachesFiltrees.forEach(function (tache) {
-
-        afficherTache(tache);
-
-    });
-}
-
-
-// Afficher les tâches sauvegardées au chargement
-afficherTaches();
-mettreAJourFiltres();
-
-
-// Ajouter une nouvelle tâche
-formulaire.addEventListener("submit", function (event) {
-
-    event.preventDefault();
-
-    const texteTache = champTache.value.trim();
-
-
-    // Empêcher une tâche vide
-    if (texteTache === "") {
-        return;
-    }
-
-
-    // Créer la tâche
-    const nouvelleTache = creerTache(texteTache);
-
-
-    // Ajouter la tâche au tableau
-    taches.push(nouvelleTache);
-
-
-    // Sauvegarder
-    localStorage.setItem(
-        "taches",
-        JSON.stringify(taches)
-    );
-
-
-    // Vider le champ
-    champTache.value = "";
-
-
-    // Actualiser l'affichage
-    afficherTaches();
-});
-
-
-// Rechercher une tâche
-recherche.addEventListener("input", function () {
-
-    afficherTaches();
-
-});
-
-
-// Gérer les boutons de filtre
-boutonsFiltres.forEach(function (bouton) {
-
-    bouton.addEventListener("click", function () {
-
-        filtreActuel = bouton.dataset.filtre;
-
-        mettreAJourFiltres();
+        // Revenir automatiquement en haut de la liste
 
         afficherTaches();
 
-    });
 
-});
+        champTache.focus();
+
+    }
+);
+
+
+// =========================
+// RECHERCHE
+// =========================
+
+recherche.addEventListener(
+    "input",
+    function () {
+
+        afficherTaches();
+
+    }
+);
+
+
+// =========================
+// FILTRES
+// =========================
+
+boutonsFiltres.forEach(
+    function (bouton) {
+
+        bouton.addEventListener(
+            "click",
+            function () {
+
+                filtreActuel =
+                    bouton.dataset.filtre;
+
+
+                mettreAJourFiltres();
+
+                afficherTaches();
+
+            }
+        );
+
+    }
+);

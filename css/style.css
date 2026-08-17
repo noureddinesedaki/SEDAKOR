@@ -1,6 +1,15 @@
+/* =========================
+   RESET
+========================= */
+
 * {
     box-sizing: border-box;
 }
+
+
+/* =========================
+   BODY
+========================= */
 
 body {
     margin: 0;
@@ -8,6 +17,11 @@ body {
     background-color: #f4f6f8;
     color: #222;
 }
+
+
+/* =========================
+   HEADER
+========================= */
 
 header {
     text-align: center;
@@ -26,11 +40,22 @@ header p {
     font-size: 18px;
 }
 
+
+/* =========================
+   MAIN
+========================= */
+
 main {
+    width: 100%;
     max-width: 800px;
     margin: 40px auto;
     padding: 0 20px;
 }
+
+
+/* =========================
+   SECTIONS
+========================= */
 
 section {
     background-color: white;
@@ -44,6 +69,11 @@ h2 {
     margin-top: 0;
 }
 
+
+/* =========================
+   FORMULAIRE
+========================= */
+
 #formulaire-tache {
     display: flex;
     gap: 10px;
@@ -51,10 +81,16 @@ h2 {
 
 #tache {
     flex: 1;
+    min-width: 0;
     padding: 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    outline: none;
+}
+
+#tache:focus {
+    border-color: #555;
 }
 
 #formulaire-tache button {
@@ -71,34 +107,22 @@ h2 {
     background-color: #333;
 }
 
-.tache {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    margin-top: 10px;
-    background-color: #f4f6f8;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+
+/* =========================
+   COMPTEUR
+========================= */
+
+#compteur-taches {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 14px;
 }
 
-.supprimer {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #c0392b;
-    color: white;
-    cursor: pointer;
-}
 
-.supprimer:hover {
-    background-color: #a93226;
-}
-
-.tache-terminee {
-    text-decoration: line-through;
-    opacity: 0.6;
-}
+/* =========================
+   RECHERCHE
+========================= */
 
 #recherche {
     width: 100%;
@@ -107,7 +131,17 @@ h2 {
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 16px;
+    outline: none;
 }
+
+#recherche:focus {
+    border-color: #555;
+}
+
+
+/* =========================
+   FILTRES
+========================= */
 
 #filtres {
     display: flex;
@@ -127,28 +161,299 @@ h2 {
     background-color: #f4f6f8;
 }
 
-#compteur-taches {
-    margin-top: -10px;
-    margin-bottom: 20px;
-    color: #666;
-    font-size: 14px;
-}
-
 #filtres button.actif {
     background-color: #111;
     color: white;
+    border-color: #111;
 }
 
-.modifier {
+
+/* =========================
+   TÂCHE
+========================= */
+
+.tache {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 15px;
+    margin-top: 10px;
+
+    background-color: #f4f6f8;
+
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+
+/* Texte de la tâche */
+
+.tache > span {
+    flex: 1;
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+    word-break: break-word;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   BOUTONS D'ACTION
+========================= */
+
+.tache-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    flex-shrink: 0;
+}
+
+
+/* Boutons */
+
+.modifier,
+.supprimer,
+.enregistrer,
+.annuler {
     padding: 8px 12px;
+
     border: none;
     border-radius: 5px;
-    background-color: #555;
+
     color: white;
     cursor: pointer;
-    margin-right: 8px;
+
+    white-space: nowrap;
+}
+
+
+/* Modifier */
+
+.modifier {
+    background-color: #555;
 }
 
 .modifier:hover {
     background-color: #333;
+}
+
+
+/* Supprimer */
+
+.supprimer {
+    background-color: #c0392b;
+}
+
+.supprimer:hover {
+    background-color: #a93226;
+}
+
+
+/* Enregistrer */
+
+.enregistrer {
+    background-color: #27ae60;
+}
+
+.enregistrer:hover {
+    background-color: #219150;
+}
+
+
+/* Annuler */
+
+.annuler {
+    background-color: #777;
+}
+
+.annuler:hover {
+    background-color: #666;
+}
+
+
+/* =========================
+   TÂCHE TERMINÉE
+========================= */
+
+.tache-terminee {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+
+/* =========================
+   CHAMP DE MODIFICATION
+========================= */
+
+.champ-modification {
+    flex: 1;
+    min-width: 0;
+
+    padding: 8px 10px;
+
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    font-size: 16px;
+
+    outline: none;
+}
+
+.champ-modification:focus {
+    border-color: #555;
+}
+
+
+/* =========================
+   RESPONSIVE TABLETTE
+========================= */
+
+@media (max-width: 700px) {
+
+    main {
+        margin: 25px auto;
+    }
+
+    section {
+        padding: 25px;
+    }
+
+    .tache {
+        align-items: flex-start;
+    }
+
+    .tache-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+}
+
+
+/* =========================
+   RESPONSIVE MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    /* Header */
+
+    header {
+        padding: 30px 15px;
+    }
+
+    header h1 {
+        font-size: 32px;
+    }
+
+    header p {
+        font-size: 16px;
+    }
+
+
+    /* Main */
+
+    main {
+        width: 100%;
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+
+
+    /* Sections */
+
+    section {
+        width: 100%;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+
+    /* Formulaire */
+
+    #formulaire-tache {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #tache {
+        width: 100%;
+    }
+
+    #formulaire-tache button {
+        width: 100%;
+    }
+
+
+    /* Recherche */
+
+    #recherche {
+        width: 100%;
+    }
+
+
+    /* Filtres */
+
+    #filtres {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    #filtres button {
+        width: 100%;
+    }
+
+
+    /* Tâches */
+
+    .tache {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+
+        width: 100%;
+        padding: 15px;
+    }
+
+
+    /* Texte */
+
+    .tache > span {
+        width: 100%;
+        flex: none;
+    }
+
+
+    /* Boutons */
+
+    .tache-actions {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .modifier,
+    .supprimer,
+    .enregistrer,
+    .annuler {
+        width: 100%;
+        margin: 0;
+    }
+
+
+    /* Champ modification */
+
+    .champ-modification {
+        width: 100%;
+        min-width: 0;
+        flex: none;
+    }
+
 }
