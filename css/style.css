@@ -625,12 +625,6 @@ h2 {
 
 .tache {
 
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
     width: 100%;
 
     padding: 15px;
@@ -655,7 +649,18 @@ h2 {
 }
 
 
-.tache > span {
+.tache-entete {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.tache-texte {
 
     flex: 1;
 
@@ -665,9 +670,18 @@ h2 {
 
     word-break: break-word;
 
+    line-height: 1.5;
+
     cursor: pointer;
 
-    line-height: 1.5;
+}
+
+
+.tache-terminee {
+
+    text-decoration: line-through;
+
+    opacity: 0.5;
 
 }
 
@@ -684,7 +698,7 @@ h2 {
 
     gap: 8px;
 
-    flex-shrink: 0;
+    margin-top: 10px;
 
     flex-wrap: wrap;
 
@@ -734,7 +748,7 @@ h2 {
 
 
 /* =========================
-   CATÉGORIE
+   CATÉGORIES
 ========================= */
 
 .categorie {
@@ -742,10 +756,6 @@ h2 {
     padding: 5px 8px;
 
     border-radius: 6px;
-
-    background-color: #e0e7ff;
-
-    color: #3730a3;
 
     font-size: 12px;
 
@@ -837,8 +847,6 @@ h2 {
 
     gap: 8px;
 
-    flex-shrink: 0;
-
 }
 
 
@@ -918,14 +926,240 @@ h2 {
 
 
 /* =========================
-   TERMINÉE
+   SOUS-TÂCHES
 ========================= */
 
-.tache-terminee {
+.sous-taches {
+
+    margin-top: 15px;
+
+    padding-top: 15px;
+
+    border-top:
+        1px solid
+        var(--bordure);
+
+}
+
+
+.sous-taches-entete {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 10px;
+
+}
+
+
+.sous-taches-titre {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.sous-taches-progressions {
+
+    color:
+        var(--texte-secondaire);
+
+    font-size: 13px;
+
+}
+
+
+.sous-tache {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 8px 10px;
+
+    margin-top: 6px;
+
+    background-color: white;
+
+    border:
+        1px solid
+        var(--bordure);
+
+    border-radius: 7px;
+
+}
+
+
+.sous-tache-checkbox {
+
+    width: 17px;
+
+    height: 17px;
+
+    flex-shrink: 0;
+
+    cursor: pointer;
+
+}
+
+
+.sous-tache-texte {
+
+    flex: 1;
+
+    min-width: 0;
+
+    font-size: 14px;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
+
+}
+
+
+.sous-tache-terminee {
 
     text-decoration: line-through;
 
     opacity: 0.5;
+
+}
+
+
+.supprimer-sous-tache {
+
+    border: none;
+
+    background: transparent;
+
+    color: #9ca3af;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    padding: 2px 5px;
+
+}
+
+
+.supprimer-sous-tache:hover {
+
+    color: var(--danger);
+
+}
+
+
+.ajout-sous-tache {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 10px;
+
+}
+
+
+.champ-sous-tache {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 9px 10px;
+
+    border:
+        1px solid
+        var(--bordure);
+
+    border-radius: 7px;
+
+    font-size: 14px;
+
+    outline: none;
+
+}
+
+
+.champ-sous-tache:focus {
+
+    border-color:
+        var(--primaire);
+
+}
+
+
+.bouton-ajouter-sous-tache {
+
+    padding: 9px 12px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background-color:
+        var(--primaire);
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+}
+
+
+.bouton-ajouter-sous-tache:hover {
+
+    background-color:
+        var(--primaire-hover);
+
+}
+
+
+/* =========================
+   PROGRESSION SOUS-TÂCHE
+========================= */
+
+.barre-sous-taches {
+
+    width: 100%;
+
+    height: 6px;
+
+    margin-top: 8px;
+
+    overflow: hidden;
+
+    background-color: #e5e7eb;
+
+    border-radius: 999px;
+
+}
+
+
+.progression-sous-taches {
+
+    width: 0%;
+
+    height: 100%;
+
+    background-color:
+        var(--succes);
+
+    border-radius: 999px;
+
+    transition:
+        width 0.3s ease;
 
 }
 
@@ -993,11 +1227,9 @@ h2 {
     }
 
 
-    .tache {
+    .tache-entete {
 
         align-items: flex-start;
-
-        flex-wrap: wrap;
 
     }
 
@@ -1151,46 +1383,20 @@ h2 {
 
     /* Tâches */
 
-    .tache {
+    .tache-entete {
 
         flex-direction: column;
 
         align-items: stretch;
 
-        gap: 12px;
-
-        padding: 15px;
-
     }
 
-
-    .tache > span {
-
-        width: 100%;
-
-        flex: none;
-
-    }
-
-
-    .tache-infos {
-
-        width: 100%;
-
-        justify-content: flex-start;
-
-    }
-
-
-    /* Actions */
 
     .tache-actions {
 
         width: 100%;
 
         flex-direction: column;
-
-        gap: 8px;
 
     }
 
@@ -1199,6 +1405,39 @@ h2 {
     .supprimer,
     .enregistrer,
     .annuler {
+
+        width: 100%;
+
+    }
+
+
+    /* Informations */
+
+    .tache-infos {
+
+        width: 100%;
+
+    }
+
+
+    /* Sous-tâches */
+
+    .sous-tache {
+
+        align-items: flex-start;
+
+    }
+
+
+    .ajout-sous-tache {
+
+        flex-direction: column;
+
+    }
+
+
+    .champ-sous-tache,
+    .bouton-ajouter-sous-tache {
 
         width: 100%;
 
