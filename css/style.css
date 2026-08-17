@@ -1,15 +1,7 @@
-/* =========================
-   RESET
-========================= */
-
 * {
     box-sizing: border-box;
 }
 
-
-/* =========================
-   VARIABLES
-========================= */
 
 :root {
 
@@ -41,10 +33,6 @@
 }
 
 
-/* =========================
-   BODY
-========================= */
-
 body {
 
     margin: 0;
@@ -59,10 +47,6 @@ body {
 
 }
 
-
-/* =========================
-   HEADER
-========================= */
 
 header {
 
@@ -90,8 +74,6 @@ header h1 {
 
     font-weight: 700;
 
-    letter-spacing: -1px;
-
 }
 
 
@@ -106,10 +88,6 @@ header p {
 }
 
 
-/* =========================
-   MAIN
-========================= */
-
 main {
 
     width: 100%;
@@ -122,10 +100,6 @@ main {
 
 }
 
-
-/* =========================
-   SECTIONS
-========================= */
 
 section {
 
@@ -160,13 +134,6 @@ h2 {
 /* =========================
    DASHBOARD
 ========================= */
-
-#dashboard h2 {
-
-    margin-bottom: 25px;
-
-}
-
 
 .statistiques {
 
@@ -243,14 +210,8 @@ h2 {
 
     font-size: 24px;
 
-    line-height: 1;
-
 }
 
-
-/* =========================
-   PROGRESSION
-========================= */
 
 .progression {
 
@@ -366,8 +327,6 @@ h2 {
 
     outline: none;
 
-    transition: 0.2s;
-
 }
 
 
@@ -377,14 +336,11 @@ h2 {
 
     background-color: white;
 
-    box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.1);
-
 }
 
 
 #priorite,
+#categorie,
 #date-echeance {
 
     padding: 13px 12px;
@@ -407,6 +363,7 @@ h2 {
 
 
 #priorite:focus,
+#categorie:focus,
 #date-echeance:focus {
 
     border-color: var(--primaire);
@@ -434,8 +391,6 @@ h2 {
 
     cursor: pointer;
 
-    transition: 0.2s;
-
 }
 
 
@@ -443,9 +398,6 @@ h2 {
 
     background-color:
         var(--primaire-hover);
-
-    transform:
-        translateY(-1px);
 
 }
 
@@ -525,8 +477,6 @@ h2 {
 
     background-color: #f3f4f6;
 
-    color: var(--texte);
-
 }
 
 
@@ -539,6 +489,69 @@ h2 {
         var(--primaire);
 
     color: white;
+
+}
+
+
+/* =========================
+   FILTRE CATÉGORIE
+========================= */
+
+#filtre-categorie {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    margin-bottom: 15px;
+
+    padding: 12px;
+
+    background-color: #f9fafb;
+
+    border:
+        1px solid
+        var(--bordure);
+
+    border-radius: 8px;
+
+}
+
+
+#filtre-categorie label {
+
+    color: var(--texte-secondaire);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+#filtre-categories {
+
+    flex: 1;
+
+    padding: 9px 12px;
+
+    border:
+        1px solid
+        var(--bordure);
+
+    border-radius: 7px;
+
+    background-color: white;
+
+    color: var(--texte);
+
+    font-size: 14px;
+
+    cursor: pointer;
 
 }
 
@@ -572,8 +585,7 @@ h2 {
 
 #tri label {
 
-    color:
-        var(--texte-secondaire);
+    color: var(--texte-secondaire);
 
     font-size: 14px;
 
@@ -604,8 +616,6 @@ h2 {
 
     cursor: pointer;
 
-    outline: none;
-
 }
 
 
@@ -635,18 +645,12 @@ h2 {
 
     border-radius: 10px;
 
-    transition: 0.2s;
-
 }
 
 
 .tache:hover {
 
     border-color: #d1d5db;
-
-    box-shadow:
-        0 4px 12px
-        rgba(0, 0, 0, 0.04);
 
 }
 
@@ -681,6 +685,8 @@ h2 {
     gap: 8px;
 
     flex-shrink: 0;
+
+    flex-wrap: wrap;
 
 }
 
@@ -726,6 +732,78 @@ h2 {
 
 }
 
+
+/* =========================
+   CATÉGORIE
+========================= */
+
+.categorie {
+
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    background-color: #e0e7ff;
+
+    color: #3730a3;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+.categorie-travail {
+
+    background-color: #dbeafe;
+
+    color: #1e40af;
+
+}
+
+
+.categorie-etudes {
+
+    background-color: #ede9fe;
+
+    color: #6d28d9;
+
+}
+
+
+.categorie-personnel {
+
+    background-color: #dcfce7;
+
+    color: #166534;
+
+}
+
+
+.categorie-projets {
+
+    background-color: #ffedd5;
+
+    color: #9a3412;
+
+}
+
+
+.categorie-autre {
+
+    background-color: #f3f4f6;
+
+    color: #374151;
+
+}
+
+
+/* =========================
+   DATE
+========================= */
 
 .date-echeance {
 
@@ -802,7 +880,8 @@ h2 {
 
 .supprimer {
 
-    background-color: var(--danger);
+    background-color:
+        var(--danger);
 
 }
 
@@ -817,7 +896,8 @@ h2 {
 
 .enregistrer {
 
-    background-color: var(--succes);
+    background-color:
+        var(--succes);
 
 }
 
@@ -838,7 +918,7 @@ h2 {
 
 
 /* =========================
-   TÂCHE TERMINÉE
+   TERMINÉE
 ========================= */
 
 .tache-terminee {
@@ -856,6 +936,7 @@ h2 {
 
 .champ-modification,
 .champ-priorite-modification,
+.champ-categorie-modification,
 .date-modification {
 
     padding: 8px 10px;
@@ -915,13 +996,6 @@ h2 {
     .tache {
 
         align-items: flex-start;
-
-        flex-wrap: wrap;
-
-    }
-
-
-    .tache-infos {
 
         flex-wrap: wrap;
 
@@ -997,13 +1071,6 @@ h2 {
     }
 
 
-    .statistique {
-
-        padding: 15px;
-
-    }
-
-
     /* Formulaire */
 
     #formulaire-tache {
@@ -1015,6 +1082,7 @@ h2 {
 
     #tache,
     #priorite,
+    #categorie,
     #date-echeance {
 
         width: 100%;
@@ -1039,6 +1107,24 @@ h2 {
 
 
     #filtres button {
+
+        width: 100%;
+
+    }
+
+
+    /* Catégorie */
+
+    #filtre-categorie {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    #filtre-categories {
 
         width: 100%;
 
@@ -1091,9 +1177,7 @@ h2 {
 
         width: 100%;
 
-        justify-content: space-between;
-
-        flex-wrap: wrap;
+        justify-content: flex-start;
 
     }
 
@@ -1125,6 +1209,7 @@ h2 {
 
     .champ-modification,
     .champ-priorite-modification,
+    .champ-categorie-modification,
     .date-modification {
 
         width: 100%;

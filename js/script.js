@@ -7,6 +7,9 @@ const champTache =
 const priorite =
     document.querySelector("#priorite");
 
+const categorie =
+    document.querySelector("#categorie");
+
 const dateEcheance =
     document.querySelector("#date-echeance");
 
@@ -24,6 +27,9 @@ const compteurTaches =
 
 const triTaches =
     document.querySelector("#tri-taches");
+
+const filtreCategories =
+    document.querySelector("#filtre-categories");
 
 
 // Dashboard
@@ -54,6 +60,8 @@ const progression =
 let taches = [];
 
 let filtreActuel = "toutes";
+
+let filtreCategorieActuel = "toutes";
 
 let triActuel = "recentes";
 
@@ -91,6 +99,7 @@ if (tachesSauvegardees) {
 function creerTache(
     texte,
     niveauPriorite,
+    niveauCategorie,
     date
 ) {
 
@@ -103,6 +112,8 @@ function creerTache(
         terminee: false,
 
         priorite: niveauPriorite,
+
+        categorie: niveauCategorie,
 
         dateEcheance: date
 
@@ -206,7 +217,63 @@ function formaterDate(date) {
 
 
 // =========================
-// METTRE À JOUR LE COMPTEUR
+// NOM DE CATÉGORIE
+// =========================
+
+function nomCategorie(categorie) {
+
+    if (
+        categorie === "travail"
+    ) {
+
+        return "💼 Travail";
+
+    }
+
+
+    if (
+        categorie === "etudes"
+    ) {
+
+        return "📚 Études";
+
+    }
+
+
+    if (
+        categorie === "personnel"
+    ) {
+
+        return "🏠 Personnel";
+
+    }
+
+
+    if (
+        categorie === "projets"
+    ) {
+
+        return "🚀 Projets";
+
+    }
+
+
+    if (
+        categorie === "autre"
+    ) {
+
+        return "📦 Autre";
+
+    }
+
+
+    return "📦 Autre";
+
+}
+
+
+// =========================
+// METTRE À JOUR COMPTEUR
 // =========================
 
 function mettreAJourCompteur() {
@@ -226,7 +293,8 @@ function mettreAJourCompteur() {
 
 
     const enCours =
-        total - terminees;
+        total -
+        terminees;
 
 
     const texteTotal =
@@ -257,7 +325,7 @@ function mettreAJourCompteur() {
 
 
 // =========================
-// METTRE À JOUR LE DASHBOARD
+// DASHBOARD
 // =========================
 
 function mettreAJourDashboard() {
@@ -277,7 +345,8 @@ function mettreAJourDashboard() {
 
 
     const enCours =
-        total - terminees;
+        total -
+        terminees;
 
 
     const enRetard =
@@ -599,65 +668,88 @@ function afficherTache(tache) {
 
     // Priorité
 
+    const badgePriorite =
+        document.createElement(
+            "span"
+        );
+
+
+    badgePriorite.classList.add(
+        "priorite"
+    );
+
+
+    badgePriorite.classList.add(
+        "priorite-" +
+        (
+            tache.priorite ||
+            "moyenne"
+        )
+    );
+
+
     if (
-        tache.priorite
+        tache.priorite ===
+        "haute"
     ) {
 
-        const badgePriorite =
-            document.createElement(
-                "span"
-            );
+        badgePriorite.textContent =
+            "Haute";
 
+    } else if (
+        tache.priorite ===
+        "basse"
+    ) {
 
-        badgePriorite.classList.add(
-            "priorite"
-        );
+        badgePriorite.textContent =
+            "Basse";
 
+    } else {
 
-        badgePriorite.classList.add(
-            "priorite-" +
-            tache.priorite
-        );
-
-
-        if (
-            tache.priorite ===
-            "basse"
-        ) {
-
-            badgePriorite.textContent =
-                "Basse";
-
-        }
-
-
-        if (
-            tache.priorite ===
-            "moyenne"
-        ) {
-
-            badgePriorite.textContent =
-                "Moyenne";
-
-        }
-
-
-        if (
-            tache.priorite ===
-            "haute"
-        ) {
-
-            badgePriorite.textContent =
-                "Haute";
-
-        }
-
-
-        informations.appendChild(
-            badgePriorite
-        );
+        badgePriorite.textContent =
+            "Moyenne";
 
     }
+
+
+    informations.appendChild(
+        badgePriorite
+    );
+
+
+    // Catégorie
+
+    const badgeCategorie =
+        document.createElement(
+            "span"
+        );
+
+
+    const categorieActuelle =
+        tache.categorie ||
+        "autre";
+
+
+    badgeCategorie.classList.add(
+        "categorie"
+    );
+
+
+    badgeCategorie.classList.add(
+        "categorie-" +
+        categorieActuelle
+    );
+
+
+    badgeCategorie.textContent =
+        nomCategorie(
+            categorieActuelle
+        );
+
+
+    informations.appendChild(
+        badgeCategorie
+    );
 
 
     // Date
@@ -710,16 +802,9 @@ function afficherTache(tache) {
     }
 
 
-    if (
-        informations.children.length >
-        0
-    ) {
-
-        nouvelleTache.appendChild(
-            informations
-        );
-
-    }
+    nouvelleTache.appendChild(
+        informations
+    );
 
 
     // Actions
@@ -735,8 +820,6 @@ function afficherTache(tache) {
     );
 
 
-    // Modifier
-
     const boutonModifier =
         document.createElement(
             "button"
@@ -751,8 +834,6 @@ function afficherTache(tache) {
         "modifier"
     );
 
-
-    // Supprimer
 
     const boutonSupprimer =
         document.createElement(
@@ -875,13 +956,13 @@ function afficherTache(tache) {
 
             // Priorité
 
-            const selectModification =
+            const selectPriorite =
                 document.createElement(
                     "select"
                 );
 
 
-            selectModification.classList.add(
+            selectPriorite.classList.add(
                 "champ-priorite-modification"
             );
 
@@ -937,7 +1018,89 @@ function afficherTache(tache) {
                     }
 
 
-                    selectModification.appendChild(
+                    selectPriorite.appendChild(
+                        element
+                    );
+
+                }
+            );
+
+
+            // Catégorie
+
+            const selectCategorie =
+                document.createElement(
+                    "select"
+                );
+
+
+            selectCategorie.classList.add(
+                "champ-categorie-modification"
+            );
+
+
+            const optionsCategories = [
+
+                {
+                    valeur: "travail",
+                    texte: "💼 Travail"
+                },
+
+                {
+                    valeur: "etudes",
+                    texte: "📚 Études"
+                },
+
+                {
+                    valeur: "personnel",
+                    texte: "🏠 Personnel"
+                },
+
+                {
+                    valeur: "projets",
+                    texte: "🚀 Projets"
+                },
+
+                {
+                    valeur: "autre",
+                    texte: "📦 Autre"
+                }
+
+            ];
+
+
+            optionsCategories.forEach(
+                function (option) {
+
+                    const element =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    element.value =
+                        option.valeur;
+
+
+                    element.textContent =
+                        option.texte;
+
+
+                    if (
+                        option.valeur ===
+                        (
+                            tache.categorie ||
+                            "autre"
+                        )
+                    ) {
+
+                        element.selected =
+                            true;
+
+                    }
+
+
+                    selectCategorie.appendChild(
                         element
                     );
 
@@ -967,12 +1130,19 @@ function afficherTache(tache) {
             );
 
 
+            // Remplacer les informations
+
             informations.innerHTML =
                 "";
 
 
             informations.appendChild(
-                selectModification
+                selectPriorite
+            );
+
+
+            informations.appendChild(
+                selectCategorie
             );
 
 
@@ -1078,7 +1248,11 @@ function afficherTache(tache) {
 
 
                     tache.priorite =
-                        selectModification.value;
+                        selectPriorite.value;
+
+
+                    tache.categorie =
+                        selectCategorie.value;
 
 
                     tache.dateEcheance =
@@ -1094,7 +1268,7 @@ function afficherTache(tache) {
             );
 
 
-            // Clavier
+            // Entrée / Échap
 
             champModification.addEventListener(
                 "keydown",
@@ -1195,7 +1369,7 @@ function afficherTaches() {
         );
 
 
-    // En cours
+    // Filtre état
 
     if (
         filtreActuel ===
@@ -1214,8 +1388,6 @@ function afficherTaches() {
     }
 
 
-    // Terminées
-
     if (
         filtreActuel ===
         "terminees"
@@ -1226,6 +1398,31 @@ function afficherTaches() {
                 function (tache) {
 
                     return tache.terminee;
+
+                }
+            );
+
+    }
+
+
+    // Filtre catégorie
+
+    if (
+        filtreCategorieActuel !==
+        "toutes"
+    ) {
+
+        tachesFiltrees =
+            tachesFiltrees.filter(
+                function (tache) {
+
+                    return (
+                        (
+                            tache.categorie ||
+                            "autre"
+                        ) ===
+                        filtreCategorieActuel
+                    );
 
                 }
             );
@@ -1299,6 +1496,7 @@ formulaire.addEventListener(
             creerTache(
                 texteTache,
                 priorite.value,
+                categorie.value,
                 dateEcheance.value
             );
 
@@ -1317,6 +1515,10 @@ formulaire.addEventListener(
 
         priorite.value =
             "moyenne";
+
+
+        categorie.value =
+            "travail";
 
 
         dateEcheance.value =
@@ -1347,7 +1549,7 @@ recherche.addEventListener(
 
 
 // =========================
-// FILTRES
+// FILTRES ÉTAT
 // =========================
 
 boutonsFiltres.forEach(
@@ -1368,6 +1570,24 @@ boutonsFiltres.forEach(
 
             }
         );
+
+    }
+);
+
+
+// =========================
+// FILTRE CATÉGORIE
+// =========================
+
+filtreCategories.addEventListener(
+    "change",
+    function () {
+
+        filtreCategorieActuel =
+            filtreCategories.value;
+
+
+        afficherTaches();
 
     }
 );
