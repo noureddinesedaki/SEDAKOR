@@ -494,7 +494,7 @@ async function demanderAutorisationNotifications() {
         ) {
 
             new Notification(
-                "TaskFlow",
+                "SEDAKOR",
                 {
                     body:
                         "Les notifications sont maintenant activées."
@@ -518,7 +518,7 @@ async function demanderAutorisationNotifications() {
 function cleRappel(tache) {
 
     return (
-        "taskflow-rappel-" +
+        "sedakor-rappel-" +
         tache.id +
         "-" +
         tache.dateEcheance +
@@ -700,7 +700,7 @@ function verifierRappels() {
             ) {
 
                 new Notification(
-                    "🔔 Rappel TaskFlow",
+                    "🔔 Rappel SEDAKOR",
                     {
                         body:
                             tache.texte +
