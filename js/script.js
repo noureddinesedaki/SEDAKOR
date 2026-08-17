@@ -5,7 +5,6 @@ const recherche = document.querySelector("#recherche");
 const boutonsFiltres = document.querySelectorAll("#filtres button");
 const compteurTaches = document.querySelector("#compteur-taches");
 
-
 let taches = [];
 let filtreActuel = "toutes";
 
@@ -68,6 +67,8 @@ function afficherTache(tache) {
     const nouvelleTache = document.createElement("div");
     nouvelleTache.classList.add("tache");
 
+
+    // Texte de la tâche
     const texteElement = document.createElement("span");
     texteElement.textContent = tache.texte;
 
@@ -87,7 +88,43 @@ function afficherTache(tache) {
     });
 
 
-    // Bouton supprimer
+    // Bouton Modifier
+    const boutonModifier = document.createElement("button");
+
+    boutonModifier.textContent = "Modifier";
+    boutonModifier.classList.add("modifier");
+
+
+    boutonModifier.addEventListener("click", function (event) {
+
+        event.stopPropagation();
+
+        const nouveauTexte = prompt(
+            "Modifier la tâche :",
+            tache.texte
+        );
+
+        if (nouveauTexte !== null) {
+
+            const texteModifie = nouveauTexte.trim();
+
+            if (texteModifie === "") {
+                return;
+            }
+
+            tache.texte = texteModifie;
+
+            localStorage.setItem(
+                "taches",
+                JSON.stringify(taches)
+            );
+
+            afficherTaches();
+        }
+    });
+
+
+    // Bouton Supprimer
     const boutonSupprimer = document.createElement("button");
 
     boutonSupprimer.textContent = "Supprimer";
@@ -99,15 +136,22 @@ function afficherTache(tache) {
         event.stopPropagation();
 
         taches = taches.filter(function (tacheActuelle) {
+
             return tacheActuelle.id !== tache.id;
+
         });
 
-        localStorage.setItem("taches", JSON.stringify(taches));
+        localStorage.setItem(
+            "taches",
+            JSON.stringify(taches)
+        );
 
         afficherTaches();
     });
 
 
+    // Ajouter les boutons à la tâche
+    nouvelleTache.appendChild(boutonModifier);
     nouvelleTache.appendChild(boutonSupprimer);
 
     listeTaches.appendChild(nouvelleTache);
@@ -127,8 +171,14 @@ function afficherTaches() {
 
     const valeurRecherche = recherche.value.toLowerCase();
 
+
+    // Recherche
     let tachesFiltrees = taches.filter(function (tache) {
-        return tache.texte.toLowerCase().includes(valeurRecherche);
+
+        return tache.texte
+            .toLowerCase()
+            .includes(valeurRecherche);
+
     });
 
 
@@ -136,9 +186,10 @@ function afficherTaches() {
     if (filtreActuel === "en-cours") {
 
         tachesFiltrees = tachesFiltrees.filter(function (tache) {
-            return !tache.terminee;
-        });
 
+            return !tache.terminee;
+
+        });
     }
 
 
@@ -146,9 +197,10 @@ function afficherTaches() {
     if (filtreActuel === "terminees") {
 
         tachesFiltrees = tachesFiltrees.filter(function (tache) {
-            return tache.terminee;
-        });
 
+            return tache.terminee;
+
+        });
     }
 
 
@@ -158,7 +210,9 @@ function afficherTaches() {
 
     // Afficher les tâches filtrées
     tachesFiltrees.forEach(function (tache) {
+
         afficherTache(tache);
+
     });
 }
 
@@ -175,19 +229,33 @@ formulaire.addEventListener("submit", function (event) {
 
     const texteTache = champTache.value.trim();
 
+
+    // Empêcher une tâche vide
     if (texteTache === "") {
         return;
     }
 
 
+    // Créer la tâche
     const nouvelleTache = creerTache(texteTache);
 
+
+    // Ajouter la tâche au tableau
     taches.push(nouvelleTache);
 
-    localStorage.setItem("taches", JSON.stringify(taches));
 
+    // Sauvegarder
+    localStorage.setItem(
+        "taches",
+        JSON.stringify(taches)
+    );
+
+
+    // Vider le champ
     champTache.value = "";
 
+
+    // Actualiser l'affichage
     afficherTaches();
 });
 

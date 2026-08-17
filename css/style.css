@@ -138,3 +138,17 @@ h2 {
     background-color: #111;
     color: white;
 }
+
+.modifier {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #555;
+    color: white;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+.modifier:hover {
+    background-color: #333;
+}
