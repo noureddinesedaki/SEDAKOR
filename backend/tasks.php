@@ -376,24 +376,25 @@ try {
 ) {
 
     $requete =
-        $pdo->query(
-            "SELECT
-                id,
-                user_id,
-                titre,
-                priorite,
-                categorie,
-                date_echeance,
-                heure_rappel,
-                rappel_active,
-                recurrence,
-                terminee,
-                sous_taches,
-                created_at,
-                updated_at
-            FROM tasks
-            ORDER BY id DESC"
-        );
+    $pdo->query(
+        "SELECT
+            id,
+            user_id,
+            titre,
+            priorite,
+            categorie,
+            date_echeance,
+            heure_rappel,
+            rappel_active,
+            recurrence,
+            terminee,
+            sous_taches,
+            created_at,
+            updated_at
+        FROM tasks
+        WHERE user_id IS NULL
+        ORDER BY id DESC"
+    );
 
 } else {
 
