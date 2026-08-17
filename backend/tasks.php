@@ -1,9 +1,18 @@
 <?php
 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
+session_start();
+
 header("Content-Type: application/json; charset=UTF-8");
 
 require_once "config.php";
 
+$userId = isset($_SESSION["user_id"])
+    ? (int) $_SESSION["user_id"]
+    : null;
 
 // ============================================================
 // FONCTIONS UTILITAIRES
@@ -701,35 +710,39 @@ try {
         // ----------------------------------------------------
 
         $requete =
-            $pdo->prepare(
-                "INSERT INTO tasks
-                (
-                    titre,
-                    priorite,
-                    categorie,
-                    date_echeance,
-                    heure_rappel,
-                    rappel_active,
-                    recurrence,
-                    terminee,
-                    sous_taches
-                )
-                VALUES
-                (
-                    :titre,
-                    :priorite,
-                    :categorie,
-                    :date_echeance,
-                    :heure_rappel,
-                    :rappel_active,
-                    :recurrence,
-                    :terminee,
-                    :sous_taches
-                )"
-            );
-
+    $pdo->prepare(
+        "INSERT INTO tasks
+        (
+            user_id,
+            titre,
+            priorite,
+            categorie,
+            date_echeance,
+            heure_rappel,
+            rappel_active,
+            recurrence,
+            terminee,
+            sous_taches
+        )
+        VALUES
+        (
+            :user_id,
+            :titre,
+            :priorite,
+            :categorie,
+            :date_echeance,
+            :heure_rappel,
+            :rappel_active,
+            :recurrence,
+            :terminee,
+            :sous_taches
+        )"
+    );
 
         $requete->execute([
+
+            ":user_id" =>
+                $userId,
 
             ":titre" =>
                 $titre,
