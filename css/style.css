@@ -1811,3 +1811,61 @@ h2 {
     }
 
 }
+
+/* ============================================================
+   SEDAKOR — BOUTON DÉCONNEXION
+   V9.2
+   ============================================================ */
+
+.site-header {
+    position: relative;
+}
+
+.site-header-titre {
+    text-align: center;
+}
+
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+
+    padding: 10px 16px;
+
+    border: none;
+    border-radius: 8px;
+
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.logout-button:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
+}
+
+.logout-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* Version mobile */
+
+@media (max-width: 600px) {
+
+    .logout-button {
+        position: static;
+        display: block;
+        margin: 15px auto 0;
+    }
+
+}

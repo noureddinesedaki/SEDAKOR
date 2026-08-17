@@ -363,40 +363,32 @@ try {
 
 
     // ========================================================
-    // GET
-    // RÉCUPÉRER LES TÂCHES
-    // ========================================================
+// GET
+// RÉCUPÉRER LES TÂCHES
+// ========================================================
 
-    if (
-        $method === "GET"
-    ) {
-
-        if (
-    $userId === null
+if (
+    $method === "GET"
 ) {
 
-    $requete =
-    $pdo->query(
-        "SELECT
-            id,
-            user_id,
-            titre,
-            priorite,
-            categorie,
-            date_echeance,
-            heure_rappel,
-            rappel_active,
-            recurrence,
-            terminee,
-            sous_taches,
-            created_at,
-            updated_at
-        FROM tasks
-        WHERE user_id IS NULL
-        ORDER BY id DESC"
-    );
+    // ----------------------------------------------------
+    // UTILISATEUR NON CONNECTÉ
+    // AUCUNE TÂCHE ACCESSIBLE
+    // ----------------------------------------------------
 
-} else {
+    if (
+        $userId === null
+    ) {
+
+        repondre([]);
+
+    }
+
+
+    // ----------------------------------------------------
+    // UTILISATEUR CONNECTÉ
+    // UNIQUEMENT SES TÂCHES
+    // ----------------------------------------------------
 
     $requete =
         $pdo->prepare(
@@ -425,76 +417,67 @@ try {
             $userId
     ]);
 
-}
+
+    $taches =
+        $requete->fetchAll();
 
 
-        $taches =
-            $requete->fetchAll();
+    foreach (
+        $taches as &$tache
+    ) {
+
+        $tache["id"] =
+            (int)
+            $tache["id"];
 
 
-        foreach (
-            $taches as &$tache
+        if (
+            $tache["user_id"] !==
+            null
         ) {
 
-            $tache["id"] =
+            $tache["user_id"] =
                 (int)
-                $tache["id"];
+                $tache["user_id"];
+
+        }
+
+
+        $tache["terminee"] =
+            (bool)
+            $tache["terminee"];
+
+
+        $tache["rappel_active"] =
+            (bool)
+            $tache["rappel_active"];
+
+
+        // -----------------------------------------------
+        // Sous-tâches JSON
+        // -----------------------------------------------
+
+        if (
+            !empty(
+                $tache["sous_taches"]
+            )
+        ) {
+
+            $sousTaches =
+                json_decode(
+                    $tache["sous_taches"],
+                    true
+                );
 
 
             if (
-                $tache["user_id"] !==
-                null
-            ) {
-
-                $tache["user_id"] =
-                    (int)
-                    $tache["user_id"];
-
-            }
-
-
-            $tache["terminee"] =
-                (bool)
-                $tache["terminee"];
-
-
-            $tache["rappel_active"] =
-                (bool)
-                $tache["rappel_active"];
-
-
-            // -----------------------------------------------
-            // Sous-tâches JSON
-            // -----------------------------------------------
-
-            if (
-                !empty(
-                    $tache["sous_taches"]
+                is_array(
+                    $sousTaches
                 )
             ) {
 
-                $sousTaches =
-                    json_decode(
-                        $tache["sous_taches"],
-                        true
-                    );
-
-
-                if (
-                    is_array(
-                        $sousTaches
-                    )
-                ) {
-
-                    $tache["sousTaches"] =
-                        $sousTaches;
-
-                } else {
-
-                    $tache["sousTaches"] =
-                        [];
-
-                }
+                $tache["sousTaches"] =
+                    $sousTaches;
 
             } else {
 
@@ -503,22 +486,29 @@ try {
 
             }
 
+        } else {
 
-            unset(
-                $tache["sous_taches"]
-            );
+            $tache["sousTaches"] =
+                [];
 
         }
 
 
-        unset($tache);
-
-
-        repondre(
-            $taches
+        unset(
+            $tache["sous_taches"]
         );
 
     }
+
+
+    unset($tache);
+
+
+    repondre(
+        $taches
+    );
+
+}
 
 
     // ========================================================
