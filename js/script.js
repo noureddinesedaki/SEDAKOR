@@ -16,6 +16,15 @@ const dateEcheance =
 const recurrence =
     document.querySelector("#recurrence");
 
+const heureRappel =
+    document.querySelector("#heure-rappel");
+
+const boutonNotifications =
+    document.querySelector("#bouton-notifications");
+
+const statutNotifications =
+    document.querySelector("#statut-notifications");
+
 const listeTaches =
     document.querySelector("#taches");
 
@@ -117,6 +126,16 @@ taches.forEach(
 
 
         if (
+            typeof tache.heureRappel !==
+            "string"
+        ) {
+
+            tache.heureRappel = "";
+
+        }
+
+
+        if (
             !Array.isArray(
                 tache.sousTaches
             )
@@ -195,7 +214,8 @@ function creerTache(
     niveauPriorite,
     niveauCategorie,
     date,
-    niveauRecurrence
+    niveauRecurrence,
+    heure
 ) {
 
     return {
@@ -213,6 +233,8 @@ function creerTache(
         dateEcheance: date,
 
         recurrence: niveauRecurrence,
+
+        heureRappel: heure || "",
 
         sousTaches: []
 
@@ -299,13 +321,11 @@ function calculerProchaineDate(
         const jour =
             prochaineDate.getDate();
 
+
         prochaineDate.setMonth(
             prochaineDate.getMonth() + 1
         );
 
-
-        // Évite les débordements
-        // de dates comme 31 → mois suivant
 
         if (
             prochaineDate.getDate() !==
@@ -383,6 +403,338 @@ function nomRecurrence(
 
 
     return "";
+
+}
+
+
+// =========================
+// V7 : RAPPELS / NOTIFICATIONS
+// =========================
+
+function notificationsDisponibles() {
+
+    return "Notification" in window;
+
+}
+
+
+function mettreAJourStatutNotifications() {
+
+    if (!notificationsDisponibles()) {
+
+        statutNotifications.textContent =
+            "Les notifications ne sont pas disponibles dans ce navigateur.";
+
+        boutonNotifications.disabled = true;
+
+        return;
+
+    }
+
+
+    if (Notification.permission === "granted") {
+
+        statutNotifications.textContent =
+            "Les notifications sont activées.";
+
+        boutonNotifications.textContent =
+            "Notifications activées";
+
+        boutonNotifications.disabled = true;
+
+        return;
+
+    }
+
+
+    if (Notification.permission === "denied") {
+
+        statutNotifications.textContent =
+            "Notifications bloquées. Autorisez-les dans les réglages du navigateur.";
+
+        boutonNotifications.textContent =
+            "Notifications bloquées";
+
+        boutonNotifications.disabled = true;
+
+        return;
+
+    }
+
+
+    statutNotifications.textContent =
+        "Activez les notifications pour recevoir les rappels.";
+
+}
+
+
+async function demanderAutorisationNotifications() {
+
+    if (!notificationsDisponibles()) {
+
+        mettreAJourStatutNotifications();
+
+        return;
+
+    }
+
+
+    try {
+
+        const permission =
+            await Notification.requestPermission();
+
+
+        mettreAJourStatutNotifications();
+
+
+        if (
+            permission ===
+            "granted"
+        ) {
+
+            new Notification(
+                "TaskFlow",
+                {
+                    body:
+                        "Les notifications sont maintenant activées."
+                }
+            );
+
+        }
+
+    } catch (erreur) {
+
+        console.error(
+            "Impossible d'activer les notifications :",
+            erreur
+        );
+
+    }
+
+}
+
+
+function cleRappel(tache) {
+
+    return (
+        "taskflow-rappel-" +
+        tache.id +
+        "-" +
+        tache.dateEcheance +
+        "-" +
+        tache.heureRappel
+    );
+
+}
+
+
+function rappelDejaEnvoye(tache) {
+
+    return (
+        localStorage.getItem(
+            cleRappel(tache)
+        ) === "oui"
+    );
+
+}
+
+
+function enregistrerRappelEnvoye(tache) {
+
+    localStorage.setItem(
+        cleRappel(tache),
+        "oui"
+    );
+
+}
+
+
+function dateHeureRappel(tache) {
+
+    if (
+        !tache.dateEcheance ||
+        !tache.heureRappel
+    ) {
+
+        return null;
+
+    }
+
+
+    const date =
+        new Date(
+            tache.dateEcheance +
+            "T" +
+            tache.heureRappel +
+            ":00"
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return null;
+
+    }
+
+
+    return date;
+
+}
+
+
+function rappelEstProche(tache) {
+
+    if (
+        tache.terminee
+    ) {
+
+        return false;
+
+    }
+
+
+    const dateRappel =
+        dateHeureRappel(tache);
+
+
+    if (!dateRappel) {
+
+        return false;
+
+    }
+
+
+    const maintenant =
+        new Date();
+
+
+    const difference =
+        dateRappel.getTime() -
+        maintenant.getTime();
+
+
+    return (
+        difference >= 0 &&
+        difference <=
+            60 * 60 * 1000
+    );
+
+}
+
+
+function rappelEstDu(tache) {
+
+    if (
+        tache.terminee
+    ) {
+
+        return false;
+
+    }
+
+
+    const dateRappel =
+        dateHeureRappel(tache);
+
+
+    if (!dateRappel) {
+
+        return false;
+
+    }
+
+
+    const maintenant =
+        new Date();
+
+
+    const difference =
+        maintenant.getTime() -
+        dateRappel.getTime();
+
+
+    return (
+        difference >= 0 &&
+        difference <=
+            2 * 60 * 1000
+    );
+
+}
+
+
+function verifierRappels() {
+
+    if (
+        !notificationsDisponibles() ||
+        Notification.permission !==
+            "granted"
+    ) {
+
+        return;
+
+    }
+
+
+    taches.forEach(
+        function (tache) {
+
+            if (
+                !tache.heureRappel ||
+                !tache.dateEcheance ||
+                tache.terminee
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                rappelEstDu(tache) &&
+                !rappelDejaEnvoye(tache)
+            ) {
+
+                new Notification(
+                    "🔔 Rappel TaskFlow",
+                    {
+                        body:
+                            tache.texte +
+                            " — rappel prévu à " +
+                            tache.heureRappel
+                    }
+                );
+
+
+                enregistrerRappelEnvoye(
+                    tache
+                );
+
+            }
+
+        }
+    );
+
+
+    afficherTaches();
+
+}
+
+
+function formaterHeure(heure) {
+
+    if (!heure) {
+
+        return "";
+
+    }
+
+
+    return "🔔 Rappel : " + heure;
 
 }
 
@@ -857,7 +1209,7 @@ function terminerTache(
 
     /*
      * V6 :
-     * lorsqu'une tâche récurrente
+     * Lorsqu'une tâche récurrente
      * est terminée, on crée
      * automatiquement la prochaine.
      */
@@ -865,7 +1217,7 @@ function terminerTache(
     if (
         tache.terminee &&
         tache.recurrence !==
-        "aucune" &&
+            "aucune" &&
         tache.dateEcheance
     ) {
 
@@ -882,15 +1234,10 @@ function terminerTache(
                 tache.priorite,
                 tache.categorie,
                 prochaineDate,
-                tache.recurrence
+                tache.recurrence,
+                tache.heureRappel
             );
 
-
-        /*
-         * Les sous-tâches ne sont pas
-         * copiées : chaque nouvelle
-         * occurrence recommence proprement.
-         */
 
         taches.push(
             prochaineTache
@@ -1059,6 +1406,17 @@ function afficherTache(
     element.classList.add(
         "tache"
     );
+
+
+    if (
+        rappelEstProche(tache)
+    ) {
+
+        element.classList.add(
+            "tache-rappel-proche"
+        );
+
+    }
 
 
     // Entête
@@ -1286,6 +1644,57 @@ function afficherTache(
 
         informations.appendChild(
             badgeRecurrence
+        );
+
+    }
+
+
+    // V7 : Badge rappel
+
+    if (
+        tache.heureRappel &&
+        tache.dateEcheance
+    ) {
+
+        const badgeRappel =
+            document.createElement("span");
+
+
+        badgeRappel.classList.add(
+            "rappel"
+        );
+
+
+        badgeRappel.textContent =
+            formaterHeure(
+                tache.heureRappel
+            );
+
+
+        if (
+            rappelEstProche(tache)
+        ) {
+
+            badgeRappel.classList.add(
+                "rappel-proche"
+            );
+
+        }
+
+
+        if (
+            rappelEstDu(tache)
+        ) {
+
+            badgeRappel.classList.add(
+                "rappel-du-jour"
+            );
+
+        }
+
+
+        informations.appendChild(
+            badgeRappel
         );
 
     }
@@ -1608,6 +2017,11 @@ function afficherTache(
                 "aucune";
 
 
+            const ancienneHeureRappel =
+                tache.heureRappel ||
+                "";
+
+
             entete.innerHTML =
                 "";
 
@@ -1753,6 +2167,23 @@ function afficherTache(
             );
 
 
+            const heureRappelModification =
+                document.createElement("input");
+
+
+            heureRappelModification.type =
+                "time";
+
+
+            heureRappelModification.value =
+                ancienneHeureRappel;
+
+
+            heureRappelModification.classList.add(
+                "heure-rappel-modification"
+            );
+
+
             const selectRecurrence =
                 document.createElement("select");
 
@@ -1862,6 +2293,10 @@ function afficherTache(
             );
 
             entete.appendChild(
+                heureRappelModification
+            );
+
+            entete.appendChild(
                 selectRecurrence
             );
 
@@ -1913,6 +2348,10 @@ function afficherTache(
 
                     tache.dateEcheance =
                         dateModification.value;
+
+
+                    tache.heureRappel =
+                        heureRappelModification.value;
 
 
                     tache.recurrence =
@@ -2080,7 +2519,8 @@ formulaire.addEventListener(
                 priorite.value,
                 categorie.value,
                 dateEcheance.value,
-                recurrence.value
+                recurrence.value,
+                heureRappel.value
             );
 
 
@@ -2106,6 +2546,9 @@ formulaire.addEventListener(
 
         recurrence.value =
             "aucune";
+
+        heureRappel.value =
+            "";
 
 
         afficherTaches();
@@ -2206,7 +2649,22 @@ triTaches.addEventListener(
 // INITIALISATION
 // =========================
 
+mettreAJourStatutNotifications();
+
+boutonNotifications.addEventListener(
+    "click",
+    demanderAutorisationNotifications
+);
+
 afficherTaches();
+
+verifierRappels();
+
+
+setInterval(
+    verifierRappels,
+    30 * 1000
+);
 
 
 boutonsFiltres.forEach(

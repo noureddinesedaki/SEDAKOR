@@ -1208,3 +1208,107 @@ h2 {
     }
 
 }
+
+/* =========================
+   V7 : RAPPELS / NOTIFICATIONS
+========================= */
+
+#notifications {
+    position: relative;
+}
+
+.notifications-entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#bouton-notifications {
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primaire);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#bouton-notifications:hover {
+    background-color: var(--primaire-hover);
+}
+
+#statut-notifications {
+    margin: 10px 0 0;
+    color: var(--texte-secondaire);
+    font-size: 14px;
+}
+
+.rappel {
+    padding: 5px 8px;
+    border-radius: 6px;
+    background-color: #fef3c7;
+    color: #92400e;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.rappel-proche {
+    background-color: #ffedd5;
+    color: #9a3412;
+}
+
+.rappel-du-jour {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.tache-rappel-proche {
+    border-color: #f59e0b;
+}
+
+#heure-rappel,
+.heure-rappel-modification {
+    padding: 13px 12px;
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+    background-color: #fafafa;
+    color: var(--texte);
+    font-size: 15px;
+    outline: none;
+}
+
+#heure-rappel:focus,
+.heure-rappel-modification:focus {
+    border-color: var(--primaire);
+    background-color: white;
+}
+
+.heure-rappel-affichage {
+    font-size: 13px;
+    color: var(--texte-secondaire);
+}
+
+@media (max-width: 900px) {
+    #notifications {
+        margin-bottom: 25px;
+    }
+}
+
+@media (max-width: 600px) {
+    .notifications-entete {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    #bouton-notifications {
+        width: 100%;
+    }
+
+    #heure-rappel,
+    .heure-rappel-modification {
+        width: 100%;
+    }
+}

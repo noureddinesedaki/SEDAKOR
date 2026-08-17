@@ -1,189 +1,98 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskFlow - Gestionnaire de tâches</title>
-
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
-
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
 <header>
-
     <h1>TaskFlow</h1>
-
-    <p>
-        Organisez vos tâches simplement.
-    </p>
-
+    <p>Organisez vos tâches simplement.</p>
 </header>
 
-
 <main>
-
 
     <!-- =========================
          DASHBOARD
     ========================== -->
-
     <section id="dashboard">
-
         <h2>Tableau de bord</h2>
 
         <div class="statistiques">
-
             <div class="statistique">
-
-                <span class="statistique-icone">
-                    📝
-                </span>
-
+                <span class="statistique-icone">📝</span>
                 <div>
-
-                    <span class="statistique-label">
-                        Total
-                    </span>
-
-                    <strong
-                        id="stat-total"
-                        class="statistique-valeur"
-                    >
-                        0
-                    </strong>
-
+                    <span class="statistique-label">Total</span>
+                    <strong id="stat-total" class="statistique-valeur">0</strong>
                 </div>
-
             </div>
 
-
             <div class="statistique">
-
-                <span class="statistique-icone">
-                    🔵
-                </span>
-
+                <span class="statistique-icone">🔵</span>
                 <div>
-
-                    <span class="statistique-label">
-                        En cours
-                    </span>
-
-                    <strong
-                        id="stat-en-cours"
-                        class="statistique-valeur"
-                    >
-                        0
-                    </strong>
-
+                    <span class="statistique-label">En cours</span>
+                    <strong id="stat-en-cours" class="statistique-valeur">0</strong>
                 </div>
-
             </div>
 
-
             <div class="statistique">
-
-                <span class="statistique-icone">
-                    ✅
-                </span>
-
+                <span class="statistique-icone">✅</span>
                 <div>
-
-                    <span class="statistique-label">
-                        Terminées
-                    </span>
-
-                    <strong
-                        id="stat-terminees"
-                        class="statistique-valeur"
-                    >
-                        0
-                    </strong>
-
+                    <span class="statistique-label">Terminées</span>
+                    <strong id="stat-terminees" class="statistique-valeur">0</strong>
                 </div>
-
             </div>
 
-
             <div class="statistique">
-
-                <span class="statistique-icone">
-                    🔴
-                </span>
-
+                <span class="statistique-icone">🔴</span>
                 <div>
-
-                    <span class="statistique-label">
-                        En retard
-                    </span>
-
-                    <strong
-                        id="stat-en-retard"
-                        class="statistique-valeur"
-                    >
-                        0
-                    </strong>
-
+                    <span class="statistique-label">En retard</span>
+                    <strong id="stat-en-retard" class="statistique-valeur">0</strong>
                 </div>
-
             </div>
-
         </div>
 
-
         <div class="progression">
-
             <div class="progression-entete">
-
-                <span>
-                    Progression
-                </span>
-
-                <strong id="pourcentage-progression">
-                    0%
-                </strong>
-
+                <span>Progression</span>
+                <strong id="pourcentage-progression">0%</strong>
             </div>
 
             <div class="barre-progression">
-
-                <div
-                    id="progression"
-                    class="progression-remplie"
-                ></div>
-
+                <div id="progression" class="progression-remplie"></div>
             </div>
-
         </div>
-
     </section>
 
+    <!-- =========================
+         V7 : NOTIFICATIONS
+    ========================== -->
+    <section id="notifications">
+        <div class="notifications-entete">
+            <div>
+                <h2>🔔 Rappels et notifications</h2>
+                <p id="statut-notifications">
+                    Les notifications sont désactivées.
+                </p>
+            </div>
 
+            <button type="button" id="bouton-notifications">
+                Activer les notifications
+            </button>
+        </div>
+    </section>
 
     <!-- =========================
          AJOUTER UNE TÂCHE
     ========================== -->
-
     <section id="ajout-tache">
-
         <h2>Ajouter une tâche</h2>
 
-        <p id="compteur-taches">
-            0 tâche
-        </p>
-
+        <p id="compteur-taches">0 tâche</p>
 
         <form id="formulaire-tache">
 
@@ -194,99 +103,47 @@
                 autocomplete="off"
             >
 
-
             <select id="priorite">
-
-                <option value="basse">
-                    Priorité basse
-                </option>
-
-                <option
-                    value="moyenne"
-                    selected
-                >
-                    Priorité moyenne
-                </option>
-
-                <option value="haute">
-                    Priorité haute
-                </option>
-
+                <option value="basse">Priorité basse</option>
+                <option value="moyenne" selected>Priorité moyenne</option>
+                <option value="haute">Priorité haute</option>
             </select>
-
 
             <select id="categorie">
-
-                <option value="travail">
-                    💼 Travail
-                </option>
-
-                <option value="etudes">
-                    📚 Études
-                </option>
-
-                <option value="personnel">
-                    🏠 Personnel
-                </option>
-
-                <option value="projets">
-                    🚀 Projets
-                </option>
-
-                <option value="autre">
-                    📦 Autre
-                </option>
-
+                <option value="travail">💼 Travail</option>
+                <option value="etudes">📚 Études</option>
+                <option value="personnel">🏠 Personnel</option>
+                <option value="projets">🚀 Projets</option>
+                <option value="autre">📦 Autre</option>
             </select>
 
-
-            <input
-                type="date"
-                id="date-echeance"
-            >
-
+            <input type="date" id="date-echeance">
 
             <!-- V6 : RÉCURRENCE -->
-
             <select id="recurrence">
-
-                <option value="aucune">
-                    Pas de répétition
-                </option>
-
-                <option value="quotidienne">
-                    🔄 Tous les jours
-                </option>
-
-                <option value="hebdomadaire">
-                    🔄 Toutes les semaines
-                </option>
-
-                <option value="mensuelle">
-                    🔄 Tous les mois
-                </option>
-
+                <option value="aucune">Pas de répétition</option>
+                <option value="quotidienne">🔄 Tous les jours</option>
+                <option value="hebdomadaire">🔄 Toutes les semaines</option>
+                <option value="mensuelle">🔄 Tous les mois</option>
             </select>
 
+            <!-- V7 : RAPPEL -->
+            <input
+                type="time"
+                id="heure-rappel"
+                aria-label="Heure du rappel"
+                title="Heure du rappel"
+            >
 
-            <button type="submit">
-                Ajouter
-            </button>
-
+            <button type="submit">Ajouter</button>
         </form>
-
     </section>
-
-
 
     <!-- =========================
          LISTE DES TÂCHES
     ========================== -->
-
     <section id="liste-taches">
-
         <h2>Mes tâches</h2>
-
 
         <input
             type="text"
@@ -295,112 +152,42 @@
             autocomplete="off"
         >
 
-
         <div id="filtres">
-
-            <button
-                type="button"
-                data-filtre="toutes"
-            >
-                Toutes
-            </button>
-
-            <button
-                type="button"
-                data-filtre="en-cours"
-            >
-                En cours
-            </button>
-
-            <button
-                type="button"
-                data-filtre="terminees"
-            >
-                Terminées
-            </button>
-
+            <button type="button" data-filtre="toutes">Toutes</button>
+            <button type="button" data-filtre="en-cours">En cours</button>
+            <button type="button" data-filtre="terminees">Terminées</button>
         </div>
-
 
         <div id="filtre-categorie">
-
-            <label for="filtre-categories">
-                Catégorie :
-            </label>
+            <label for="filtre-categories">Catégorie :</label>
 
             <select id="filtre-categories">
-
-                <option value="toutes">
-                    Toutes les catégories
-                </option>
-
-                <option value="travail">
-                    💼 Travail
-                </option>
-
-                <option value="etudes">
-                    📚 Études
-                </option>
-
-                <option value="personnel">
-                    🏠 Personnel
-                </option>
-
-                <option value="projets">
-                    🚀 Projets
-                </option>
-
-                <option value="autre">
-                    📦 Autre
-                </option>
-
+                <option value="toutes">Toutes les catégories</option>
+                <option value="travail">💼 Travail</option>
+                <option value="etudes">📚 Études</option>
+                <option value="personnel">🏠 Personnel</option>
+                <option value="projets">🚀 Projets</option>
+                <option value="autre">📦 Autre</option>
             </select>
-
         </div>
-
 
         <div id="tri">
-
-            <label for="tri-taches">
-                Trier par :
-            </label>
+            <label for="tri-taches">Trier par :</label>
 
             <select id="tri-taches">
-
-                <option value="recentes">
-                    Plus récentes
-                </option>
-
-                <option value="anciennes">
-                    Plus anciennes
-                </option>
-
-                <option value="priorite-haute">
-                    Priorité haute → basse
-                </option>
-
-                <option value="priorite-basse">
-                    Priorité basse → haute
-                </option>
-
-                <option value="echeance">
-                    Échéance la plus proche
-                </option>
-
+                <option value="recentes">Plus récentes</option>
+                <option value="anciennes">Plus anciennes</option>
+                <option value="priorite-haute">Priorité haute → basse</option>
+                <option value="priorite-basse">Priorité basse → haute</option>
+                <option value="echeance">Échéance la plus proche</option>
             </select>
-
         </div>
 
-
         <div id="taches"></div>
-
     </section>
 
 </main>
 
-
 <script src="js/script.js"></script>
-
 </body>
-
 </html>
