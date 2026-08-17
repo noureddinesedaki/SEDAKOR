@@ -371,25 +371,60 @@ try {
         $method === "GET"
     ) {
 
-        $requete =
-            $pdo->query(
-                "SELECT
-                    id,
-                    user_id,
-                    titre,
-                    priorite,
-                    categorie,
-                    date_echeance,
-                    heure_rappel,
-                    rappel_active,
-                    recurrence,
-                    terminee,
-                    sous_taches,
-                    created_at,
-                    updated_at
-                 FROM tasks
-                 ORDER BY id DESC"
-            );
+        if (
+    $userId === null
+) {
+
+    $requete =
+        $pdo->query(
+            "SELECT
+                id,
+                user_id,
+                titre,
+                priorite,
+                categorie,
+                date_echeance,
+                heure_rappel,
+                rappel_active,
+                recurrence,
+                terminee,
+                sous_taches,
+                created_at,
+                updated_at
+            FROM tasks
+            ORDER BY id DESC"
+        );
+
+} else {
+
+    $requete =
+        $pdo->prepare(
+            "SELECT
+                id,
+                user_id,
+                titre,
+                priorite,
+                categorie,
+                date_echeance,
+                heure_rappel,
+                rappel_active,
+                recurrence,
+                terminee,
+                sous_taches,
+                created_at,
+                updated_at
+            FROM tasks
+            WHERE user_id = :user_id
+            ORDER BY id DESC"
+        );
+
+
+    $requete->execute([
+        ":user_id" =>
+            $userId
+    ]);
+
+}
 
 
         $taches =
@@ -834,11 +869,11 @@ try {
         // ----------------------------------------------------
 
         $verification =
-            $pdo->prepare(
-                "SELECT id
-                 FROM tasks
-                 WHERE id = :id"
-            );
+    $pdo->prepare(
+        "SELECT id, user_id
+         FROM tasks
+         WHERE id = :id"
+    );
 
 
         $verification->execute([
@@ -847,16 +882,31 @@ try {
         ]);
 
 
-        if (
-            !$verification->fetch()
-        ) {
+        $tacheExistante = $verification->fetch();
 
-            repondre([
-                "erreur" =>
-                    "Tâche introuvable."
-            ], 404);
+if (
+    !$tacheExistante
+) {
 
-        }
+    repondre([
+        "erreur" =>
+            "Tâche introuvable."
+    ], 404);
+
+}
+
+if (
+    $userId !== null &&
+    $tacheExistante["user_id"] !== null &&
+    (int) $tacheExistante["user_id"] !== $userId
+) {
+
+    repondre([
+        "erreur" =>
+            "Vous n'êtes pas autorisé à modifier cette tâche."
+    ], 403);
+
+}
 
 
         $champs = [];
@@ -1264,36 +1314,44 @@ try {
     // SUPPRIMER UNE TÂCHE
     // ========================================================
 
+   if (
+    $method === "DELETE"
+) {
+
+    $donnees =
+        lireJSON();
+
+
+    $id =
+        $donnees["id"] ??
+        $_GET["id"] ??
+        null;
+
+
     if (
-        $method === "DELETE"
+        !is_numeric($id) ||
+        (int)$id <= 0
     ) {
 
-        $donnees =
-            lireJSON();
+        repondre([
+            "erreur" =>
+                "ID de tâche invalide."
+        ], 400);
+
+    }
 
 
-        $id =
-            $donnees["id"] ??
-            $_GET["id"] ??
-            null;
+    $id =
+        (int)$id;
 
 
-        if (
-            !is_numeric($id) ||
-            (int)$id <= 0
-        ) {
+    // ----------------------------------------------------
+    // MODE PUBLIC
+    // ----------------------------------------------------
 
-            repondre([
-                "erreur" =>
-                    "ID de tâche invalide."
-            ], 400);
-
-        }
-
-
-        $id =
-            (int)$id;
-
+    if (
+        $userId === null
+    ) {
 
         $requete =
             $pdo->prepare(
@@ -1307,34 +1365,63 @@ try {
                 $id
         ]);
 
+    }
 
-        if (
-            $requete->rowCount() ===
-            0
-        ) {
+    // ----------------------------------------------------
+    // UTILISATEUR CONNECTÉ
+    // ----------------------------------------------------
 
-            repondre([
-                "erreur" =>
-                    "Tâche introuvable."
-            ], 404);
+    else {
 
-        }
+        $requete =
+            $pdo->prepare(
+                "DELETE FROM tasks
+                 WHERE id = :id
+                 AND user_id = :user_id"
+            );
 
 
-        repondre([
+        $requete->execute([
+            ":id" =>
+                $id,
 
-            "succes" =>
-                true,
-
-            "message" =>
-                "Tâche supprimée.",
-
-            "id" =>
-                $id
-
+            ":user_id" =>
+                $userId
         ]);
 
     }
+
+
+    // ----------------------------------------------------
+    // VÉRIFICATION
+    // ----------------------------------------------------
+
+    if (
+        $requete->rowCount() === 0
+    ) {
+
+        repondre([
+            "erreur" =>
+                "Tâche introuvable ou non autorisée."
+        ], 404);
+
+    }
+
+
+    repondre([
+
+        "succes" =>
+            true,
+
+        "message" =>
+            "Tâche supprimée.",
+
+        "id" =>
+            $id
+
+    ]);
+
+}
 
 
     // ========================================================
