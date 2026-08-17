@@ -8,14 +8,42 @@
 
 
 /* =========================
+   VARIABLES
+========================= */
+
+:root {
+    --fond: #f5f7fb;
+    --blanc: #ffffff;
+    --texte: #1f2937;
+    --texte-secondaire: #6b7280;
+    --bordure: #e5e7eb;
+
+    --primaire: #2563eb;
+    --primaire-hover: #1d4ed8;
+
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+
+    --succes: #16a34a;
+    --succes-hover: #15803d;
+
+    --ombre: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================
    BODY
 ========================= */
 
 body {
     margin: 0;
+
     font-family: Arial, sans-serif;
-    background-color: #f4f6f8;
-    color: #222;
+
+    background-color: var(--fond);
+    color: var(--texte);
+
+    min-height: 100vh;
 }
 
 
@@ -25,19 +53,32 @@ body {
 
 header {
     text-align: center;
-    padding: 40px 20px;
-    background-color: #111;
+
+    padding: 55px 20px;
+
+    background: linear-gradient(
+        135deg,
+        #111827,
+        #1f2937
+    );
+
     color: white;
 }
 
 header h1 {
     margin: 0 0 10px;
-    font-size: 40px;
+
+    font-size: 44px;
+    font-weight: 700;
+    letter-spacing: -1px;
 }
 
 header p {
     margin: 0;
+
     font-size: 18px;
+
+    color: #d1d5db;
 }
 
 
@@ -47,8 +88,10 @@ header p {
 
 main {
     width: 100%;
-    max-width: 800px;
-    margin: 40px auto;
+    max-width: 850px;
+
+    margin: 45px auto;
+
     padding: 0 20px;
 }
 
@@ -58,53 +101,24 @@ main {
 ========================= */
 
 section {
-    background-color: white;
+    background-color: var(--blanc);
+
     padding: 30px;
-    margin-bottom: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+
+    margin-bottom: 25px;
+
+    border: 1px solid var(--bordure);
+
+    border-radius: 16px;
+
+    box-shadow: var(--ombre);
 }
 
 h2 {
     margin-top: 0;
-}
+    margin-bottom: 20px;
 
-
-/* =========================
-   FORMULAIRE
-========================= */
-
-#formulaire-tache {
-    display: flex;
-    gap: 10px;
-}
-
-#tache {
-    flex: 1;
-    min-width: 0;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    outline: none;
-}
-
-#tache:focus {
-    border-color: #555;
-}
-
-#formulaire-tache button {
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #111;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-#formulaire-tache button:hover {
-    background-color: #333;
+    font-size: 22px;
 }
 
 
@@ -115,8 +129,77 @@ h2 {
 #compteur-taches {
     margin-top: -10px;
     margin-bottom: 20px;
-    color: #666;
+
+    color: var(--texte-secondaire);
+
     font-size: 14px;
+}
+
+
+/* =========================
+   FORMULAIRE
+========================= */
+
+#formulaire-tache {
+    display: flex;
+
+    gap: 10px;
+}
+
+#tache {
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 13px 15px;
+
+    border: 1px solid var(--bordure);
+
+    border-radius: 8px;
+
+    background-color: #fafafa;
+
+    font-size: 16px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+#tache:focus {
+    border-color: var(--primaire);
+
+    background-color: white;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+
+/* Bouton Ajouter */
+
+#formulaire-tache button {
+    padding: 13px 22px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background-color: var(--primaire);
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+#formulaire-tache button:hover {
+    background-color: var(--primaire-hover);
+
+    transform: translateY(-1px);
 }
 
 
@@ -126,16 +209,30 @@ h2 {
 
 #recherche {
     width: 100%;
-    padding: 12px;
+
+    padding: 13px 15px;
+
     margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+
+    border: 1px solid var(--bordure);
+
+    border-radius: 8px;
+
+    background-color: #fafafa;
+
     font-size: 16px;
+
     outline: none;
+
+    transition: 0.2s;
 }
 
 #recherche:focus {
-    border-color: #555;
+    border-color: var(--primaire);
+
+    background-color: white;
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 
@@ -145,70 +242,105 @@ h2 {
 
 #filtres {
     display: flex;
-    gap: 10px;
+
+    gap: 8px;
+
     margin-bottom: 20px;
 }
 
 #filtres button {
     padding: 8px 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+
+    border: 1px solid var(--bordure);
+
+    border-radius: 8px;
+
     background-color: white;
+
+    color: var(--texte-secondaire);
+
     cursor: pointer;
+
+    transition: 0.2s;
 }
 
 #filtres button:hover {
-    background-color: #f4f6f8;
+    background-color: #f3f4f6;
+
+    color: var(--texte);
 }
 
+
+/* Filtre actif */
+
 #filtres button.actif {
-    background-color: #111;
+    background-color: var(--primaire);
+
+    border-color: var(--primaire);
+
     color: white;
-    border-color: #111;
 }
 
 
 /* =========================
-   TÂCHE
+   TÂCHES
 ========================= */
 
 .tache {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
 
     width: 100%;
 
     padding: 15px;
+
     margin-top: 10px;
 
-    background-color: #f4f6f8;
+    background-color: #fafafa;
 
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    border: 1px solid var(--bordure);
+
+    border-radius: 10px;
+
+    transition: 0.2s;
+}
+
+.tache:hover {
+    border-color: #d1d5db;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
 }
 
 
-/* Texte de la tâche */
+/* Texte */
 
 .tache > span {
     flex: 1;
+
     min-width: 0;
 
     overflow-wrap: anywhere;
+
     word-break: break-word;
 
     cursor: pointer;
+
+    line-height: 1.5;
 }
 
 
 /* =========================
-   BOUTONS D'ACTION
+   ACTIONS
 ========================= */
 
 .tache-actions {
     display: flex;
+
     align-items: center;
+
     gap: 8px;
 
     flex-shrink: 0;
@@ -224,56 +356,62 @@ h2 {
     padding: 8px 12px;
 
     border: none;
-    border-radius: 5px;
+
+    border-radius: 7px;
 
     color: white;
+
+    font-size: 14px;
+
     cursor: pointer;
 
     white-space: nowrap;
+
+    transition: 0.2s;
 }
 
 
 /* Modifier */
 
 .modifier {
-    background-color: #555;
+    background-color: #6b7280;
 }
 
 .modifier:hover {
-    background-color: #333;
+    background-color: #4b5563;
 }
 
 
 /* Supprimer */
 
 .supprimer {
-    background-color: #c0392b;
+    background-color: var(--danger);
 }
 
 .supprimer:hover {
-    background-color: #a93226;
+    background-color: var(--danger-hover);
 }
 
 
 /* Enregistrer */
 
 .enregistrer {
-    background-color: #27ae60;
+    background-color: var(--succes);
 }
 
 .enregistrer:hover {
-    background-color: #219150;
+    background-color: var(--succes-hover);
 }
 
 
 /* Annuler */
 
 .annuler {
-    background-color: #777;
+    background-color: #6b7280;
 }
 
 .annuler:hover {
-    background-color: #666;
+    background-color: #4b5563;
 }
 
 
@@ -283,7 +421,8 @@ h2 {
 
 .tache-terminee {
     text-decoration: line-through;
-    opacity: 0.6;
+
+    opacity: 0.5;
 }
 
 
@@ -293,12 +432,16 @@ h2 {
 
 .champ-modification {
     flex: 1;
+
     min-width: 0;
 
     padding: 8px 10px;
 
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid var(--bordure);
+
+    border-radius: 7px;
+
+    background-color: white;
 
     font-size: 16px;
 
@@ -306,18 +449,20 @@ h2 {
 }
 
 .champ-modification:focus {
-    border-color: #555;
+    border-color: var(--primaire);
+
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 
 /* =========================
-   RESPONSIVE TABLETTE
+   RESPONSIVE
 ========================= */
 
 @media (max-width: 700px) {
 
     main {
-        margin: 25px auto;
+        margin: 30px auto;
     }
 
     section {
@@ -330,26 +475,24 @@ h2 {
 
     .tache-actions {
         flex-wrap: wrap;
+
         justify-content: flex-end;
     }
-
 }
 
 
 /* =========================
-   RESPONSIVE MOBILE
+   MOBILE
 ========================= */
 
 @media (max-width: 600px) {
 
-    /* Header */
-
     header {
-        padding: 30px 15px;
+        padding: 40px 15px;
     }
 
     header h1 {
-        font-size: 32px;
+        font-size: 36px;
     }
 
     header p {
@@ -357,21 +500,21 @@ h2 {
     }
 
 
-    /* Main */
-
     main {
         width: 100%;
+
         margin: 20px auto;
+
         padding: 0 10px;
     }
 
 
-    /* Sections */
-
     section {
         width: 100%;
+
         padding: 20px;
-        margin-bottom: 20px;
+
+        border-radius: 12px;
     }
 
 
@@ -379,7 +522,6 @@ h2 {
 
     #formulaire-tache {
         flex-direction: column;
-        gap: 10px;
     }
 
     #tache {
@@ -391,18 +533,10 @@ h2 {
     }
 
 
-    /* Recherche */
-
-    #recherche {
-        width: 100%;
-    }
-
-
     /* Filtres */
 
     #filtres {
         flex-direction: column;
-        gap: 8px;
     }
 
     #filtres button {
@@ -414,45 +548,48 @@ h2 {
 
     .tache {
         flex-direction: column;
+
         align-items: stretch;
+
         gap: 12px;
 
-        width: 100%;
         padding: 15px;
     }
 
 
-    /* Texte */
-
     .tache > span {
         width: 100%;
+
         flex: none;
     }
 
 
-    /* Boutons */
+    /* Actions */
 
     .tache-actions {
-        display: flex;
-        flex-direction: column;
         width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
         gap: 8px;
     }
+
 
     .modifier,
     .supprimer,
     .enregistrer,
     .annuler {
         width: 100%;
-        margin: 0;
     }
 
 
-    /* Champ modification */
+    /* Modification */
 
     .champ-modification {
         width: 100%;
-        min-width: 0;
+
         flex: none;
     }
 
