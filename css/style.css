@@ -12,22 +12,32 @@
 ========================= */
 
 :root {
+
     --fond: #f5f7fb;
+
     --blanc: #ffffff;
+
     --texte: #1f2937;
+
     --texte-secondaire: #6b7280;
+
     --bordure: #e5e7eb;
 
     --primaire: #2563eb;
+
     --primaire-hover: #1d4ed8;
 
     --danger: #dc2626;
+
     --danger-hover: #b91c1c;
 
     --succes: #16a34a;
+
     --succes-hover: #15803d;
 
-    --ombre: 0 10px 30px rgba(0, 0, 0, 0.06);
+    --ombre:
+        0 10px 30px rgba(0, 0, 0, 0.06);
+
 }
 
 
@@ -36,6 +46,7 @@
 ========================= */
 
 body {
+
     margin: 0;
 
     font-family: Arial, sans-serif;
@@ -45,6 +56,7 @@ body {
     color: var(--texte);
 
     min-height: 100vh;
+
 }
 
 
@@ -53,20 +65,25 @@ body {
 ========================= */
 
 header {
+
     text-align: center;
 
     padding: 55px 20px;
 
-    background: linear-gradient(
-        135deg,
-        #111827,
-        #1f2937
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #111827,
+            #1f2937
+        );
 
     color: white;
+
 }
 
+
 header h1 {
+
     margin: 0 0 10px;
 
     font-size: 44px;
@@ -74,14 +91,18 @@ header h1 {
     font-weight: 700;
 
     letter-spacing: -1px;
+
 }
 
+
 header p {
+
     margin: 0;
 
     font-size: 18px;
 
     color: #d1d5db;
+
 }
 
 
@@ -90,6 +111,7 @@ header p {
 ========================= */
 
 main {
+
     width: 100%;
 
     max-width: 850px;
@@ -97,6 +119,7 @@ main {
     margin: 45px auto;
 
     padding: 0 20px;
+
 }
 
 
@@ -105,25 +128,189 @@ main {
 ========================= */
 
 section {
+
     background-color: var(--blanc);
 
     padding: 30px;
 
     margin-bottom: 25px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 16px;
 
     box-shadow: var(--ombre);
+
 }
 
+
 h2 {
+
     margin-top: 0;
 
     margin-bottom: 20px;
 
     font-size: 22px;
+
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+#dashboard h2 {
+
+    margin-bottom: 25px;
+
+}
+
+
+.statistiques {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 12px;
+
+}
+
+
+.statistique {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 18px;
+
+    background-color: #f9fafb;
+
+    border:
+        1px solid
+        var(--bordure);
+
+    border-radius: 12px;
+
+}
+
+
+.statistique-icone {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 10px;
+
+    background-color: white;
+
+    font-size: 20px;
+
+    flex-shrink: 0;
+
+}
+
+
+.statistique-label {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: var(--texte-secondaire);
+
+    font-size: 13px;
+
+}
+
+
+.statistique-valeur {
+
+    display: block;
+
+    font-size: 24px;
+
+    line-height: 1;
+
+}
+
+
+/* =========================
+   PROGRESSION
+========================= */
+
+.progression {
+
+    margin-top: 25px;
+
+}
+
+
+.progression-entete {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 8px;
+
+    color: var(--texte-secondaire);
+
+    font-size: 14px;
+
+}
+
+
+.progression-entete strong {
+
+    color: var(--texte);
+
+}
+
+
+.barre-progression {
+
+    width: 100%;
+
+    height: 10px;
+
+    overflow: hidden;
+
+    background-color: #e5e7eb;
+
+    border-radius: 999px;
+
+}
+
+
+.progression-remplie {
+
+    width: 0%;
+
+    height: 100%;
+
+    background-color: var(--primaire);
+
+    border-radius: 999px;
+
+    transition:
+        width 0.3s ease;
+
 }
 
 
@@ -132,6 +319,7 @@ h2 {
 ========================= */
 
 #compteur-taches {
+
     margin-top: -10px;
 
     margin-bottom: 20px;
@@ -139,6 +327,7 @@ h2 {
     color: var(--texte-secondaire);
 
     font-size: 14px;
+
 }
 
 
@@ -147,24 +336,27 @@ h2 {
 ========================= */
 
 #formulaire-tache {
+
     display: flex;
 
     gap: 10px;
 
     align-items: stretch;
+
 }
 
 
-/* Champ tâche */
-
 #tache {
+
     flex: 1;
 
     min-width: 0;
 
     padding: 13px 15px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 8px;
 
@@ -175,9 +367,12 @@ h2 {
     outline: none;
 
     transition: 0.2s;
+
 }
 
+
 #tache:focus {
+
     border-color: var(--primaire);
 
     background-color: white;
@@ -185,16 +380,18 @@ h2 {
     box-shadow:
         0 0 0 3px
         rgba(37, 99, 235, 0.1);
+
 }
 
 
-/* Priorité et date */
-
 #priorite,
 #date-echeance {
+
     padding: 13px 12px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 8px;
 
@@ -206,24 +403,21 @@ h2 {
 
     outline: none;
 
-    transition: 0.2s;
 }
+
 
 #priorite:focus,
 #date-echeance:focus {
+
     border-color: var(--primaire);
 
     background-color: white;
 
-    box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.1);
 }
 
 
-/* Bouton Ajouter */
-
 #formulaire-tache button {
+
     padding: 13px 22px;
 
     border: none;
@@ -241,12 +435,18 @@ h2 {
     cursor: pointer;
 
     transition: 0.2s;
+
 }
 
-#formulaire-tache button:hover {
-    background-color: var(--primaire-hover);
 
-    transform: translateY(-1px);
+#formulaire-tache button:hover {
+
+    background-color:
+        var(--primaire-hover);
+
+    transform:
+        translateY(-1px);
+
 }
 
 
@@ -255,13 +455,16 @@ h2 {
 ========================= */
 
 #recherche {
+
     width: 100%;
 
     padding: 13px 15px;
 
     margin-bottom: 20px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 8px;
 
@@ -271,17 +474,16 @@ h2 {
 
     outline: none;
 
-    transition: 0.2s;
 }
 
+
 #recherche:focus {
-    border-color: var(--primaire);
+
+    border-color:
+        var(--primaire);
 
     background-color: white;
 
-    box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.1);
 }
 
 
@@ -290,17 +492,23 @@ h2 {
 ========================= */
 
 #filtres {
+
     display: flex;
 
     gap: 8px;
 
     margin-bottom: 15px;
+
 }
 
+
 #filtres button {
+
     padding: 8px 15px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 8px;
 
@@ -310,21 +518,28 @@ h2 {
 
     cursor: pointer;
 
-    transition: 0.2s;
 }
 
+
 #filtres button:hover {
+
     background-color: #f3f4f6;
 
     color: var(--texte);
+
 }
 
-#filtres button.actif {
-    background-color: var(--primaire);
 
-    border-color: var(--primaire);
+#filtres button.actif {
+
+    background-color:
+        var(--primaire);
+
+    border-color:
+        var(--primaire);
 
     color: white;
+
 }
 
 
@@ -333,6 +548,7 @@ h2 {
 ========================= */
 
 #tri {
+
     display: flex;
 
     align-items: center;
@@ -345,27 +561,38 @@ h2 {
 
     background-color: #f9fafb;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 8px;
+
 }
 
+
 #tri label {
-    color: var(--texte-secondaire);
+
+    color:
+        var(--texte-secondaire);
 
     font-size: 14px;
 
     font-weight: 600;
 
     white-space: nowrap;
+
 }
 
+
 #tri-taches {
+
     flex: 1;
 
     padding: 9px 12px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 7px;
 
@@ -378,14 +605,7 @@ h2 {
     cursor: pointer;
 
     outline: none;
-}
 
-#tri-taches:focus {
-    border-color: var(--primaire);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.1);
 }
 
 
@@ -394,6 +614,7 @@ h2 {
 ========================= */
 
 .tache {
+
     display: flex;
 
     align-items: center;
@@ -408,25 +629,30 @@ h2 {
 
     background-color: #fafafa;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 10px;
 
     transition: 0.2s;
+
 }
 
+
 .tache:hover {
+
     border-color: #d1d5db;
 
     box-shadow:
         0 4px 12px
         rgba(0, 0, 0, 0.04);
+
 }
 
 
-/* Texte */
-
 .tache > span {
+
     flex: 1;
 
     min-width: 0;
@@ -438,6 +664,7 @@ h2 {
     cursor: pointer;
 
     line-height: 1.5;
+
 }
 
 
@@ -446,6 +673,7 @@ h2 {
 ========================= */
 
 .tache-infos {
+
     display: flex;
 
     align-items: center;
@@ -453,12 +681,12 @@ h2 {
     gap: 8px;
 
     flex-shrink: 0;
+
 }
 
 
-/* Priorité */
-
 .priorite {
+
     padding: 5px 8px;
 
     border-radius: 6px;
@@ -468,44 +696,54 @@ h2 {
     font-weight: 600;
 
     white-space: nowrap;
+
 }
 
+
 .priorite-basse {
+
     background-color: #dcfce7;
 
     color: #166534;
+
 }
 
+
 .priorite-moyenne {
+
     background-color: #fef3c7;
 
     color: #92400e;
+
 }
 
+
 .priorite-haute {
+
     background-color: #fee2e2;
 
     color: #991b1b;
+
 }
 
 
-/* Date */
-
 .date-echeance {
+
     font-size: 13px;
 
     color: var(--texte-secondaire);
 
     white-space: nowrap;
+
 }
 
 
-/* Date dépassée */
-
 .date-en-retard {
+
     color: var(--danger);
 
     font-weight: 600;
+
 }
 
 
@@ -514,6 +752,7 @@ h2 {
 ========================= */
 
 .tache-actions {
+
     display: flex;
 
     align-items: center;
@@ -521,6 +760,7 @@ h2 {
     gap: 8px;
 
     flex-shrink: 0;
+
 }
 
 
@@ -528,6 +768,7 @@ h2 {
 .supprimer,
 .enregistrer,
 .annuler {
+
     padding: 8px 12px;
 
     border: none;
@@ -542,43 +783,57 @@ h2 {
 
     white-space: nowrap;
 
-    transition: 0.2s;
 }
 
 
 .modifier {
+
     background-color: #6b7280;
+
 }
 
+
 .modifier:hover {
+
     background-color: #4b5563;
+
 }
 
 
 .supprimer {
+
     background-color: var(--danger);
+
 }
 
+
 .supprimer:hover {
-    background-color: var(--danger-hover);
+
+    background-color:
+        var(--danger-hover);
+
 }
 
 
 .enregistrer {
+
     background-color: var(--succes);
+
 }
 
+
 .enregistrer:hover {
-    background-color: var(--succes-hover);
+
+    background-color:
+        var(--succes-hover);
+
 }
 
 
 .annuler {
-    background-color: #6b7280;
-}
 
-.annuler:hover {
-    background-color: #4b5563;
+    background-color: #6b7280;
+
 }
 
 
@@ -587,9 +842,11 @@ h2 {
 ========================= */
 
 .tache-terminee {
+
     text-decoration: line-through;
 
     opacity: 0.5;
+
 }
 
 
@@ -600,9 +857,12 @@ h2 {
 .champ-modification,
 .champ-priorite-modification,
 .date-modification {
+
     padding: 8px 10px;
 
-    border: 1px solid var(--bordure);
+    border:
+        1px solid
+        var(--bordure);
 
     border-radius: 7px;
 
@@ -611,22 +871,16 @@ h2 {
     font-size: 15px;
 
     outline: none;
+
 }
 
+
 .champ-modification {
+
     flex: 1;
 
     min-width: 0;
-}
 
-.champ-modification:focus,
-.champ-priorite-modification:focus,
-.date-modification:focus {
-    border-color: var(--primaire);
-
-    box-shadow:
-        0 0 0 3px
-        rgba(37, 99, 235, 0.1);
 }
 
 
@@ -637,28 +891,51 @@ h2 {
 @media (max-width: 700px) {
 
     main {
+
         margin: 30px auto;
+
     }
+
 
     section {
+
         padding: 25px;
+
     }
 
+
+    .statistiques {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+    }
+
+
     .tache {
+
         align-items: flex-start;
 
         flex-wrap: wrap;
+
     }
+
 
     .tache-infos {
+
         flex-wrap: wrap;
+
     }
 
+
     .tache-actions {
+
         flex-wrap: wrap;
 
         justify-content: flex-end;
+
     }
+
 }
 
 
@@ -669,84 +946,127 @@ h2 {
 @media (max-width: 600px) {
 
     header {
+
         padding: 40px 15px;
+
     }
+
 
     header h1 {
+
         font-size: 36px;
+
     }
+
 
     header p {
+
         font-size: 16px;
+
     }
 
+
     main {
+
         width: 100%;
 
         margin: 20px auto;
 
         padding: 0 10px;
+
     }
 
+
     section {
+
         width: 100%;
 
         padding: 20px;
 
         border-radius: 12px;
+
+    }
+
+
+    /* Dashboard */
+
+    .statistiques {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .statistique {
+
+        padding: 15px;
+
     }
 
 
     /* Formulaire */
 
     #formulaire-tache {
+
         flex-direction: column;
+
     }
+
 
     #tache,
     #priorite,
     #date-echeance {
+
         width: 100%;
+
     }
 
+
     #formulaire-tache button {
+
         width: 100%;
+
     }
 
 
     /* Filtres */
 
     #filtres {
+
         flex-direction: column;
+
     }
 
+
     #filtres button {
+
         width: 100%;
+
     }
 
 
     /* Tri */
 
     #tri {
+
         flex-direction: column;
 
         align-items: stretch;
 
-        gap: 8px;
     }
 
-    #tri label {
-        white-space: normal;
-    }
 
     #tri-taches {
+
         width: 100%;
+
     }
 
 
     /* Tâches */
 
     .tache {
+
         flex-direction: column;
 
         align-items: stretch;
@@ -754,41 +1074,50 @@ h2 {
         gap: 12px;
 
         padding: 15px;
+
     }
 
+
     .tache > span {
+
         width: 100%;
 
         flex: none;
+
     }
 
 
-    /* Informations */
-
     .tache-infos {
+
         width: 100%;
 
         justify-content: space-between;
 
         flex-wrap: wrap;
+
     }
 
 
     /* Actions */
 
     .tache-actions {
+
         width: 100%;
 
         flex-direction: column;
 
         gap: 8px;
+
     }
+
 
     .modifier,
     .supprimer,
     .enregistrer,
     .annuler {
+
         width: 100%;
+
     }
 
 
@@ -797,7 +1126,9 @@ h2 {
     .champ-modification,
     .champ-priorite-modification,
     .date-modification {
+
         width: 100%;
+
     }
 
 }

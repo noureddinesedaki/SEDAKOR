@@ -2,6 +2,7 @@
 <html lang="fr">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -15,17 +16,179 @@
         rel="stylesheet"
         href="css/style.css"
     >
+
 </head>
+
 
 <body>
 
+    <!-- =========================
+         HEADER
+    ========================== -->
+
     <header>
+
         <h1>TaskFlow</h1>
-        <p>Organisez vos tâches simplement.</p>
+
+        <p>
+            Organisez vos tâches simplement.
+        </p>
+
     </header>
 
 
     <main>
+
+
+        <!-- =========================
+             TABLEAU DE BORD
+        ========================== -->
+
+        <section id="dashboard">
+
+            <h2>Tableau de bord</h2>
+
+
+            <div class="statistiques">
+
+
+                <!-- Total -->
+
+                <div class="statistique">
+
+                    <span class="statistique-icone">
+                        📝
+                    </span>
+
+                    <div>
+
+                        <span class="statistique-label">
+                            Total
+                        </span>
+
+                        <strong
+                            id="stat-total"
+                            class="statistique-valeur"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- En cours -->
+
+                <div class="statistique">
+
+                    <span class="statistique-icone">
+                        🔵
+                    </span>
+
+                    <div>
+
+                        <span class="statistique-label">
+                            En cours
+                        </span>
+
+                        <strong
+                            id="stat-en-cours"
+                            class="statistique-valeur"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Terminées -->
+
+                <div class="statistique">
+
+                    <span class="statistique-icone">
+                        ✅
+                    </span>
+
+                    <div>
+
+                        <span class="statistique-label">
+                            Terminées
+                        </span>
+
+                        <strong
+                            id="stat-terminees"
+                            class="statistique-valeur"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- En retard -->
+
+                <div class="statistique">
+
+                    <span class="statistique-icone">
+                        🔴
+                    </span>
+
+                    <div>
+
+                        <span class="statistique-label">
+                            En retard
+                        </span>
+
+                        <strong
+                            id="stat-en-retard"
+                            class="statistique-valeur"
+                        >
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Progression -->
+
+            <div class="progression">
+
+                <div class="progression-entete">
+
+                    <span>
+                        Progression
+                    </span>
+
+                    <strong id="pourcentage-progression">
+                        0%
+                    </strong>
+
+                </div>
+
+
+                <div class="barre-progression">
+
+                    <div
+                        id="progression"
+                        class="progression-remplie"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
 
         <!-- =========================
              AJOUTER UNE TÂCHE
@@ -35,11 +198,14 @@
 
             <h2>Ajouter une tâche</h2>
 
+
             <p id="compteur-taches">
                 0 tâche
             </p>
 
+
             <form id="formulaire-tache">
+
 
                 <input
                     type="text"
@@ -47,6 +213,7 @@
                     placeholder="Ex : Apprendre JavaScript"
                     autocomplete="off"
                 >
+
 
                 <select id="priorite">
 
@@ -67,10 +234,12 @@
 
                 </select>
 
+
                 <input
                     type="date"
                     id="date-echeance"
                 >
+
 
                 <button type="submit">
                     Ajouter
@@ -79,6 +248,7 @@
             </form>
 
         </section>
+
 
 
         <!-- =========================
@@ -111,12 +281,14 @@
                     Toutes
                 </button>
 
+
                 <button
                     type="button"
                     data-filtre="en-cours"
                 >
                     En cours
                 </button>
+
 
                 <button
                     type="button"
@@ -136,23 +308,28 @@
                     Trier par :
                 </label>
 
+
                 <select id="tri-taches">
 
                     <option value="recentes">
                         Plus récentes
                     </option>
 
+
                     <option value="anciennes">
                         Plus anciennes
                     </option>
+
 
                     <option value="priorite-haute">
                         Priorité haute → basse
                     </option>
 
+
                     <option value="priorite-basse">
                         Priorité basse → haute
                     </option>
+
 
                     <option value="echeance">
                         Échéance la plus proche
@@ -166,7 +343,9 @@
             <!-- Liste -->
 
             <div id="taches">
+
                 <!-- Les tâches seront ajoutées avec JavaScript -->
+
             </div>
 
         </section>

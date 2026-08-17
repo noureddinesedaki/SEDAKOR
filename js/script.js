@@ -1,16 +1,60 @@
-const formulaire = document.querySelector("#formulaire-tache");
-const champTache = document.querySelector("#tache");
-const priorite = document.querySelector("#priorite");
-const dateEcheance = document.querySelector("#date-echeance");
-const listeTaches = document.querySelector("#taches");
-const recherche = document.querySelector("#recherche");
-const boutonsFiltres = document.querySelectorAll("#filtres button");
-const compteurTaches = document.querySelector("#compteur-taches");
-const triTaches = document.querySelector("#tri-taches");
+const formulaire =
+    document.querySelector("#formulaire-tache");
+
+const champTache =
+    document.querySelector("#tache");
+
+const priorite =
+    document.querySelector("#priorite");
+
+const dateEcheance =
+    document.querySelector("#date-echeance");
+
+const listeTaches =
+    document.querySelector("#taches");
+
+const recherche =
+    document.querySelector("#recherche");
+
+const boutonsFiltres =
+    document.querySelectorAll("#filtres button");
+
+const compteurTaches =
+    document.querySelector("#compteur-taches");
+
+const triTaches =
+    document.querySelector("#tri-taches");
+
+
+// Dashboard
+
+const statTotal =
+    document.querySelector("#stat-total");
+
+const statEnCours =
+    document.querySelector("#stat-en-cours");
+
+const statTerminees =
+    document.querySelector("#stat-terminees");
+
+const statEnRetard =
+    document.querySelector("#stat-en-retard");
+
+const pourcentageProgression =
+    document.querySelector(
+        "#pourcentage-progression"
+    );
+
+const progression =
+    document.querySelector(
+        "#progression"
+    );
 
 
 let taches = [];
+
 let filtreActuel = "toutes";
+
 let triActuel = "recentes";
 
 
@@ -21,18 +65,22 @@ let triActuel = "recentes";
 const tachesSauvegardees =
     localStorage.getItem("taches");
 
+
 if (tachesSauvegardees) {
 
     try {
 
         taches =
-            JSON.parse(tachesSauvegardees);
+            JSON.parse(
+                tachesSauvegardees
+            );
 
     } catch (erreur) {
 
         taches = [];
 
     }
+
 }
 
 
@@ -59,6 +107,7 @@ function creerTache(
         dateEcheance: date
 
     };
+
 }
 
 
@@ -71,126 +120,6 @@ function sauvegarderTaches() {
     localStorage.setItem(
         "taches",
         JSON.stringify(taches)
-    );
-
-}
-
-
-// =========================
-// COMPTEUR
-// =========================
-
-function mettreAJourCompteur() {
-
-    const nombreTotal =
-        taches.length;
-
-
-    const nombreTerminees =
-        taches.filter(
-            function (tache) {
-
-                return tache.terminee;
-
-            }
-        ).length;
-
-
-    const nombreEnCours =
-        nombreTotal -
-        nombreTerminees;
-
-
-    const texteTaches =
-        nombreTotal <= 1
-            ? "tâche"
-            : "tâches";
-
-
-    const texteTerminees =
-        nombreTerminees <= 1
-            ? "terminée"
-            : "terminées";
-
-
-    compteurTaches.textContent =
-        nombreTotal +
-        " " +
-        texteTaches +
-        " • " +
-        nombreEnCours +
-        " en cours" +
-        " • " +
-        nombreTerminees +
-        " " +
-        texteTerminees;
-
-}
-
-
-// =========================
-// FILTRE ACTIF
-// =========================
-
-function mettreAJourFiltres() {
-
-    boutonsFiltres.forEach(
-        function (bouton) {
-
-            bouton.classList.remove(
-                "actif"
-            );
-
-
-            if (
-                bouton.dataset.filtre ===
-                filtreActuel
-            ) {
-
-                bouton.classList.add(
-                    "actif"
-                );
-
-            }
-
-        }
-    );
-
-}
-
-
-// =========================
-// FORMATER UNE DATE
-// =========================
-
-function formaterDate(date) {
-
-    if (!date) {
-
-        return "";
-
-    }
-
-
-    const morceaux =
-        date.split("-");
-
-
-    if (
-        morceaux.length !== 3
-    ) {
-
-        return date;
-
-    }
-
-
-    return (
-        morceaux[2] +
-        "/" +
-        morceaux[1] +
-        "/" +
-        morceaux[0]
     );
 
 }
@@ -240,6 +169,201 @@ function dateEstEnRetard(tache) {
 
 
 // =========================
+// FORMATER UNE DATE
+// =========================
+
+function formaterDate(date) {
+
+    if (!date) {
+
+        return "";
+
+    }
+
+
+    const morceaux =
+        date.split("-");
+
+
+    if (
+        morceaux.length !== 3
+    ) {
+
+        return date;
+
+    }
+
+
+    return (
+        morceaux[2] +
+        "/" +
+        morceaux[1] +
+        "/" +
+        morceaux[0]
+    );
+
+}
+
+
+// =========================
+// METTRE À JOUR LE COMPTEUR
+// =========================
+
+function mettreAJourCompteur() {
+
+    const total =
+        taches.length;
+
+
+    const terminees =
+        taches.filter(
+            function (tache) {
+
+                return tache.terminee;
+
+            }
+        ).length;
+
+
+    const enCours =
+        total - terminees;
+
+
+    const texteTotal =
+        total <= 1
+            ? "tâche"
+            : "tâches";
+
+
+    const texteTerminees =
+        terminees <= 1
+            ? "terminée"
+            : "terminées";
+
+
+    compteurTaches.textContent =
+        total +
+        " " +
+        texteTotal +
+        " • " +
+        enCours +
+        " en cours" +
+        " • " +
+        terminees +
+        " " +
+        texteTerminees;
+
+}
+
+
+// =========================
+// METTRE À JOUR LE DASHBOARD
+// =========================
+
+function mettreAJourDashboard() {
+
+    const total =
+        taches.length;
+
+
+    const terminees =
+        taches.filter(
+            function (tache) {
+
+                return tache.terminee;
+
+            }
+        ).length;
+
+
+    const enCours =
+        total - terminees;
+
+
+    const enRetard =
+        taches.filter(
+            function (tache) {
+
+                return dateEstEnRetard(
+                    tache
+                );
+
+            }
+        ).length;
+
+
+    let pourcentage = 0;
+
+
+    if (total > 0) {
+
+        pourcentage =
+            Math.round(
+                (terminees / total) *
+                100
+            );
+
+    }
+
+
+    statTotal.textContent =
+        total;
+
+
+    statEnCours.textContent =
+        enCours;
+
+
+    statTerminees.textContent =
+        terminees;
+
+
+    statEnRetard.textContent =
+        enRetard;
+
+
+    pourcentageProgression.textContent =
+        pourcentage + "%";
+
+
+    progression.style.width =
+        pourcentage + "%";
+
+}
+
+
+// =========================
+// FILTRES
+// =========================
+
+function mettreAJourFiltres() {
+
+    boutonsFiltres.forEach(
+        function (bouton) {
+
+            bouton.classList.remove(
+                "actif"
+            );
+
+
+            if (
+                bouton.dataset.filtre ===
+                filtreActuel
+            ) {
+
+                bouton.classList.add(
+                    "actif"
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+// =========================
 // PRIORITÉ
 // =========================
 
@@ -263,23 +387,35 @@ function valeurPriorite(tache) {
     }
 
 
-    return 1;
+    if (
+        tache.priorite === "basse"
+    ) {
+
+        return 1;
+
+    }
+
+
+    return 0;
 
 }
 
 
 // =========================
-// TRI DES TÂCHES
+// TRI
 // =========================
 
-function trierTaches(tachesATrier) {
+function trierTaches(
+    tachesATrier
+) {
 
     const copie =
         [...tachesATrier];
 
 
     if (
-        triActuel === "recentes"
+        triActuel ===
+        "recentes"
     ) {
 
         copie.sort(
@@ -294,7 +430,8 @@ function trierTaches(tachesATrier) {
 
 
     if (
-        triActuel === "anciennes"
+        triActuel ===
+        "anciennes"
     ) {
 
         copie.sort(
@@ -354,8 +491,6 @@ function trierTaches(tachesATrier) {
         copie.sort(
             function (a, b) {
 
-                // Les tâches sans date vont à la fin
-
                 if (
                     !a.dateEcheance &&
                     !b.dateEcheance
@@ -366,14 +501,18 @@ function trierTaches(tachesATrier) {
                 }
 
 
-                if (!a.dateEcheance) {
+                if (
+                    !a.dateEcheance
+                ) {
 
                     return 1;
 
                 }
 
 
-                if (!b.dateEcheance) {
+                if (
+                    !b.dateEcheance
+                ) {
 
                     return -1;
 
@@ -407,7 +546,9 @@ function trierTaches(tachesATrier) {
 function afficherTache(tache) {
 
     const nouvelleTache =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     nouvelleTache.classList.add(
@@ -415,19 +556,21 @@ function afficherTache(tache) {
     );
 
 
-    // =========================
-    // TEXTE
-    // =========================
+    // Texte
 
     const texteElement =
-        document.createElement("span");
+        document.createElement(
+            "span"
+        );
 
 
     texteElement.textContent =
         tache.texte;
 
 
-    if (tache.terminee) {
+    if (
+        tache.terminee
+    ) {
 
         texteElement.classList.add(
             "tache-terminee"
@@ -441,12 +584,12 @@ function afficherTache(tache) {
     );
 
 
-    // =========================
-    // INFORMATIONS
-    // =========================
+    // Informations
 
     const informations =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     informations.classList.add(
@@ -454,11 +597,11 @@ function afficherTache(tache) {
     );
 
 
-    // =========================
-    // PRIORITÉ
-    // =========================
+    // Priorité
 
-    if (tache.priorite) {
+    if (
+        tache.priorite
+    ) {
 
         const badgePriorite =
             document.createElement(
@@ -478,7 +621,8 @@ function afficherTache(tache) {
 
 
         if (
-            tache.priorite === "basse"
+            tache.priorite ===
+            "basse"
         ) {
 
             badgePriorite.textContent =
@@ -488,7 +632,8 @@ function afficherTache(tache) {
 
 
         if (
-            tache.priorite === "moyenne"
+            tache.priorite ===
+            "moyenne"
         ) {
 
             badgePriorite.textContent =
@@ -498,7 +643,8 @@ function afficherTache(tache) {
 
 
         if (
-            tache.priorite === "haute"
+            tache.priorite ===
+            "haute"
         ) {
 
             badgePriorite.textContent =
@@ -514,9 +660,7 @@ function afficherTache(tache) {
     }
 
 
-    // =========================
-    // DATE
-    // =========================
+    // Date
 
     if (
         tache.dateEcheance
@@ -578,12 +722,12 @@ function afficherTache(tache) {
     }
 
 
-    // =========================
-    // ACTIONS
-    // =========================
+    // Actions
 
     const actions =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
 
     actions.classList.add(
@@ -641,7 +785,7 @@ function afficherTache(tache) {
 
 
     // =========================
-    // TERMINER LA TÂCHE
+    // TERMINER
     // =========================
 
     nouvelleTache.addEventListener(
@@ -702,7 +846,7 @@ function afficherTache(tache) {
             );
 
 
-            // Champ texte
+            // Texte
 
             const champModification =
                 document.createElement(
@@ -729,7 +873,7 @@ function afficherTache(tache) {
             );
 
 
-            // Select priorité
+            // Priorité
 
             const selectModification =
                 document.createElement(
@@ -823,8 +967,6 @@ function afficherTache(tache) {
             );
 
 
-            // Informations
-
             informations.innerHTML =
                 "";
 
@@ -839,7 +981,7 @@ function afficherTache(tache) {
             );
 
 
-            // Bouton enregistrer
+            // Boutons
 
             const boutonEnregistrer =
                 document.createElement(
@@ -855,8 +997,6 @@ function afficherTache(tache) {
                 "enregistrer"
             );
 
-
-            // Bouton annuler
 
             const boutonAnnuler =
                 document.createElement(
@@ -889,6 +1029,7 @@ function afficherTache(tache) {
 
             champModification.focus();
 
+
             champModification.select();
 
 
@@ -916,7 +1057,9 @@ function afficherTache(tache) {
 
 
                     const nouveauTexte =
-                        champModification.value.trim();
+                        champModification
+                            .value
+                            .trim();
 
 
                     if (
@@ -951,7 +1094,7 @@ function afficherTache(tache) {
             );
 
 
-            // Entrée / Échap
+            // Clavier
 
             champModification.addEventListener(
                 "keydown",
@@ -1031,12 +1174,12 @@ function afficherTaches() {
 
     mettreAJourCompteur();
 
+    mettreAJourDashboard();
+
 
     const valeurRecherche =
         recherche.value.toLowerCase();
 
-
-    // Recherche
 
     let tachesFiltrees =
         taches.filter(
@@ -1052,7 +1195,7 @@ function afficherTaches() {
         );
 
 
-    // Filtre en cours
+    // En cours
 
     if (
         filtreActuel ===
@@ -1071,7 +1214,7 @@ function afficherTaches() {
     }
 
 
-    // Filtre terminées
+    // Terminées
 
     if (
         filtreActuel ===
@@ -1171,8 +1314,10 @@ formulaire.addEventListener(
         champTache.value =
             "";
 
+
         priorite.value =
             "moyenne";
+
 
         dateEcheance.value =
             "";
