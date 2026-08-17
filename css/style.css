@@ -41,6 +41,7 @@ body {
     font-family: Arial, sans-serif;
 
     background-color: var(--fond);
+
     color: var(--texte);
 
     min-height: 100vh;
@@ -69,7 +70,9 @@ header h1 {
     margin: 0 0 10px;
 
     font-size: 44px;
+
     font-weight: 700;
+
     letter-spacing: -1px;
 }
 
@@ -88,6 +91,7 @@ header p {
 
 main {
     width: 100%;
+
     max-width: 850px;
 
     margin: 45px auto;
@@ -116,6 +120,7 @@ section {
 
 h2 {
     margin-top: 0;
+
     margin-bottom: 20px;
 
     font-size: 22px;
@@ -128,6 +133,7 @@ h2 {
 
 #compteur-taches {
     margin-top: -10px;
+
     margin-bottom: 20px;
 
     color: var(--texte-secondaire);
@@ -144,7 +150,12 @@ h2 {
     display: flex;
 
     gap: 10px;
+
+    align-items: stretch;
 }
+
+
+/* Champ tâche */
 
 #tache {
     flex: 1;
@@ -171,11 +182,46 @@ h2 {
 
     background-color: white;
 
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.1);
 }
 
 
-/* Bouton Ajouter */
+/* Priorité et date */
+
+#priorite,
+#date-echeance {
+    padding: 13px 12px;
+
+    border: 1px solid var(--bordure);
+
+    border-radius: 8px;
+
+    background-color: #fafafa;
+
+    color: var(--texte);
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+#priorite:focus,
+#date-echeance:focus {
+    border-color: var(--primaire);
+
+    background-color: white;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.1);
+}
+
+
+/* Bouton ajouter */
 
 #formulaire-tache button {
     padding: 13px 22px;
@@ -189,6 +235,7 @@ h2 {
     color: white;
 
     font-size: 16px;
+
     font-weight: 600;
 
     cursor: pointer;
@@ -232,7 +279,9 @@ h2 {
 
     background-color: white;
 
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.1);
 }
 
 
@@ -270,9 +319,6 @@ h2 {
     color: var(--texte);
 }
 
-
-/* Filtre actif */
-
 #filtres button.actif {
     background-color: var(--primaire);
 
@@ -291,7 +337,7 @@ h2 {
 
     align-items: center;
 
-    gap: 10px;
+    gap: 12px;
 
     width: 100%;
 
@@ -311,7 +357,9 @@ h2 {
 .tache:hover {
     border-color: #d1d5db;
 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, 0.04);
 }
 
 
@@ -329,6 +377,83 @@ h2 {
     cursor: pointer;
 
     line-height: 1.5;
+}
+
+
+/* =========================
+   INFORMATIONS
+========================= */
+
+.tache-infos {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    flex-shrink: 0;
+}
+
+
+/* Priorité */
+
+.priorite {
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* Basse */
+
+.priorite-basse {
+    background-color: #dcfce7;
+
+    color: #166534;
+}
+
+
+/* Moyenne */
+
+.priorite-moyenne {
+    background-color: #fef3c7;
+
+    color: #92400e;
+}
+
+
+/* Haute */
+
+.priorite-haute {
+    background-color: #fee2e2;
+
+    color: #991b1b;
+}
+
+
+/* Date */
+
+.date-echeance {
+    font-size: 13px;
+
+    color: var(--texte-secondaire);
+
+    white-space: nowrap;
+}
+
+
+/* Date dépassée */
+
+.date-en-retard {
+    color: var(--danger);
+
+    font-weight: 600;
 }
 
 
@@ -427,14 +552,12 @@ h2 {
 
 
 /* =========================
-   CHAMP DE MODIFICATION
+   MODIFICATION
 ========================= */
 
-.champ-modification {
-    flex: 1;
-
-    min-width: 0;
-
+.champ-modification,
+.champ-priorite-modification,
+.date-modification {
     padding: 8px 10px;
 
     border: 1px solid var(--bordure);
@@ -443,20 +566,30 @@ h2 {
 
     background-color: white;
 
-    font-size: 16px;
+    font-size: 15px;
 
     outline: none;
 }
 
-.champ-modification:focus {
+.champ-modification {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.champ-modification:focus,
+.champ-priorite-modification:focus,
+.date-modification:focus {
     border-color: var(--primaire);
 
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.1);
 }
 
 
 /* =========================
-   RESPONSIVE
+   TABLETTE
 ========================= */
 
 @media (max-width: 700px) {
@@ -471,6 +604,12 @@ h2 {
 
     .tache {
         align-items: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+    .tache-infos {
+        flex-wrap: wrap;
     }
 
     .tache-actions {
@@ -499,7 +638,6 @@ h2 {
         font-size: 16px;
     }
 
-
     main {
         width: 100%;
 
@@ -507,7 +645,6 @@ h2 {
 
         padding: 0 10px;
     }
-
 
     section {
         width: 100%;
@@ -524,7 +661,9 @@ h2 {
         flex-direction: column;
     }
 
-    #tache {
+    #tache,
+    #priorite,
+    #date-echeance {
         width: 100%;
     }
 
@@ -556,11 +695,21 @@ h2 {
         padding: 15px;
     }
 
-
     .tache > span {
         width: 100%;
 
         flex: none;
+    }
+
+
+    /* Informations */
+
+    .tache-infos {
+        width: 100%;
+
+        justify-content: space-between;
+
+        flex-wrap: wrap;
     }
 
 
@@ -569,13 +718,10 @@ h2 {
     .tache-actions {
         width: 100%;
 
-        display: flex;
-
         flex-direction: column;
 
         gap: 8px;
     }
-
 
     .modifier,
     .supprimer,
@@ -587,10 +733,10 @@ h2 {
 
     /* Modification */
 
-    .champ-modification {
+    .champ-modification,
+    .champ-priorite-modification,
+    .date-modification {
         width: 100%;
-
-        flex: none;
     }
 
 }

@@ -4,12 +4,17 @@
 <head>
     <meta charset="UTF-8">
 
-    <!-- Indispensable pour le responsive mobile -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>TaskFlow - Gestionnaire de tâches</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 </head>
 
 <body>
@@ -19,15 +24,16 @@
         <p>Organisez vos tâches simplement.</p>
     </header>
 
-
     <main>
 
-        <!-- Section ajout -->
+        <!-- Ajouter une tâche -->
         <section id="ajout-tache">
 
             <h2>Ajouter une tâche</h2>
 
-            <p id="compteur-taches">0 tâche</p>
+            <p id="compteur-taches">
+                0 tâche
+            </p>
 
             <form id="formulaire-tache">
 
@@ -36,6 +42,30 @@
                     id="tache"
                     placeholder="Ex : Apprendre JavaScript"
                     autocomplete="off"
+                >
+
+                <select id="priorite">
+
+                    <option value="basse">
+                        Priorité basse
+                    </option>
+
+                    <option
+                        value="moyenne"
+                        selected
+                    >
+                        Priorité moyenne
+                    </option>
+
+                    <option value="haute">
+                        Priorité haute
+                    </option>
+
+                </select>
+
+                <input
+                    type="date"
+                    id="date-echeance"
                 >
 
                 <button type="submit">
@@ -47,7 +77,7 @@
         </section>
 
 
-        <!-- Section liste -->
+        <!-- Liste des tâches -->
         <section id="liste-taches">
 
             <h2>Mes tâches</h2>
@@ -59,8 +89,6 @@
                 autocomplete="off"
             >
 
-
-            <!-- Filtres -->
             <div id="filtres">
 
                 <button
@@ -86,17 +114,14 @@
 
             </div>
 
-
-            <!-- Liste des tâches -->
             <div id="taches">
-                <!-- Les tâches sont ajoutées avec JavaScript -->
+                <!-- Les tâches seront ajoutées avec JavaScript -->
             </div>
 
         </section>
 
     </main>
-
-
+    
     <script src="js/script.js"></script>
 
 </body>

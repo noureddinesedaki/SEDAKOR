@@ -1,9 +1,12 @@
 const formulaire = document.querySelector("#formulaire-tache");
 const champTache = document.querySelector("#tache");
+const priorite = document.querySelector("#priorite");
+const dateEcheance = document.querySelector("#date-echeance");
 const listeTaches = document.querySelector("#taches");
 const recherche = document.querySelector("#recherche");
 const boutonsFiltres = document.querySelectorAll("#filtres button");
 const compteurTaches = document.querySelector("#compteur-taches");
+
 
 let taches = [];
 let filtreActuel = "toutes";
@@ -13,10 +16,15 @@ let filtreActuel = "toutes";
 // CHARGER LES TÂCHES
 // =========================
 
-const tachesSauvegardees = localStorage.getItem("taches");
+const tachesSauvegardees =
+    localStorage.getItem("taches");
 
 if (tachesSauvegardees) {
-    taches = JSON.parse(tachesSauvegardees);
+    try {
+        taches = JSON.parse(tachesSauvegardees);
+    } catch (erreur) {
+        taches = [];
+    }
 }
 
 
@@ -24,14 +32,28 @@ if (tachesSauvegardees) {
 // CRÉER UNE TÂCHE
 // =========================
 
-function creerTache(texte) {
+function creerTache(texte, niveauPriorite, date) {
 
     return {
         id: Date.now(),
         texte: texte,
-        terminee: false
+        terminee: false,
+        priorite: niveauPriorite,
+        dateEcheance: date
     };
+}
 
+
+// =========================
+// SAUVEGARDER
+// =========================
+
+function sauvegarderTaches() {
+
+    localStorage.setItem(
+        "taches",
+        JSON.stringify(taches)
+    );
 }
 
 
@@ -43,24 +65,34 @@ function mettreAJourCompteur() {
 
     const nombreTotal = taches.length;
 
-    const nombreTerminees = taches.filter(function (tache) {
-        return tache.terminee;
-    }).length;
+    const nombreTerminees =
+        taches.filter(function (tache) {
+            return tache.terminee;
+        }).length;
 
-    const nombreEnCours = nombreTotal - nombreTerminees;
+    const nombreEnCours =
+        nombreTotal - nombreTerminees;
 
     const texteTaches =
-        nombreTotal <= 1 ? "tâche" : "tâches";
+        nombreTotal <= 1
+            ? "tâche"
+            : "tâches";
 
     const texteTerminees =
-        nombreTerminees <= 1 ? "terminée" : "terminées";
-
+        nombreTerminees <= 1
+            ? "terminée"
+            : "terminées";
 
     compteurTaches.textContent =
-        nombreTotal + " " + texteTaches +
-        " • " + nombreEnCours + " en cours" +
-        " • " + nombreTerminees + " " + texteTerminees;
-
+        nombreTotal + " " +
+        texteTaches +
+        " • " +
+        nombreEnCours +
+        " en cours" +
+        " • " +
+        nombreTerminees +
+        " " +
+        texteTerminees;
 }
 
 
@@ -74,14 +106,71 @@ function mettreAJourFiltres() {
 
         bouton.classList.remove("actif");
 
-        if (bouton.dataset.filtre === filtreActuel) {
-
+        if (
+            bouton.dataset.filtre ===
+            filtreActuel
+        ) {
             bouton.classList.add("actif");
-
         }
 
     });
+}
 
+
+// =========================
+// FORMATER UNE DATE
+// =========================
+
+function formaterDate(date) {
+
+    if (!date) {
+        return "";
+    }
+
+    const morceaux = date.split("-");
+
+    if (morceaux.length !== 3) {
+        return date;
+    }
+
+    return (
+        morceaux[2] +
+        "/" +
+        morceaux[1] +
+        "/" +
+        morceaux[0]
+    );
+}
+
+
+// =========================
+// DATE EN RETARD
+// =========================
+
+function dateEstEnRetard(tache) {
+
+    if (
+        !tache.dateEcheance ||
+        tache.terminee
+    ) {
+        return false;
+    }
+
+    const aujourdHui = new Date();
+
+    aujourdHui.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    const dateLimite = new Date(
+        tache.dateEcheance +
+        "T00:00:00"
+    );
+
+    return dateLimite < aujourdHui;
 }
 
 
@@ -91,7 +180,8 @@ function mettreAJourFiltres() {
 
 function afficherTache(tache) {
 
-    const nouvelleTache = document.createElement("div");
+    const nouvelleTache =
+        document.createElement("div");
 
     nouvelleTache.classList.add("tache");
 
@@ -100,286 +190,488 @@ function afficherTache(tache) {
     // TEXTE
     // =========================
 
-    const texteElement = document.createElement("span");
+    const texteElement =
+        document.createElement("span");
 
-    texteElement.textContent = tache.texte;
-
-    nouvelleTache.appendChild(texteElement);
-
-
-    // Si la tâche est terminée
+    texteElement.textContent =
+        tache.texte;
 
     if (tache.terminee) {
 
-        texteElement.classList.add("tache-terminee");
+        texteElement.classList.add(
+            "tache-terminee"
+        );
+    }
 
+    nouvelleTache.appendChild(
+        texteElement
+    );
+
+
+    // =========================
+    // INFORMATIONS
+    // =========================
+
+    const informations =
+        document.createElement("div");
+
+    informations.classList.add(
+        "tache-infos"
+    );
+
+
+    // =========================
+    // PRIORITÉ
+    // =========================
+
+    if (tache.priorite) {
+
+        const badgePriorite =
+            document.createElement("span");
+
+        badgePriorite.classList.add(
+            "priorite"
+        );
+
+        badgePriorite.classList.add(
+            "priorite-" +
+            tache.priorite
+        );
+
+
+        if (
+            tache.priorite === "basse"
+        ) {
+
+            badgePriorite.textContent =
+                "Basse";
+
+        } else if (
+            tache.priorite === "moyenne"
+        ) {
+
+            badgePriorite.textContent =
+                "Moyenne";
+
+        } else if (
+            tache.priorite === "haute"
+        ) {
+
+            badgePriorite.textContent =
+                "Haute";
+
+        }
+
+        informations.appendChild(
+            badgePriorite
+        );
     }
 
 
     // =========================
-    // CONTENEUR DES BOUTONS
+    // DATE D'ÉCHÉANCE
     // =========================
 
-    const actions = document.createElement("div");
+    if (tache.dateEcheance) {
 
-    actions.classList.add("tache-actions");
+        const dateElement =
+            document.createElement("span");
 
-
-    // =========================
-    // BOUTON MODIFIER
-    // =========================
-
-    const boutonModifier = document.createElement("button");
-
-    boutonModifier.textContent = "Modifier";
-
-    boutonModifier.classList.add("modifier");
-
-
-    // =========================
-    // BOUTON SUPPRIMER
-    // =========================
-
-    const boutonSupprimer = document.createElement("button");
-
-    boutonSupprimer.textContent = "Supprimer";
-
-    boutonSupprimer.classList.add("supprimer");
-
-
-    // Ajouter les boutons
-
-    actions.appendChild(boutonModifier);
-    actions.appendChild(boutonSupprimer);
-
-    nouvelleTache.appendChild(actions);
-
-
-    // =========================
-    // TERMINER / RÉACTIVER
-    // =========================
-
-    nouvelleTache.addEventListener("click", function (event) {
-
-        // Ne pas déclencher si on clique sur un bouton ou un input
-
-        if (
-            event.target.tagName === "BUTTON" ||
-            event.target.tagName === "INPUT"
-        ) {
-            return;
-        }
-
-
-        tache.terminee = !tache.terminee;
-
-
-        localStorage.setItem(
-            "taches",
-            JSON.stringify(taches)
+        dateElement.classList.add(
+            "date-echeance"
         );
 
 
-        afficherTaches();
+        if (dateEstEnRetard(tache)) {
 
-    });
+            dateElement.classList.add(
+                "date-en-retard"
+            );
+
+            dateElement.textContent =
+                "En retard • " +
+                formaterDate(
+                    tache.dateEcheance
+                );
+
+        } else {
+
+            dateElement.textContent =
+                "Échéance : " +
+                formaterDate(
+                    tache.dateEcheance
+                );
+        }
+
+
+        informations.appendChild(
+            dateElement
+        );
+    }
+
+
+    if (
+        informations.children.length > 0
+    ) {
+
+        nouvelleTache.appendChild(
+            informations
+        );
+    }
+
+
+    // =========================
+    // ACTIONS
+    // =========================
+
+    const actions =
+        document.createElement("div");
+
+    actions.classList.add(
+        "tache-actions"
+    );
+
+
+    // Modifier
+
+    const boutonModifier =
+        document.createElement("button");
+
+    boutonModifier.textContent =
+        "Modifier";
+
+    boutonModifier.classList.add(
+        "modifier"
+    );
+
+
+    // Supprimer
+
+    const boutonSupprimer =
+        document.createElement("button");
+
+    boutonSupprimer.textContent =
+        "Supprimer";
+
+    boutonSupprimer.classList.add(
+        "supprimer"
+    );
+
+
+    actions.appendChild(
+        boutonModifier
+    );
+
+    actions.appendChild(
+        boutonSupprimer
+    );
+
+    nouvelleTache.appendChild(
+        actions
+    );
+
+
+    // =========================
+    // TERMINER LA TÂCHE
+    // =========================
+
+    nouvelleTache.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target.tagName === "BUTTON" ||
+                event.target.tagName === "INPUT" ||
+                event.target.tagName === "SELECT"
+            ) {
+                return;
+            }
+
+            tache.terminee =
+                !tache.terminee;
+
+            sauvegarderTaches();
+
+            afficherTaches();
+        }
+    );
 
 
     // =========================
     // MODIFIER
     // =========================
 
-    boutonModifier.addEventListener("click", function (event) {
+    boutonModifier.addEventListener(
+        "click",
+        function (event) {
 
-        event.stopPropagation();
-
-
-        // Éviter de lancer plusieurs éditions
-
-        if (nouvelleTache.classList.contains("edition")) {
-            return;
-        }
+            event.stopPropagation();
 
 
-        nouvelleTache.classList.add("edition");
+            // Empêcher plusieurs éditions
 
-
-        // Champ de modification
-
-        const champModification =
-            document.createElement("input");
-
-        champModification.type = "text";
-
-        champModification.value = tache.texte;
-
-        champModification.classList.add(
-            "champ-modification"
-        );
-
-
-        // Remplacer le texte par le champ
-
-        nouvelleTache.replaceChild(
-            champModification,
-            texteElement
-        );
-
-
-        // Bouton Enregistrer
-
-        const boutonEnregistrer =
-            document.createElement("button");
-
-        boutonEnregistrer.textContent =
-            "Enregistrer";
-
-        boutonEnregistrer.classList.add(
-            "enregistrer"
-        );
-
-
-        // Bouton Annuler
-
-        const boutonAnnuler =
-            document.createElement("button");
-
-        boutonAnnuler.textContent =
-            "Annuler";
-
-        boutonAnnuler.classList.add(
-            "annuler"
-        );
-
-
-        // Vider les boutons actuels
-
-        actions.innerHTML = "";
-
-
-        // Ajouter les nouveaux boutons
-
-        actions.appendChild(boutonEnregistrer);
-        actions.appendChild(boutonAnnuler);
-
-
-        // Focus automatique
-
-        champModification.focus();
-
-
-        // Sélectionner le texte
-
-        champModification.select();
-
-
-        // =========================
-        // ANNULER
-        // =========================
-
-        boutonAnnuler.addEventListener(
-            "click",
-            function (event) {
-
-                event.stopPropagation();
-
-
-                nouvelleTache.replaceChild(
-                    texteElement,
-                    champModification
-                );
-
-
-                actions.innerHTML = "";
-
-                actions.appendChild(boutonModifier);
-                actions.appendChild(boutonSupprimer);
-
-
-                nouvelleTache.classList.remove(
+            if (
+                nouvelleTache.classList.contains(
                     "edition"
-                );
-
+                )
+            ) {
+                return;
             }
-        );
+
+            nouvelleTache.classList.add(
+                "edition"
+            );
 
 
-        // =========================
-        // ENREGISTRER
-        // =========================
+            // Champ texte
 
-        boutonEnregistrer.addEventListener(
-            "click",
-            function (event) {
+            const champModification =
+                document.createElement("input");
 
-                event.stopPropagation();
+            champModification.type =
+                "text";
+
+            champModification.value =
+                tache.texte;
+
+            champModification.classList.add(
+                "champ-modification"
+            );
 
 
-                const nouveauTexte =
-                    champModification.value.trim();
+            nouvelleTache.replaceChild(
+                champModification,
+                texteElement
+            );
 
 
-                // Empêcher une tâche vide
+            // =========================
+            // SELECT PRIORITÉ
+            // =========================
 
-                if (nouveauTexte === "") {
+            const selectModification =
+                document.createElement("select");
 
-                    champModification.focus();
+            selectModification.classList.add(
+                "champ-priorite-modification"
+            );
 
-                    return;
 
+            const optionsPriorite = [
+                {
+                    valeur: "basse",
+                    texte: "Priorité basse"
+                },
+                {
+                    valeur: "moyenne",
+                    texte: "Priorité moyenne"
+                },
+                {
+                    valeur: "haute",
+                    texte: "Priorité haute"
                 }
+            ];
 
 
-                // Modifier la tâche
+            optionsPriorite.forEach(
+                function (option) {
 
-                tache.texte = nouveauTexte;
+                    const element =
+                        document.createElement(
+                            "option"
+                        );
 
+                    element.value =
+                        option.valeur;
 
-                // Sauvegarder
-
-                localStorage.setItem(
-                    "taches",
-                    JSON.stringify(taches)
-                );
-
-
-                // Actualiser l'affichage
-
-                afficherTaches();
-
-            }
-        );
+                    element.textContent =
+                        option.texte;
 
 
-        // =========================
-        // ENTRÉE CLAVIER
-        // =========================
+                    if (
+                        option.valeur ===
+                        (
+                            tache.priorite ||
+                            "moyenne"
+                        )
+                    ) {
 
-        champModification.addEventListener(
-            "keydown",
-            function (event) {
+                        element.selected =
+                            true;
+                    }
 
-                // Entrée = enregistrer
 
-                if (event.key === "Enter") {
-
-                    boutonEnregistrer.click();
-
+                    selectModification.appendChild(
+                        element
+                    );
                 }
+            );
 
 
-                // Échap = annuler
+            // =========================
+            // DATE MODIFICATION
+            // =========================
 
-                if (event.key === "Escape") {
+            const dateModification =
+                document.createElement("input");
 
-                    boutonAnnuler.click();
+            dateModification.type =
+                "date";
 
+            dateModification.value =
+                tache.dateEcheance || "";
+
+            dateModification.classList.add(
+                "date-modification"
+            );
+
+
+            // =========================
+            // INFORMATIONS
+            // =========================
+
+            informations.innerHTML = "";
+
+            informations.appendChild(
+                selectModification
+            );
+
+            informations.appendChild(
+                dateModification
+            );
+
+
+            // =========================
+            // BOUTON ENREGISTRER
+            // =========================
+
+            const boutonEnregistrer =
+                document.createElement("button");
+
+            boutonEnregistrer.textContent =
+                "Enregistrer";
+
+            boutonEnregistrer.classList.add(
+                "enregistrer"
+            );
+
+
+            // =========================
+            // BOUTON ANNULER
+            // =========================
+
+            const boutonAnnuler =
+                document.createElement("button");
+
+            boutonAnnuler.textContent =
+                "Annuler";
+
+            boutonAnnuler.classList.add(
+                "annuler"
+            );
+
+
+            actions.innerHTML = "";
+
+            actions.appendChild(
+                boutonEnregistrer
+            );
+
+            actions.appendChild(
+                boutonAnnuler
+            );
+
+
+            // Focus
+
+            champModification.focus();
+
+            champModification.select();
+
+
+            // =========================
+            // ANNULER
+            // =========================
+
+            boutonAnnuler.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+                    afficherTaches();
                 }
+            );
 
-            }
-        );
 
-    });
+            // =========================
+            // ENREGISTRER
+            // =========================
+
+            boutonEnregistrer.addEventListener(
+                "click",
+                function (event) {
+
+                    event.stopPropagation();
+
+
+                    const nouveauTexte =
+                        champModification.value.trim();
+
+
+                    if (
+                        nouveauTexte === ""
+                    ) {
+
+                        champModification.focus();
+
+                        return;
+                    }
+
+
+                    tache.texte =
+                        nouveauTexte;
+
+                    tache.priorite =
+                        selectModification.value;
+
+                    tache.dateEcheance =
+                        dateModification.value;
+
+
+                    sauvegarderTaches();
+
+                    afficherTaches();
+                }
+            );
+
+
+            // =========================
+            // CLAVIER
+            // =========================
+
+            champModification.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        boutonEnregistrer.click();
+                    }
+
+
+                    if (
+                        event.key === "Escape"
+                    ) {
+
+                        boutonAnnuler.click();
+                    }
+                }
+            );
+        }
+    );
 
 
     // =========================
@@ -393,33 +685,28 @@ function afficherTache(tache) {
             event.stopPropagation();
 
 
-            taches = taches.filter(
-                function (tacheActuelle) {
+            taches =
+                taches.filter(
+                    function (tacheActuelle) {
 
-                    return (
-                        tacheActuelle.id !== tache.id
-                    );
+                        return (
+                            tacheActuelle.id !==
+                            tache.id
+                        );
+                    }
+                );
 
-                }
-            );
 
-
-            localStorage.setItem(
-                "taches",
-                JSON.stringify(taches)
-            );
-
+            sauvegarderTaches();
 
             afficherTaches();
-
         }
     );
 
 
-    // Ajouter la tâche à la liste
-
-    listeTaches.appendChild(nouvelleTache);
-
+    listeTaches.appendChild(
+        nouvelleTache
+    );
 }
 
 
@@ -436,75 +723,60 @@ function afficherTaches() {
         recherche.value.toLowerCase();
 
 
-    // =========================
-    // RECHERCHE
-    // =========================
-
     let tachesFiltrees =
-        taches.filter(function (tache) {
+        taches.filter(
+            function (tache) {
 
-            return tache.texte
-                .toLowerCase()
-                .includes(valeurRecherche);
+                return tache.texte
+                    .toLowerCase()
+                    .includes(
+                        valeurRecherche
+                    );
+            }
+        );
 
-        });
 
+    // En cours
 
-    // =========================
-    // FILTRE EN COURS
-    // =========================
-
-    if (filtreActuel === "en-cours") {
+    if (
+        filtreActuel === "en-cours"
+    ) {
 
         tachesFiltrees =
             tachesFiltrees.filter(
                 function (tache) {
 
                     return !tache.terminee;
-
                 }
             );
-
     }
 
 
-    // =========================
-    // FILTRE TERMINÉES
-    // =========================
+    // Terminées
 
-    if (filtreActuel === "terminees") {
+    if (
+        filtreActuel === "terminees"
+    ) {
 
         tachesFiltrees =
             tachesFiltrees.filter(
                 function (tache) {
 
                     return tache.terminee;
-
                 }
             );
-
     }
 
 
-    // =========================
-    // EFFACER LA LISTE
-    // =========================
-
     listeTaches.innerHTML = "";
 
-
-    // =========================
-    // AFFICHER LES TÂCHES
-    // =========================
 
     tachesFiltrees.forEach(
         function (tache) {
 
             afficherTache(tache);
-
         }
     );
-
 }
 
 
@@ -532,48 +804,62 @@ formulaire.addEventListener(
             champTache.value.trim();
 
 
-        // Empêcher une tâche vide
-
-        if (texteTache === "") {
+        if (
+            texteTache === ""
+        ) {
 
             champTache.focus();
 
             return;
-
         }
+
+
+        // Récupérer les valeurs
+
+        const niveauPriorite =
+            priorite.value;
+
+        const date =
+            dateEcheance.value;
 
 
         // Créer la tâche
 
         const nouvelleTache =
-            creerTache(texteTache);
+            creerTache(
+                texteTache,
+                niveauPriorite,
+                date
+            );
 
 
         // Ajouter au tableau
 
-        taches.push(nouvelleTache);
+        taches.push(
+            nouvelleTache
+        );
 
 
         // Sauvegarder
 
-        localStorage.setItem(
-            "taches",
-            JSON.stringify(taches)
-        );
+        sauvegarderTaches();
 
 
-        // Vider le champ
+        // Réinitialiser le formulaire
 
         champTache.value = "";
 
+        priorite.value =
+            "moyenne";
 
-        // Revenir automatiquement en haut de la liste
+        dateEcheance.value = "";
+
+
+        // Actualiser
 
         afficherTaches();
 
-
         champTache.focus();
-
     }
 );
 
@@ -587,7 +873,6 @@ recherche.addEventListener(
     function () {
 
         afficherTaches();
-
     }
 );
 
@@ -606,13 +891,10 @@ boutonsFiltres.forEach(
                 filtreActuel =
                     bouton.dataset.filtre;
 
-
                 mettreAJourFiltres();
 
                 afficherTaches();
-
             }
         );
-
     }
 );
