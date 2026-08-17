@@ -80,9 +80,10 @@ function afficherTache(tache) {
 
         tache.terminee = !tache.terminee;
 
-        texteElement.classList.toggle("tache-terminee");
-
-        localStorage.setItem("taches", JSON.stringify(taches));
+        localStorage.setItem(
+            "taches",
+            JSON.stringify(taches)
+        );
 
         afficherTaches();
     });
@@ -99,28 +100,91 @@ function afficherTache(tache) {
 
         event.stopPropagation();
 
-        const nouveauTexte = prompt(
-            "Modifier la tâche :",
-            tache.texte
+        // Créer le champ de modification
+        const champModification = document.createElement("input");
+
+        champModification.type = "text";
+        champModification.value = tache.texte;
+        champModification.classList.add("champ-modification");
+
+        // Remplacer le texte par le champ
+        nouvelleTache.replaceChild(
+            champModification,
+            texteElement
         );
 
-        if (nouveauTexte !== null) {
+        champModification.focus();
 
-            const texteModifie = nouveauTexte.trim();
 
-            if (texteModifie === "") {
+        // Créer le bouton Enregistrer
+        const boutonEnregistrer = document.createElement("button");
+
+        boutonEnregistrer.textContent = "Enregistrer";
+        boutonEnregistrer.classList.add("enregistrer");
+
+
+        // Créer le bouton Annuler
+        const boutonAnnuler = document.createElement("button");
+
+        boutonAnnuler.textContent = "Annuler";
+        boutonAnnuler.classList.add("annuler");
+
+
+        // Annuler la modification
+        boutonAnnuler.addEventListener("click", function (event) {
+
+            event.stopPropagation();
+
+            nouvelleTache.replaceChild(
+                texteElement,
+                champModification
+            );
+
+            boutonEnregistrer.remove();
+            boutonAnnuler.remove();
+        });
+
+
+        // Enregistrer la modification
+        boutonEnregistrer.addEventListener("click", function (event) {
+
+            event.stopPropagation();
+
+            const nouveauTexte = champModification.value.trim();
+
+            // Empêcher un texte vide
+            if (nouveauTexte === "") {
                 return;
             }
 
-            tache.texte = texteModifie;
+            // Modifier la tâche
+            tache.texte = nouveauTexte;
 
+            // Sauvegarder
             localStorage.setItem(
                 "taches",
                 JSON.stringify(taches)
             );
 
-            afficherTaches();
-        }
+            // Mettre à jour le texte affiché
+            texteElement.textContent = nouveauTexte;
+
+            // Remplacer le champ par le texte
+            nouvelleTache.replaceChild(
+                texteElement,
+                champModification
+            );
+
+            // Supprimer les boutons d'édition
+            boutonEnregistrer.remove();
+            boutonAnnuler.remove();
+        });
+
+
+        // Ajouter les boutons d'édition
+        nouvelleTache.appendChild(boutonEnregistrer);
+        nouvelleTache.appendChild(boutonAnnuler);
+
     });
 
 
