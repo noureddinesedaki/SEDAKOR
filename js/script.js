@@ -13,6 +13,9 @@ const categorie =
 const dateEcheance =
     document.querySelector("#date-echeance");
 
+const recurrence =
+    document.querySelector("#recurrence");
+
 const listeTaches =
     document.querySelector("#taches");
 
@@ -31,8 +34,6 @@ const triTaches =
 const filtreCategories =
     document.querySelector("#filtre-categories");
 
-
-// Dashboard
 
 const statTotal =
     document.querySelector("#stat-total");
@@ -93,15 +94,13 @@ if (tachesSauvegardees) {
 
 
 // =========================
-// NORMALISER LES ANCIENNES TÂCHES
+// NORMALISATION
 // =========================
 
 taches.forEach(
     function (tache) {
 
-        if (
-            !tache.priorite
-        ) {
+        if (!tache.priorite) {
 
             tache.priorite =
                 "moyenne";
@@ -109,9 +108,7 @@ taches.forEach(
         }
 
 
-        if (
-            !tache.categorie
-        ) {
+        if (!tache.categorie) {
 
             tache.categorie =
                 "autre";
@@ -126,6 +123,25 @@ taches.forEach(
         ) {
 
             tache.sousTaches = [];
+
+        }
+
+
+        if (!tache.recurrence) {
+
+            tache.recurrence =
+                "aucune";
+
+        }
+
+
+        if (
+            typeof tache.recurrence !==
+            "string"
+        ) {
+
+            tache.recurrence =
+                "aucune";
 
         }
 
@@ -157,14 +173,29 @@ localStorage.setItem(
 
 
 // =========================
-// CRÉER UNE TÂCHE
+// SAUVEGARDE
+// =========================
+
+function sauvegarderTaches() {
+
+    localStorage.setItem(
+        "taches",
+        JSON.stringify(taches)
+    );
+
+}
+
+
+// =========================
+// CRÉATION
 // =========================
 
 function creerTache(
     texte,
     niveauPriorite,
     niveauCategorie,
-    date
+    date,
+    niveauRecurrence
 ) {
 
     return {
@@ -181,16 +212,14 @@ function creerTache(
 
         dateEcheance: date,
 
+        recurrence: niveauRecurrence,
+
         sousTaches: []
 
     };
 
 }
 
-
-// =========================
-// CRÉER UNE SOUS-TÂCHE
-// =========================
 
 function creerSousTache(
     texte
@@ -212,21 +241,154 @@ function creerSousTache(
 
 
 // =========================
-// SAUVEGARDER
+// RÉCURRENCE
 // =========================
 
-function sauvegarderTaches() {
+function calculerProchaineDate(
+    date,
+    typeRecurrence
+) {
 
-    localStorage.setItem(
-        "taches",
-        JSON.stringify(taches)
+    if (
+        !date ||
+        typeRecurrence ===
+        "aucune"
+    ) {
+
+        return "";
+
+    }
+
+
+    const prochaineDate =
+        new Date(
+            date +
+            "T00:00:00"
+        );
+
+
+    if (
+        typeRecurrence ===
+        "quotidienne"
+    ) {
+
+        prochaineDate.setDate(
+            prochaineDate.getDate() + 1
+        );
+
+    }
+
+
+    if (
+        typeRecurrence ===
+        "hebdomadaire"
+    ) {
+
+        prochaineDate.setDate(
+            prochaineDate.getDate() + 7
+        );
+
+    }
+
+
+    if (
+        typeRecurrence ===
+        "mensuelle"
+    ) {
+
+        const jour =
+            prochaineDate.getDate();
+
+        prochaineDate.setMonth(
+            prochaineDate.getMonth() + 1
+        );
+
+
+        // Évite les débordements
+        // de dates comme 31 → mois suivant
+
+        if (
+            prochaineDate.getDate() !==
+            jour
+        ) {
+
+            prochaineDate.setDate(0);
+
+        }
+
+    }
+
+
+    const annee =
+        prochaineDate.getFullYear();
+
+    const mois =
+        String(
+            prochaineDate.getMonth() + 1
+        ).padStart(2, "0");
+
+    const jour =
+        String(
+            prochaineDate.getDate()
+        ).padStart(2, "0");
+
+
+    return (
+        annee +
+        "-" +
+        mois +
+        "-" +
+        jour
     );
 
 }
 
 
 // =========================
-// DATE EN RETARD
+// NOM RÉCURRENCE
+// =========================
+
+function nomRecurrence(
+    typeRecurrence
+) {
+
+    if (
+        typeRecurrence ===
+        "quotidienne"
+    ) {
+
+        return "🔄 Tous les jours";
+
+    }
+
+
+    if (
+        typeRecurrence ===
+        "hebdomadaire"
+    ) {
+
+        return "🔄 Chaque semaine";
+
+    }
+
+
+    if (
+        typeRecurrence ===
+        "mensuelle"
+    ) {
+
+        return "🔄 Chaque mois";
+
+    }
+
+
+    return "";
+
+}
+
+
+// =========================
+// DATE
 // =========================
 
 function dateEstEnRetard(tache) {
@@ -268,10 +430,6 @@ function dateEstEnRetard(tache) {
 }
 
 
-// =========================
-// FORMATER UNE DATE
-// =========================
-
 function formaterDate(date) {
 
     if (!date) {
@@ -306,7 +464,7 @@ function formaterDate(date) {
 
 
 // =========================
-// NOM CATÉGORIE
+// CATÉGORIE
 // =========================
 
 function nomCategorie(
@@ -355,23 +513,12 @@ function nomCategorie(
 
 
 // =========================
-// COMPTER SOUS-TÂCHES
+// SOUS-TÂCHES
 // =========================
 
 function nombreSousTachesTerminees(
     tache
 ) {
-
-    if (
-        !Array.isArray(
-            tache.sousTaches
-        )
-    ) {
-
-        return 0;
-
-    }
-
 
     return tache.sousTaches.filter(
         function (sousTache) {
@@ -384,18 +531,11 @@ function nombreSousTachesTerminees(
 }
 
 
-// =========================
-// POURCENTAGE SOUS-TÂCHES
-// =========================
-
 function pourcentageSousTaches(
     tache
 ) {
 
     if (
-        !Array.isArray(
-            tache.sousTaches
-        ) ||
         tache.sousTaches.length === 0
     ) {
 
@@ -442,29 +582,22 @@ function mettreAJourCompteur() {
         terminees;
 
 
-    const texteTotal =
-        total <= 1
-            ? "tâche"
-            : "tâches";
-
-
-    const texteTerminees =
-        terminees <= 1
-            ? "terminée"
-            : "terminées";
-
-
     compteurTaches.textContent =
         total +
-        " " +
-        texteTotal +
+        (
+            total <= 1
+                ? " tâche"
+                : " tâches"
+        ) +
         " • " +
         enCours +
-        " en cours" +
-        " • " +
+        " en cours • " +
         terminees +
-        " " +
-        texteTerminees;
+        (
+            terminees <= 1
+                ? " terminée"
+                : " terminées"
+        );
 
 }
 
@@ -506,15 +639,10 @@ function mettreAJourDashboard() {
         ).length;
 
 
-    let pourcentage = 0;
-
-
-    if (
-        total > 0
-    ) {
-
-        pourcentage =
-            Math.round(
+    const pourcentage =
+        total === 0
+            ? 0
+            : Math.round(
                 (
                     terminees /
                     total
@@ -522,20 +650,15 @@ function mettreAJourDashboard() {
                 100
             );
 
-    }
-
 
     statTotal.textContent =
         total;
 
-
     statEnCours.textContent =
         enCours;
 
-
     statTerminees.textContent =
         terminees;
-
 
     statEnRetard.textContent =
         enRetard;
@@ -549,37 +672,6 @@ function mettreAJourDashboard() {
     progression.style.width =
         pourcentage +
         "%";
-
-}
-
-
-// =========================
-// FILTRES
-// =========================
-
-function mettreAJourFiltres() {
-
-    boutonsFiltres.forEach(
-        function (bouton) {
-
-            bouton.classList.remove(
-                "actif"
-            );
-
-
-            if (
-                bouton.dataset.filtre ===
-                filtreActuel
-            ) {
-
-                bouton.classList.add(
-                    "actif"
-                );
-
-            }
-
-        }
-    );
 
 }
 
@@ -610,16 +702,7 @@ function valeurPriorite(
     }
 
 
-    if (
-        tache.priorite === "basse"
-    ) {
-
-        return 1;
-
-    }
-
-
-    return 0;
+    return 1;
 
 }
 
@@ -637,8 +720,7 @@ function trierTaches(
 
 
     if (
-        triActuel ===
-        "recentes"
+        triActuel === "recentes"
     ) {
 
         copie.sort(
@@ -653,8 +735,7 @@ function trierTaches(
 
 
     if (
-        triActuel ===
-        "anciennes"
+        triActuel === "anciennes"
     ) {
 
         copie.sort(
@@ -763,7 +844,70 @@ function trierTaches(
 
 
 // =========================
-// AFFICHER UNE SOUS-TÂCHE
+// TERMINER UNE TÂCHE
+// =========================
+
+function terminerTache(
+    tache
+) {
+
+    tache.terminee =
+        !tache.terminee;
+
+
+    /*
+     * V6 :
+     * lorsqu'une tâche récurrente
+     * est terminée, on crée
+     * automatiquement la prochaine.
+     */
+
+    if (
+        tache.terminee &&
+        tache.recurrence !==
+        "aucune" &&
+        tache.dateEcheance
+    ) {
+
+        const prochaineDate =
+            calculerProchaineDate(
+                tache.dateEcheance,
+                tache.recurrence
+            );
+
+
+        const prochaineTache =
+            creerTache(
+                tache.texte,
+                tache.priorite,
+                tache.categorie,
+                prochaineDate,
+                tache.recurrence
+            );
+
+
+        /*
+         * Les sous-tâches ne sont pas
+         * copiées : chaque nouvelle
+         * occurrence recommence proprement.
+         */
+
+        taches.push(
+            prochaineTache
+        );
+
+    }
+
+
+    sauvegarderTaches();
+
+    afficherTaches();
+
+}
+
+
+// =========================
+// AFFICHER SOUS-TÂCHE
 // =========================
 
 function afficherSousTache(
@@ -773,9 +917,7 @@ function afficherSousTache(
 ) {
 
     const element =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     element.classList.add(
@@ -783,12 +925,8 @@ function afficherSousTache(
     );
 
 
-    // Checkbox
-
     const checkbox =
-        document.createElement(
-            "input"
-        );
+        document.createElement("input");
 
 
     checkbox.type =
@@ -804,12 +942,8 @@ function afficherSousTache(
         sousTache.terminee;
 
 
-    // Texte
-
     const texte =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
 
     texte.classList.add(
@@ -832,28 +966,22 @@ function afficherSousTache(
     }
 
 
-    // Supprimer
-
-    const boutonSupprimer =
-        document.createElement(
-            "button"
-        );
+    const bouton =
+        document.createElement("button");
 
 
-    boutonSupprimer.type =
+    bouton.type =
         "button";
 
 
-    boutonSupprimer.classList.add(
+    bouton.classList.add(
         "supprimer-sous-tache"
     );
 
 
-    boutonSupprimer.textContent =
+    bouton.textContent =
         "×";
 
-
-    // Cocher
 
     checkbox.addEventListener(
         "change",
@@ -865,30 +993,22 @@ function afficherSousTache(
 
             sauvegarderTaches();
 
-
             afficherTaches();
 
         }
     );
 
 
-    // Supprimer
-
-    boutonSupprimer.addEventListener(
+    bouton.addEventListener(
         "click",
-        function (event) {
-
-            event.stopPropagation();
-
+        function () {
 
             tache.sousTaches =
                 tache.sousTaches.filter(
-                    function (
-                        sousTacheActuelle
-                    ) {
+                    function (element) {
 
                         return (
-                            sousTacheActuelle.id !==
+                            element.id !==
                             sousTache.id
                         );
 
@@ -897,7 +1017,6 @@ function afficherSousTache(
 
 
             sauvegarderTaches();
-
 
             afficherTaches();
 
@@ -909,14 +1028,12 @@ function afficherSousTache(
         checkbox
     );
 
-
     element.appendChild(
         texte
     );
 
-
     element.appendChild(
-        boutonSupprimer
+        bouton
     );
 
 
@@ -935,36 +1052,19 @@ function afficherTache(
     tache
 ) {
 
-    if (
-        !Array.isArray(
-            tache.sousTaches
-        )
-    ) {
-
-        tache.sousTaches = [];
-
-    }
+    const element =
+        document.createElement("div");
 
 
-    const nouvelleTache =
-        document.createElement(
-            "div"
-        );
-
-
-    nouvelleTache.classList.add(
+    element.classList.add(
         "tache"
     );
 
 
-    // =========================
-    // ENTÊTE
-    // =========================
+    // Entête
 
     const entete =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     entete.classList.add(
@@ -972,20 +1072,16 @@ function afficherTache(
     );
 
 
-    // Texte
-
-    const texteElement =
-        document.createElement(
-            "span"
-        );
+    const texte =
+        document.createElement("span");
 
 
-    texteElement.classList.add(
+    texte.classList.add(
         "tache-texte"
     );
 
 
-    texteElement.textContent =
+    texte.textContent =
         tache.texte;
 
 
@@ -993,24 +1089,15 @@ function afficherTache(
         tache.terminee
     ) {
 
-        texteElement.classList.add(
+        texte.classList.add(
             "tache-terminee"
         );
 
     }
 
 
-    entete.appendChild(
-        texteElement
-    );
-
-
-    // Actions
-
     const actions =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     actions.classList.add(
@@ -1018,72 +1105,67 @@ function afficherTache(
     );
 
 
-    const boutonModifier =
-        document.createElement(
-            "button"
-        );
+    const modifier =
+        document.createElement("button");
 
 
-    boutonModifier.type =
+    modifier.type =
         "button";
 
 
-    boutonModifier.textContent =
+    modifier.textContent =
         "Modifier";
 
 
-    boutonModifier.classList.add(
+    modifier.classList.add(
         "modifier"
     );
 
 
-    const boutonSupprimer =
-        document.createElement(
-            "button"
-        );
+    const supprimer =
+        document.createElement("button");
 
 
-    boutonSupprimer.type =
+    supprimer.type =
         "button";
 
 
-    boutonSupprimer.textContent =
+    supprimer.textContent =
         "Supprimer";
 
 
-    boutonSupprimer.classList.add(
+    supprimer.classList.add(
         "supprimer"
     );
 
 
     actions.appendChild(
-        boutonModifier
+        modifier
     );
-
 
     actions.appendChild(
-        boutonSupprimer
+        supprimer
     );
 
+
+    entete.appendChild(
+        texte
+    );
 
     entete.appendChild(
         actions
     );
 
 
-    nouvelleTache.appendChild(
+    element.appendChild(
         entete
     );
 
 
-    // =========================
-    // INFORMATIONS
-    // =========================
+    // Informations
 
     const informations =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     informations.classList.add(
@@ -1091,52 +1173,23 @@ function afficherTache(
     );
 
 
-    // Priorité
-
     const badgePriorite =
-        document.createElement(
-            "span"
-        );
+        document.createElement("span");
 
 
     badgePriorite.classList.add(
-        "priorite"
-    );
-
-
-    const prioriteActuelle =
-        tache.priorite ||
-        "moyenne";
-
-
-    badgePriorite.classList.add(
+        "priorite",
         "priorite-" +
-        prioriteActuelle
+        tache.priorite
     );
 
 
-    if (
-        prioriteActuelle ===
-        "haute"
-    ) {
-
-        badgePriorite.textContent =
-            "Haute";
-
-    } else if (
-        prioriteActuelle ===
-        "basse"
-    ) {
-
-        badgePriorite.textContent =
-            "Basse";
-
-    } else {
-
-        badgePriorite.textContent =
-            "Moyenne";
-
-    }
+    badgePriorite.textContent =
+        tache.priorite === "haute"
+            ? "Haute"
+            : tache.priorite === "basse"
+                ? "Basse"
+                : "Moyenne";
 
 
     informations.appendChild(
@@ -1144,33 +1197,20 @@ function afficherTache(
     );
 
 
-    // Catégorie
-
     const badgeCategorie =
-        document.createElement(
-            "span"
-        );
-
-
-    const categorieActuelle =
-        tache.categorie ||
-        "autre";
+        document.createElement("span");
 
 
     badgeCategorie.classList.add(
-        "categorie"
-    );
-
-
-    badgeCategorie.classList.add(
+        "categorie",
         "categorie-" +
-        categorieActuelle
+        tache.categorie
     );
 
 
     badgeCategorie.textContent =
         nomCategorie(
-            categorieActuelle
+            tache.categorie
         );
 
 
@@ -1179,59 +1219,79 @@ function afficherTache(
     );
 
 
-    // Date
-
     if (
         tache.dateEcheance
     ) {
 
-        const dateElement =
-            document.createElement(
-                "span"
-            );
+        const date =
+            document.createElement("span");
 
 
-        dateElement.classList.add(
+        date.classList.add(
             "date-echeance"
         );
 
 
+        date.textContent =
+            dateEstEnRetard(tache)
+                ? "En retard • " +
+                  formaterDate(
+                      tache.dateEcheance
+                  )
+                : "Échéance : " +
+                  formaterDate(
+                      tache.dateEcheance
+                  );
+
+
         if (
-            dateEstEnRetard(
-                tache
-            )
+            dateEstEnRetard(tache)
         ) {
 
-            dateElement.classList.add(
+            date.classList.add(
                 "date-en-retard"
             );
-
-
-            dateElement.textContent =
-                "En retard • " +
-                formaterDate(
-                    tache.dateEcheance
-                );
-
-        } else {
-
-            dateElement.textContent =
-                "Échéance : " +
-                formaterDate(
-                    tache.dateEcheance
-                );
 
         }
 
 
         informations.appendChild(
-            dateElement
+            date
         );
 
     }
 
 
-    nouvelleTache.appendChild(
+    // Badge récurrence
+
+    if (
+        tache.recurrence !==
+        "aucune"
+    ) {
+
+        const badgeRecurrence =
+            document.createElement("span");
+
+
+        badgeRecurrence.classList.add(
+            "recurrence"
+        );
+
+
+        badgeRecurrence.textContent =
+            nomRecurrence(
+                tache.recurrence
+            );
+
+
+        informations.appendChild(
+            badgeRecurrence
+        );
+
+    }
+
+
+    element.appendChild(
         informations
     );
 
@@ -1241,9 +1301,7 @@ function afficherTache(
     // =========================
 
     const blocSousTaches =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     blocSousTaches.classList.add(
@@ -1252,9 +1310,7 @@ function afficherTache(
 
 
     const enteteSousTaches =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     enteteSousTaches.classList.add(
@@ -1262,55 +1318,42 @@ function afficherTache(
     );
 
 
-    const titreSousTaches =
-        document.createElement(
-            "span"
-        );
+    const titre =
+        document.createElement("span");
 
 
-    titreSousTaches.classList.add(
+    titre.classList.add(
         "sous-taches-titre"
     );
 
 
-    titreSousTaches.textContent =
+    titre.textContent =
         "Sous-tâches";
 
 
-    const progressionTexte =
-        document.createElement(
-            "span"
-        );
+    const compteur =
+        document.createElement("span");
 
 
-    progressionTexte.classList.add(
+    compteur.classList.add(
         "sous-taches-progressions"
     );
 
 
-    const totalSousTaches =
+    compteur.textContent =
+        nombreSousTachesTerminees(
+            tache
+        ) +
+        " / " +
         tache.sousTaches.length;
 
 
-    const sousTachesTerminees =
-        nombreSousTachesTerminees(
-            tache
-        );
-
-
-    progressionTexte.textContent =
-        sousTachesTerminees +
-        " / " +
-        totalSousTaches;
-
-
     enteteSousTaches.appendChild(
-        titreSousTaches
+        titre
     );
 
-
     enteteSousTaches.appendChild(
-        progressionTexte
+        compteur
     );
 
 
@@ -1319,53 +1362,43 @@ function afficherTache(
     );
 
 
-    // Barre de progression
-
-    const barreSousTaches =
-        document.createElement(
-            "div"
-        );
+    const barre =
+        document.createElement("div");
 
 
-    barreSousTaches.classList.add(
+    barre.classList.add(
         "barre-sous-taches"
     );
 
 
-    const progressionSousTaches =
-        document.createElement(
-            "div"
-        );
+    const barreRemplie =
+        document.createElement("div");
 
 
-    progressionSousTaches.classList.add(
+    barreRemplie.classList.add(
         "progression-sous-taches"
     );
 
 
-    progressionSousTaches.style.width =
+    barreRemplie.style.width =
         pourcentageSousTaches(
             tache
         ) +
         "%";
 
 
-    barreSousTaches.appendChild(
-        progressionSousTaches
+    barre.appendChild(
+        barreRemplie
     );
 
 
     blocSousTaches.appendChild(
-        barreSousTaches
+        barre
     );
 
 
-    // Liste des sous-tâches
-
     const listeSousTaches =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
 
     tache.sousTaches.forEach(
@@ -1386,111 +1419,87 @@ function afficherTache(
     );
 
 
-    // Ajouter une sous-tâche
-
-    const ajoutSousTache =
-        document.createElement(
-            "div"
-        );
+    const ajout =
+        document.createElement("div");
 
 
-    ajoutSousTache.classList.add(
+    ajout.classList.add(
         "ajout-sous-tache"
     );
 
 
-    const champSousTache =
-        document.createElement(
-            "input"
-        );
+    const champ =
+        document.createElement("input");
 
 
-    champSousTache.type =
+    champ.type =
         "text";
 
 
-    champSousTache.placeholder =
+    champ.placeholder =
         "Ajouter une sous-tâche...";
 
 
-    champSousTache.classList.add(
+    champ.classList.add(
         "champ-sous-tache"
     );
 
 
-    const boutonAjouterSousTache =
-        document.createElement(
-            "button"
-        );
+    const boutonAjout =
+        document.createElement("button");
 
 
-    boutonAjouterSousTache.type =
+    boutonAjout.type =
         "button";
 
 
-    boutonAjouterSousTache.textContent =
+    boutonAjout.textContent =
         "Ajouter";
 
 
-    boutonAjouterSousTache.classList.add(
+    boutonAjout.classList.add(
         "bouton-ajouter-sous-tache"
     );
 
 
     function ajouterSousTache() {
 
-        const texteSousTache =
-            champSousTache.value.trim();
+        const valeur =
+            champ.value.trim();
 
 
-        if (
-            texteSousTache === ""
-        ) {
+        if (!valeur) {
 
-            champSousTache.focus();
+            champ.focus();
 
             return;
 
         }
 
 
-        const nouvelleSousTache =
-            creerSousTache(
-                texteSousTache
-            );
-
-
         tache.sousTaches.push(
-            nouvelleSousTache
+            creerSousTache(
+                valeur
+            )
         );
 
 
         sauvegarderTaches();
-
 
         afficherTaches();
 
     }
 
 
-    boutonAjouterSousTache.addEventListener(
+    boutonAjout.addEventListener(
         "click",
-        function (event) {
-
-            event.stopPropagation();
-
-            ajouterSousTache();
-
-        }
+        ajouterSousTache
     );
 
 
-    champSousTache.addEventListener(
+    champ.addEventListener(
         "keydown",
         function (event) {
-
-            event.stopPropagation();
-
 
             if (
                 event.key ===
@@ -1505,43 +1514,63 @@ function afficherTache(
     );
 
 
-    ajoutSousTache.appendChild(
-        champSousTache
+    ajout.appendChild(
+        champ
     );
 
-
-    ajoutSousTache.appendChild(
-        boutonAjouterSousTache
+    ajout.appendChild(
+        boutonAjout
     );
 
 
     blocSousTaches.appendChild(
-        ajoutSousTache
+        ajout
     );
 
 
-    nouvelleTache.appendChild(
+    element.appendChild(
         blocSousTaches
     );
 
 
     // =========================
-    // TERMINER LA TÂCHE
+    // TERMINER
     // =========================
 
-    texteElement.addEventListener(
+    texte.addEventListener(
         "click",
-        function (event) {
+        function () {
 
-            event.stopPropagation();
+            terminerTache(
+                tache
+            );
+
+        }
+    );
 
 
-            tache.terminee =
-                !tache.terminee;
+    // =========================
+    // SUPPRIMER
+    // =========================
+
+    supprimer.addEventListener(
+        "click",
+        function () {
+
+            taches =
+                taches.filter(
+                    function (element) {
+
+                        return (
+                            element.id !==
+                            tache.id
+                        );
+
+                    }
+                );
 
 
             sauvegarderTaches();
-
 
             afficherTaches();
 
@@ -1553,35 +1582,38 @@ function afficherTache(
     // MODIFIER
     // =========================
 
-    boutonModifier.addEventListener(
+    modifier.addEventListener(
         "click",
-        function (event) {
+        function () {
 
-            event.stopPropagation();
-
-
-            if (
-                nouvelleTache.classList.contains(
-                    "edition"
-                )
-            ) {
-
-                return;
-
-            }
+            const ancienTexte =
+                tache.texte;
 
 
-            nouvelleTache.classList.add(
-                "edition"
-            );
+            const ancienPriorite =
+                tache.priorite;
 
 
-            // Champ texte
+            const ancienneCategorie =
+                tache.categorie;
+
+
+            const ancienneDate =
+                tache.dateEcheance ||
+                "";
+
+
+            const ancienneRecurrence =
+                tache.recurrence ||
+                "aucune";
+
+
+            entete.innerHTML =
+                "";
+
 
             const champModification =
-                document.createElement(
-                    "input"
-                );
+                document.createElement("input");
 
 
             champModification.type =
@@ -1589,7 +1621,7 @@ function afficherTache(
 
 
             champModification.value =
-                tache.texte;
+                ancienTexte;
 
 
             champModification.classList.add(
@@ -1597,18 +1629,17 @@ function afficherTache(
             );
 
 
-            entete.replaceChild(
-                champModification,
-                texteElement
+            const actionsEdition =
+                document.createElement("div");
+
+
+            actionsEdition.classList.add(
+                "tache-actions"
             );
 
 
-            // Priorité
-
             const selectPriorite =
-                document.createElement(
-                    "select"
-                );
+                document.createElement("select");
 
 
             selectPriorite.classList.add(
@@ -1617,18 +1648,9 @@ function afficherTache(
 
 
             [
-                {
-                    valeur: "basse",
-                    texte: "Priorité basse"
-                },
-                {
-                    valeur: "moyenne",
-                    texte: "Priorité moyenne"
-                },
-                {
-                    valeur: "haute",
-                    texte: "Priorité haute"
-                }
+                ["basse", "Priorité basse"],
+                ["moyenne", "Priorité moyenne"],
+                ["haute", "Priorité haute"]
             ].forEach(
                 function (option) {
 
@@ -1639,16 +1661,15 @@ function afficherTache(
 
 
                     element.value =
-                        option.valeur;
-
+                        option[0];
 
                     element.textContent =
-                        option.texte;
+                        option[1];
 
 
                     if (
-                        option.valeur ===
-                        prioriteActuelle
+                        option[0] ===
+                        ancienPriorite
                     ) {
 
                         element.selected =
@@ -1665,12 +1686,8 @@ function afficherTache(
             );
 
 
-            // Catégorie
-
             const selectCategorie =
-                document.createElement(
-                    "select"
-                );
+                document.createElement("select");
 
 
             selectCategorie.classList.add(
@@ -1679,26 +1696,11 @@ function afficherTache(
 
 
             [
-                {
-                    valeur: "travail",
-                    texte: "💼 Travail"
-                },
-                {
-                    valeur: "etudes",
-                    texte: "📚 Études"
-                },
-                {
-                    valeur: "personnel",
-                    texte: "🏠 Personnel"
-                },
-                {
-                    valeur: "projets",
-                    texte: "🚀 Projets"
-                },
-                {
-                    valeur: "autre",
-                    texte: "📦 Autre"
-                }
+                ["travail", "💼 Travail"],
+                ["etudes", "📚 Études"],
+                ["personnel", "🏠 Personnel"],
+                ["projets", "🚀 Projets"],
+                ["autre", "📦 Autre"]
             ].forEach(
                 function (option) {
 
@@ -1709,16 +1711,15 @@ function afficherTache(
 
 
                     element.value =
-                        option.valeur;
-
+                        option[0];
 
                     element.textContent =
-                        option.texte;
+                        option[1];
 
 
                     if (
-                        option.valeur ===
-                        categorieActuelle
+                        option[0] ===
+                        ancienneCategorie
                     ) {
 
                         element.selected =
@@ -1735,12 +1736,8 @@ function afficherTache(
             );
 
 
-            // Date
-
             const dateModification =
-                document.createElement(
-                    "input"
-                );
+                document.createElement("input");
 
 
             dateModification.type =
@@ -1748,8 +1745,7 @@ function afficherTache(
 
 
             dateModification.value =
-                tache.dateEcheance ||
-                "";
+                ancienneDate;
 
 
             dateModification.classList.add(
@@ -1757,94 +1753,126 @@ function afficherTache(
             );
 
 
-            // Remplacer les infos
-
-            informations.innerHTML =
-                "";
+            const selectRecurrence =
+                document.createElement("select");
 
 
-            informations.appendChild(
-                selectPriorite
+            selectRecurrence.classList.add(
+                "recurrence-modification"
             );
 
 
-            informations.appendChild(
-                selectCategorie
+            [
+                ["aucune", "Pas de répétition"],
+                ["quotidienne", "🔄 Tous les jours"],
+                ["hebdomadaire", "🔄 Chaque semaine"],
+                ["mensuelle", "🔄 Chaque mois"]
+            ].forEach(
+                function (option) {
+
+                    const element =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    element.value =
+                        option[0];
+
+                    element.textContent =
+                        option[1];
+
+
+                    if (
+                        option[0] ===
+                        ancienneRecurrence
+                    ) {
+
+                        element.selected =
+                            true;
+
+                    }
+
+
+                    selectRecurrence.appendChild(
+                        element
+                    );
+
+                }
             );
 
 
-            informations.appendChild(
-                dateModification
-            );
+            const enregistrer =
+                document.createElement("button");
 
 
-            // Boutons
-
-            actions.innerHTML =
-                "";
-
-
-            const boutonEnregistrer =
-                document.createElement(
-                    "button"
-                );
-
-
-            boutonEnregistrer.type =
+            enregistrer.type =
                 "button";
 
 
-            boutonEnregistrer.textContent =
+            enregistrer.textContent =
                 "Enregistrer";
 
 
-            boutonEnregistrer.classList.add(
+            enregistrer.classList.add(
                 "enregistrer"
             );
 
 
-            const boutonAnnuler =
-                document.createElement(
-                    "button"
-                );
+            const annuler =
+                document.createElement("button");
 
 
-            boutonAnnuler.type =
+            annuler.type =
                 "button";
 
 
-            boutonAnnuler.textContent =
+            annuler.textContent =
                 "Annuler";
 
 
-            boutonAnnuler.classList.add(
+            annuler.classList.add(
                 "annuler"
             );
 
 
-            actions.appendChild(
-                boutonEnregistrer
+            actionsEdition.appendChild(
+                enregistrer
+            );
+
+            actionsEdition.appendChild(
+                annuler
             );
 
 
-            actions.appendChild(
-                boutonAnnuler
+            entete.appendChild(
+                champModification
+            );
+
+            entete.appendChild(
+                selectPriorite
+            );
+
+            entete.appendChild(
+                selectCategorie
+            );
+
+            entete.appendChild(
+                dateModification
+            );
+
+            entete.appendChild(
+                selectRecurrence
+            );
+
+            entete.appendChild(
+                actionsEdition
             );
 
 
-            champModification.focus();
-
-
-            champModification.select();
-
-
-            // Annuler
-
-            boutonAnnuler.addEventListener(
+            annuler.addEventListener(
                 "click",
-                function (event) {
-
-                    event.stopPropagation();
+                function () {
 
                     afficherTaches();
 
@@ -1852,14 +1880,9 @@ function afficherTache(
             );
 
 
-            // Enregistrer
-
-            boutonEnregistrer.addEventListener(
+            enregistrer.addEventListener(
                 "click",
-                function (event) {
-
-                    event.stopPropagation();
-
+                function () {
 
                     const nouveauTexte =
                         champModification
@@ -1867,9 +1890,7 @@ function afficherTache(
                             .trim();
 
 
-                    if (
-                        nouveauTexte === ""
-                    ) {
+                    if (!nouveauTexte) {
 
                         champModification.focus();
 
@@ -1894,8 +1915,11 @@ function afficherTache(
                         dateModification.value;
 
 
-                    sauvegarderTaches();
+                    tache.recurrence =
+                        selectRecurrence.value;
 
+
+                    sauvegarderTaches();
 
                     afficherTaches();
 
@@ -1903,80 +1927,23 @@ function afficherTache(
             );
 
 
-            // Entrée / Échap
+            champModification.focus();
 
-            champModification.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key ===
-                        "Enter"
-                    ) {
-
-                        boutonEnregistrer.click();
-
-                    }
-
-
-                    if (
-                        event.key ===
-                        "Escape"
-                    ) {
-
-                        boutonAnnuler.click();
-
-                    }
-
-                }
-            );
-
-        }
-    );
-
-
-    // =========================
-    // SUPPRIMER
-    // =========================
-
-    boutonSupprimer.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-
-            taches =
-                taches.filter(
-                    function (tacheActuelle) {
-
-                        return (
-                            tacheActuelle.id !==
-                            tache.id
-                        );
-
-                    }
-                );
-
-
-            sauvegarderTaches();
-
-
-            afficherTaches();
+            champModification.select();
 
         }
     );
 
 
     listeTaches.appendChild(
-        nouvelleTache
+        element
     );
 
 }
 
 
 // =========================
-// AFFICHER LES TÂCHES
+// AFFICHAGE
 // =========================
 
 function afficherTaches() {
@@ -1986,33 +1953,33 @@ function afficherTaches() {
     mettreAJourDashboard();
 
 
-    const valeurRecherche =
-        recherche.value.toLowerCase();
+    const rechercheTexte =
+        recherche.value
+            .toLowerCase()
+            .trim();
 
 
-    let tachesFiltrees =
+    let resultat =
         taches.filter(
             function (tache) {
 
                 return tache.texte
                     .toLowerCase()
                     .includes(
-                        valeurRecherche
+                        rechercheTexte
                     );
 
             }
         );
 
 
-    // Filtre état
-
     if (
         filtreActuel ===
         "en-cours"
     ) {
 
-        tachesFiltrees =
-            tachesFiltrees.filter(
+        resultat =
+            resultat.filter(
                 function (tache) {
 
                     return !tache.terminee;
@@ -2028,8 +1995,8 @@ function afficherTaches() {
         "terminees"
     ) {
 
-        tachesFiltrees =
-            tachesFiltrees.filter(
+        resultat =
+            resultat.filter(
                 function (tache) {
 
                     return tache.terminee;
@@ -2040,22 +2007,17 @@ function afficherTaches() {
     }
 
 
-    // Filtre catégorie
-
     if (
         filtreCategorieActuel !==
         "toutes"
     ) {
 
-        tachesFiltrees =
-            tachesFiltrees.filter(
+        resultat =
+            resultat.filter(
                 function (tache) {
 
                     return (
-                        (
-                            tache.categorie ||
-                            "autre"
-                        ) ===
+                        tache.categorie ===
                         filtreCategorieActuel
                     );
 
@@ -2065,11 +2027,9 @@ function afficherTaches() {
     }
 
 
-    // Tri
-
-    tachesFiltrees =
+    resultat =
         trierTaches(
-            tachesFiltrees
+            resultat
         );
 
 
@@ -2077,7 +2037,7 @@ function afficherTaches() {
         "";
 
 
-    tachesFiltrees.forEach(
+    resultat.forEach(
         function (tache) {
 
             afficherTache(
@@ -2091,16 +2051,7 @@ function afficherTaches() {
 
 
 // =========================
-// CHARGEMENT INITIAL
-// =========================
-
-afficherTaches();
-
-mettreAJourFiltres();
-
-
-// =========================
-// AJOUTER UNE TÂCHE
+// FORMULAIRE
 // =========================
 
 formulaire.addEventListener(
@@ -2110,13 +2061,11 @@ formulaire.addEventListener(
         event.preventDefault();
 
 
-        const texteTache =
+        const texte =
             champTache.value.trim();
 
 
-        if (
-            texteTache === ""
-        ) {
+        if (!texte) {
 
             champTache.focus();
 
@@ -2127,10 +2076,11 @@ formulaire.addEventListener(
 
         const nouvelleTache =
             creerTache(
-                texteTache,
+                texte,
                 priorite.value,
                 categorie.value,
-                dateEcheance.value
+                dateEcheance.value,
+                recurrence.value
             );
 
 
@@ -2145,21 +2095,20 @@ formulaire.addEventListener(
         champTache.value =
             "";
 
-
         priorite.value =
             "moyenne";
-
 
         categorie.value =
             "travail";
 
-
         dateEcheance.value =
             "";
 
+        recurrence.value =
+            "aucune";
+
 
         afficherTaches();
-
 
         champTache.focus();
 
@@ -2173,11 +2122,7 @@ formulaire.addEventListener(
 
 recherche.addEventListener(
     "input",
-    function () {
-
-        afficherTaches();
-
-    }
+    afficherTaches
 );
 
 
@@ -2196,7 +2141,20 @@ boutonsFiltres.forEach(
                     bouton.dataset.filtre;
 
 
-                mettreAJourFiltres();
+                boutonsFiltres.forEach(
+                    function (element) {
+
+                        element.classList.remove(
+                            "actif"
+                        );
+
+                    }
+                );
+
+
+                bouton.classList.add(
+                    "actif"
+                );
 
 
                 afficherTaches();
@@ -2209,7 +2167,7 @@ boutonsFiltres.forEach(
 
 
 // =========================
-// FILTRE CATÉGORIE
+// CATÉGORIE
 // =========================
 
 filtreCategories.addEventListener(
@@ -2239,6 +2197,31 @@ triTaches.addEventListener(
 
 
         afficherTaches();
+
+    }
+);
+
+
+// =========================
+// INITIALISATION
+// =========================
+
+afficherTaches();
+
+
+boutonsFiltres.forEach(
+    function (bouton) {
+
+        if (
+            bouton.dataset.filtre ===
+            "toutes"
+        ) {
+
+            bouton.classList.add(
+                "actif"
+            );
+
+        }
 
     }
 );

@@ -72,8 +72,6 @@ header h1 {
 
     font-size: 44px;
 
-    font-weight: 700;
-
 }
 
 
@@ -226,20 +224,11 @@ h2 {
 
     justify-content: space-between;
 
-    align-items: center;
-
     margin-bottom: 8px;
 
     color: var(--texte-secondaire);
 
     font-size: 14px;
-
-}
-
-
-.progression-entete strong {
-
-    color: var(--texte);
 
 }
 
@@ -269,14 +258,13 @@ h2 {
 
     border-radius: 999px;
 
-    transition:
-        width 0.3s ease;
+    transition: width 0.3s ease;
 
 }
 
 
 /* =========================
-   COMPTEUR
+   FORMULAIRE
 ========================= */
 
 #compteur-taches {
@@ -291,10 +279,6 @@ h2 {
 
 }
 
-
-/* =========================
-   FORMULAIRE
-========================= */
 
 #formulaire-tache {
 
@@ -313,35 +297,14 @@ h2 {
 
     min-width: 0;
 
-    padding: 13px 15px;
-
-    border:
-        1px solid
-        var(--bordure);
-
-    border-radius: 8px;
-
-    background-color: #fafafa;
-
-    font-size: 16px;
-
-    outline: none;
-
 }
 
 
-#tache:focus {
-
-    border-color: var(--primaire);
-
-    background-color: white;
-
-}
-
-
+#tache,
 #priorite,
 #categorie,
-#date-echeance {
+#date-echeance,
+#recurrence {
 
     padding: 13px 12px;
 
@@ -362,9 +325,11 @@ h2 {
 }
 
 
+#tache:focus,
 #priorite:focus,
 #categorie:focus,
-#date-echeance:focus {
+#date-echeance:focus,
+#recurrence:focus {
 
     border-color: var(--primaire);
 
@@ -396,8 +361,7 @@ h2 {
 
 #formulaire-tache button:hover {
 
-    background-color:
-        var(--primaire-hover);
+    background-color: var(--primaire-hover);
 
 }
 
@@ -431,8 +395,7 @@ h2 {
 
 #recherche:focus {
 
-    border-color:
-        var(--primaire);
+    border-color: var(--primaire);
 
     background-color: white;
 
@@ -473,20 +436,11 @@ h2 {
 }
 
 
-#filtres button:hover {
-
-    background-color: #f3f4f6;
-
-}
-
-
 #filtres button.actif {
 
-    background-color:
-        var(--primaire);
+    background-color: var(--primaire);
 
-    border-color:
-        var(--primaire);
+    border-color: var(--primaire);
 
     color: white;
 
@@ -494,10 +448,11 @@ h2 {
 
 
 /* =========================
-   FILTRE CATÉGORIE
+   CATÉGORIE / TRI
 ========================= */
 
-#filtre-categorie {
+#filtre-categorie,
+#tri {
 
     display: flex;
 
@@ -520,69 +475,7 @@ h2 {
 }
 
 
-#filtre-categorie label {
-
-    color: var(--texte-secondaire);
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    white-space: nowrap;
-
-}
-
-
-#filtre-categories {
-
-    flex: 1;
-
-    padding: 9px 12px;
-
-    border:
-        1px solid
-        var(--bordure);
-
-    border-radius: 7px;
-
-    background-color: white;
-
-    color: var(--texte);
-
-    font-size: 14px;
-
-    cursor: pointer;
-
-}
-
-
-/* =========================
-   TRI
-========================= */
-
-#tri {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 10px;
-
-    margin-bottom: 20px;
-
-    padding: 12px;
-
-    background-color: #f9fafb;
-
-    border:
-        1px solid
-        var(--bordure);
-
-    border-radius: 8px;
-
-}
-
-
+#filtre-categorie label,
 #tri label {
 
     color: var(--texte-secondaire);
@@ -596,6 +489,7 @@ h2 {
 }
 
 
+#filtre-categories,
 #tri-taches {
 
     flex: 1;
@@ -611,8 +505,6 @@ h2 {
     background-color: white;
 
     color: var(--texte);
-
-    font-size: 14px;
 
     cursor: pointer;
 
@@ -642,13 +534,6 @@ h2 {
 }
 
 
-.tache:hover {
-
-    border-color: #d1d5db;
-
-}
-
-
 .tache-entete {
 
     display: flex;
@@ -668,8 +553,6 @@ h2 {
 
     overflow-wrap: anywhere;
 
-    word-break: break-word;
-
     line-height: 1.5;
 
     cursor: pointer;
@@ -685,10 +568,6 @@ h2 {
 
 }
 
-
-/* =========================
-   INFORMATIONS
-========================= */
 
 .tache-infos {
 
@@ -714,8 +593,6 @@ h2 {
     font-size: 12px;
 
     font-weight: 600;
-
-    white-space: nowrap;
 
 }
 
@@ -747,10 +624,6 @@ h2 {
 }
 
 
-/* =========================
-   CATÉGORIES
-========================= */
-
 .categorie {
 
     padding: 5px 8px;
@@ -760,8 +633,6 @@ h2 {
     font-size: 12px;
 
     font-weight: 600;
-
-    white-space: nowrap;
 
 }
 
@@ -811,17 +682,11 @@ h2 {
 }
 
 
-/* =========================
-   DATE
-========================= */
-
 .date-echeance {
 
     font-size: 13px;
 
     color: var(--texte-secondaire);
-
-    white-space: nowrap;
 
 }
 
@@ -836,8 +701,25 @@ h2 {
 
 
 /* =========================
-   ACTIONS
+   RÉCURRENCE
 ========================= */
+
+.recurrence {
+
+    padding: 5px 8px;
+
+    border-radius: 6px;
+
+    background-color: #e0e7ff;
+
+    color: #3730a3;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
 
 .tache-actions {
 
@@ -863,8 +745,6 @@ h2 {
 
     color: white;
 
-    font-size: 14px;
-
     cursor: pointer;
 
     white-space: nowrap;
@@ -879,41 +759,16 @@ h2 {
 }
 
 
-.modifier:hover {
-
-    background-color: #4b5563;
-
-}
-
-
 .supprimer {
 
-    background-color:
-        var(--danger);
-
-}
-
-
-.supprimer:hover {
-
-    background-color:
-        var(--danger-hover);
+    background-color: var(--danger);
 
 }
 
 
 .enregistrer {
 
-    background-color:
-        var(--succes);
-
-}
-
-
-.enregistrer:hover {
-
-    background-color:
-        var(--succes-hover);
+    background-color: var(--succes);
 
 }
 
@@ -966,8 +821,7 @@ h2 {
 
 .sous-taches-progressions {
 
-    color:
-        var(--texte-secondaire);
+    color: var(--texte-secondaire);
 
     font-size: 13px;
 
@@ -1003,8 +857,6 @@ h2 {
 
     height: 17px;
 
-    flex-shrink: 0;
-
     cursor: pointer;
 
 }
@@ -1019,8 +871,6 @@ h2 {
     font-size: 14px;
 
     overflow-wrap: anywhere;
-
-    word-break: break-word;
 
 }
 
@@ -1045,15 +895,6 @@ h2 {
     cursor: pointer;
 
     font-size: 16px;
-
-    padding: 2px 5px;
-
-}
-
-
-.supprimer-sous-tache:hover {
-
-    color: var(--danger);
 
 }
 
@@ -1083,17 +924,7 @@ h2 {
 
     border-radius: 7px;
 
-    font-size: 14px;
-
     outline: none;
-
-}
-
-
-.champ-sous-tache:focus {
-
-    border-color:
-        var(--primaire);
 
 }
 
@@ -1106,29 +937,14 @@ h2 {
 
     border-radius: 7px;
 
-    background-color:
-        var(--primaire);
+    background-color: var(--primaire);
 
     color: white;
 
     cursor: pointer;
 
-    font-size: 14px;
-
 }
 
-
-.bouton-ajouter-sous-tache:hover {
-
-    background-color:
-        var(--primaire-hover);
-
-}
-
-
-/* =========================
-   PROGRESSION SOUS-TÂCHE
-========================= */
 
 .barre-sous-taches {
 
@@ -1153,13 +969,11 @@ h2 {
 
     height: 100%;
 
-    background-color:
-        var(--succes);
+    background-color: var(--succes);
 
     border-radius: 999px;
 
-    transition:
-        width 0.3s ease;
+    transition: width 0.3s ease;
 
 }
 
@@ -1171,7 +985,8 @@ h2 {
 .champ-modification,
 .champ-priorite-modification,
 .champ-categorie-modification,
-.date-modification {
+.date-modification,
+.recurrence-modification {
 
     padding: 8px 10px;
 
@@ -1183,9 +998,7 @@ h2 {
 
     background-color: white;
 
-    font-size: 15px;
-
-    outline: none;
+    font-size: 14px;
 
 }
 
@@ -1200,8 +1013,25 @@ h2 {
 
 
 /* =========================
-   TABLETTE
+   RESPONSIVE
 ========================= */
+
+@media (max-width: 900px) {
+
+    #formulaire-tache {
+
+        flex-wrap: wrap;
+
+    }
+
+    #tache {
+
+        flex-basis: 100%;
+
+    }
+
+}
+
 
 @media (max-width: 700px) {
 
@@ -1245,10 +1075,6 @@ h2 {
 }
 
 
-/* =========================
-   MOBILE
-========================= */
-
 @media (max-width: 600px) {
 
     header {
@@ -1265,16 +1091,7 @@ h2 {
     }
 
 
-    header p {
-
-        font-size: 16px;
-
-    }
-
-
     main {
-
-        width: 100%;
 
         margin: 20px auto;
 
@@ -1285,16 +1102,10 @@ h2 {
 
     section {
 
-        width: 100%;
-
         padding: 20px;
-
-        border-radius: 12px;
 
     }
 
-
-    /* Dashboard */
 
     .statistiques {
 
@@ -1302,8 +1113,6 @@ h2 {
 
     }
 
-
-    /* Formulaire */
 
     #formulaire-tache {
 
@@ -1315,21 +1124,14 @@ h2 {
     #tache,
     #priorite,
     #categorie,
-    #date-echeance {
-
-        width: 100%;
-
-    }
-
-
+    #date-echeance,
+    #recurrence,
     #formulaire-tache button {
 
         width: 100%;
 
     }
 
-
-    /* Filtres */
 
     #filtres {
 
@@ -1345,26 +1147,7 @@ h2 {
     }
 
 
-    /* Catégorie */
-
-    #filtre-categorie {
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-    }
-
-
-    #filtre-categories {
-
-        width: 100%;
-
-    }
-
-
-    /* Tri */
-
+    #filtre-categorie,
     #tri {
 
         flex-direction: column;
@@ -1374,14 +1157,13 @@ h2 {
     }
 
 
+    #filtre-categories,
     #tri-taches {
 
         width: 100%;
 
     }
 
-
-    /* Tâches */
 
     .tache-entete {
 
@@ -1411,24 +1193,6 @@ h2 {
     }
 
 
-    /* Informations */
-
-    .tache-infos {
-
-        width: 100%;
-
-    }
-
-
-    /* Sous-tâches */
-
-    .sous-tache {
-
-        align-items: flex-start;
-
-    }
-
-
     .ajout-sous-tache {
 
         flex-direction: column;
@@ -1438,18 +1202,6 @@ h2 {
 
     .champ-sous-tache,
     .bouton-ajouter-sous-tache {
-
-        width: 100%;
-
-    }
-
-
-    /* Modification */
-
-    .champ-modification,
-    .champ-priorite-modification,
-    .champ-categorie-modification,
-    .date-modification {
 
         width: 100%;
 
