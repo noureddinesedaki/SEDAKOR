@@ -3,6 +3,10 @@
 }
 
 
+/* =========================
+   VARIABLES
+========================= */
+
 :root {
 
     --fond: #f5f7fb;
@@ -33,6 +37,10 @@
 }
 
 
+/* =========================
+   GLOBAL
+========================= */
+
 body {
 
     margin: 0;
@@ -47,6 +55,10 @@ body {
 
 }
 
+
+/* =========================
+   HEADER
+========================= */
 
 header {
 
@@ -85,6 +97,10 @@ header p {
 
 }
 
+
+/* =========================
+   CONTENU PRINCIPAL
+========================= */
 
 main {
 
@@ -280,22 +296,31 @@ h2 {
 }
 
 
+/*
+   FORMULAIRE PRINCIPAL
+
+   On utilise CSS Grid pour éviter
+   que les champs débordent de la carte.
+*/
+
 #formulaire-tache {
 
-    display: flex;
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 2fr)
+        minmax(0, 1.1fr)
+        minmax(0, 1.1fr)
+        minmax(0, 1.2fr)
+        minmax(0, 1.3fr)
+        minmax(0, 1fr)
+        auto;
 
     gap: 10px;
 
     align-items: stretch;
 
-}
-
-
-#tache {
-
-    flex: 1;
-
-    min-width: 0;
+    width: 100%;
 
 }
 
@@ -304,7 +329,12 @@ h2 {
 #priorite,
 #categorie,
 #date-echeance,
+#heure-rappel,
 #recurrence {
+
+    width: 100%;
+
+    min-width: 0;
 
     padding: 13px 12px;
 
@@ -329,6 +359,7 @@ h2 {
 #priorite:focus,
 #categorie:focus,
 #date-echeance:focus,
+#heure-rappel:focus,
 #recurrence:focus {
 
     border-color: var(--primaire);
@@ -355,6 +386,8 @@ h2 {
     font-weight: 600;
 
     cursor: pointer;
+
+    white-space: nowrap;
 
 }
 
@@ -584,6 +617,10 @@ h2 {
 }
 
 
+/* =========================
+   PRIORITÉS
+========================= */
+
 .priorite {
 
     padding: 5px 8px;
@@ -623,6 +660,10 @@ h2 {
 
 }
 
+
+/* =========================
+   CATÉGORIES
+========================= */
 
 .categorie {
 
@@ -720,6 +761,10 @@ h2 {
 
 }
 
+
+/* =========================
+   ACTIONS
+========================= */
 
 .tache-actions {
 
@@ -1016,22 +1061,33 @@ h2 {
    RESPONSIVE
 ========================= */
 
+/*
+   Tablettes / petits écrans
+*/
+
 @media (max-width: 900px) {
 
     #formulaire-tache {
 
-        flex-wrap: wrap;
+        grid-template-columns:
+            minmax(0, 2fr)
+            minmax(0, 1fr)
+            minmax(0, 1fr);
 
     }
 
     #tache {
 
-        flex-basis: 100%;
+        grid-column: 1 / -1;
 
     }
 
 }
 
+
+/*
+   Écrans moyens
+*/
 
 @media (max-width: 700px) {
 
@@ -1057,6 +1113,22 @@ h2 {
     }
 
 
+    #formulaire-tache {
+
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(0, 1fr);
+
+    }
+
+
+    #tache {
+
+        grid-column: 1 / -1;
+
+    }
+
+
     .tache-entete {
 
         align-items: flex-start;
@@ -1074,6 +1146,10 @@ h2 {
 
 }
 
+
+/*
+   Téléphones
+*/
 
 @media (max-width: 600px) {
 
@@ -1116,7 +1192,14 @@ h2 {
 
     #formulaire-tache {
 
-        flex-direction: column;
+        grid-template-columns: 1fr;
+
+    }
+
+
+    #tache {
+
+        grid-column: auto;
 
     }
 
@@ -1125,6 +1208,7 @@ h2 {
     #priorite,
     #categorie,
     #date-echeance,
+    #heure-rappel,
     #recurrence,
     #formulaire-tache button {
 
@@ -1209,106 +1293,197 @@ h2 {
 
 }
 
+
 /* =========================
    V7 : RAPPELS / NOTIFICATIONS
 ========================= */
 
 #notifications {
+
     position: relative;
+
 }
+
 
 .notifications-entete {
+
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     gap: 15px;
+
     flex-wrap: wrap;
+
 }
+
 
 #bouton-notifications {
+
     padding: 11px 16px;
+
     border: none;
+
     border-radius: 8px;
+
     background-color: var(--primaire);
+
     color: white;
+
     font-size: 14px;
+
     font-weight: 600;
+
     cursor: pointer;
+
 }
+
 
 #bouton-notifications:hover {
+
     background-color: var(--primaire-hover);
+
 }
+
 
 #statut-notifications {
+
     margin: 10px 0 0;
+
     color: var(--texte-secondaire);
+
     font-size: 14px;
+
 }
+
 
 .rappel {
+
     padding: 5px 8px;
+
     border-radius: 6px;
+
     background-color: #fef3c7;
+
     color: #92400e;
+
     font-size: 12px;
+
     font-weight: 600;
+
 }
+
 
 .rappel-proche {
+
     background-color: #ffedd5;
+
     color: #9a3412;
+
 }
+
 
 .rappel-du-jour {
+
     background-color: #dbeafe;
+
     color: #1e40af;
+
 }
 
+
 .tache-rappel-proche {
+
     border-color: #f59e0b;
+
 }
+
 
 #heure-rappel,
 .heure-rappel-modification {
+
+    width: 100%;
+
+    min-width: 0;
+
     padding: 13px 12px;
-    border: 1px solid var(--bordure);
+
+    border:
+        1px solid
+        var(--bordure);
+
     border-radius: 8px;
+
     background-color: #fafafa;
+
     color: var(--texte);
+
     font-size: 15px;
+
     outline: none;
+
 }
+
 
 #heure-rappel:focus,
 .heure-rappel-modification:focus {
+
     border-color: var(--primaire);
+
     background-color: white;
+
 }
+
 
 .heure-rappel-affichage {
+
     font-size: 13px;
+
     color: var(--texte-secondaire);
+
 }
+
+
+/* =========================
+   RESPONSIVE NOTIFICATIONS
+========================= */
 
 @media (max-width: 900px) {
+
     #notifications {
+
         margin-bottom: 25px;
+
     }
+
 }
 
+
 @media (max-width: 600px) {
+
     .notifications-entete {
+
         align-items: stretch;
+
         flex-direction: column;
+
     }
 
+
     #bouton-notifications {
+
         width: 100%;
+
     }
+
 
     #heure-rappel,
     .heure-rappel-modification {
+
         width: 100%;
+
     }
+
 }
