@@ -1,0 +1,140 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #222;
+}
+
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #111;
+    color: white;
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font-size: 40px;
+}
+
+header p {
+    margin: 0;
+    font-size: 18px;
+}
+
+main {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+section {
+    background-color: white;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+#formulaire-tache {
+    display: flex;
+    gap: 10px;
+}
+
+#tache {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#formulaire-tache button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #111;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#formulaire-tache button:hover {
+    background-color: #333;
+}
+
+.tache {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-top: 10px;
+    background-color: #f4f6f8;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.supprimer {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background-color: #c0392b;
+    color: white;
+    cursor: pointer;
+}
+
+.supprimer:hover {
+    background-color: #a93226;
+}
+
+.tache-terminee {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+#recherche {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#filtres {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#filtres button {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+}
+
+#filtres button:hover {
+    background-color: #f4f6f8;
+}
+
+#compteur-taches {
+    margin-top: -10px;
+    margin-bottom: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+#filtres button.actif {
+    background-color: #111;
+    color: white;
+}

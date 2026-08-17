@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TaskFlow - Gestionnaire de tâches</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>TaskFlow</h1>
+        <p>Organisez vos tâches simplement.</p>
+    </header>
+
+    <main>
+
+        <section id="ajout-tache">
+
+            <h2>Ajouter une tâche</h2>
+
+            <p id="compteur-taches">0 tâche</p>
+
+            <form id="formulaire-tache">
+
+                <input 
+                    type="text" 
+                    id="tache"
+                    placeholder="Ex : Apprendre JavaScript"
+                >
+
+                <button type="submit">
+                    Ajouter
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <section id="liste-taches">
+
+            <h2>Mes tâches</h2>
+
+            <input
+    type="text"
+    id="recherche"
+    placeholder="Rechercher une tâche..."
+>
+
+            <div id="filtres">
+
+    <button type="button" data-filtre="toutes">Toutes</button>
+    <button type="button" data-filtre="en-cours">En cours</button>
+    <button type="button" data-filtre="terminees">Terminées</button>
+
+</div>
+
+            <div id="taches">
+                <!-- Les tâches seront ajoutées ici avec JavaScript -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="js/script.js"></script>
+
+</body>
+</html>
