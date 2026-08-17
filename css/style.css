@@ -1487,3 +1487,169 @@ h2 {
     }
 
 }
+
+/* =========================================================
+   SEDAKOR V8.2 — CORRECTION DU MODE MODIFICATION
+   ========================================================= */
+
+/*
+   Quand une tâche est en modification, le champ texte
+   doit prendre toute la largeur disponible.
+*/
+
+.tache-entete:has(.champ-modification) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* Champ texte de modification */
+
+.tache-entete:has(.champ-modification) .champ-modification {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+    min-height: 48px;
+
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 1.4;
+
+    border: 1px solid var(--bordure);
+    border-radius: 8px;
+
+    background-color: white;
+
+    outline: none;
+}
+
+
+/* Quand on clique dans le champ */
+
+.tache-entete:has(.champ-modification) .champ-modification:focus {
+    border-color: var(--primaire);
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* Les sélecteurs de modification */
+
+.tache-entete:has(.champ-modification)
+.champ-priorite-modification,
+
+.tache-entete:has(.champ-modification)
+.champ-categorie-modification,
+
+.tache-entete:has(.champ-modification)
+.date-modification,
+
+.tache-entete:has(.champ-modification)
+.recurrence-modification {
+    flex: 1 1 auto;
+    min-width: 150px;
+}
+
+
+/* Boutons Enregistrer / Annuler */
+
+.tache-entete:has(.champ-modification) .tache-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   TABLETTE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .tache-entete:has(.champ-modification) {
+        align-items: stretch;
+    }
+
+    .tache-entete:has(.champ-modification)
+    .champ-modification {
+        flex-basis: 100%;
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .tache-entete:has(.champ-modification)
+    .champ-priorite-modification,
+
+    .tache-entete:has(.champ-modification)
+    .champ-categorie-modification,
+
+    .tache-entete:has(.champ-modification)
+    .date-modification,
+
+    .tache-entete:has(.champ-modification)
+    .recurrence-modification {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 180px;
+    }
+
+    .tache-entete:has(.champ-modification)
+    .tache-actions {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+
+/* =========================================================
+   TÉLÉPHONE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .tache-entete:has(.champ-modification) {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tache-entete:has(.champ-modification)
+    .champ-modification,
+
+    .tache-entete:has(.champ-modification)
+    .champ-priorite-modification,
+
+    .tache-entete:has(.champ-modification)
+    .champ-categorie-modification,
+
+    .tache-entete:has(.champ-modification)
+    .date-modification,
+
+    .tache-entete:has(.champ-modification)
+    .recurrence-modification {
+
+        width: 100%;
+        min-width: 100%;
+        flex: none;
+        box-sizing: border-box;
+    }
+
+    .tache-entete:has(.champ-modification)
+    .tache-actions {
+        width: 100%;
+        flex-direction: column;
+        margin-left: 0;
+    }
+
+    .tache-entete:has(.champ-modification)
+    .tache-actions button {
+        width: 100%;
+    }
+}
