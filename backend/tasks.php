@@ -5,17 +5,305 @@ header("Content-Type: application/json; charset=UTF-8");
 require_once "config.php";
 
 
+// ============================================================
+// FONCTIONS UTILITAIRES
+// ============================================================
+
+function repondre($donnees, $code = 200)
+{
+    http_response_code($code);
+
+    echo json_encode(
+        $donnees,
+        JSON_UNESCAPED_UNICODE
+    );
+
+    exit;
+}
+
+
+function lireJSON()
+{
+    $contenu =
+        file_get_contents("php://input");
+
+    if (
+        $contenu === false ||
+        trim($contenu) === ""
+    ) {
+
+        repondre([
+            "erreur" =>
+                "Aucune donnée reçue."
+        ], 400);
+
+    }
+
+
+    $donnees =
+        json_decode(
+            $contenu,
+            true
+        );
+
+
+    if (
+        json_last_error() !==
+        JSON_ERROR_NONE
+    ) {
+
+        repondre([
+            "erreur" =>
+                "JSON invalide."
+        ], 400);
+
+    }
+
+
+    if (
+        !is_array($donnees)
+    ) {
+
+        repondre([
+            "erreur" =>
+                "Les données reçues sont invalides."
+        ], 400);
+
+    }
+
+
+    return $donnees;
+}
+
+
+function valeurAutorisee(
+    $valeur,
+    $valeurs
+) {
+
+    return in_array(
+        $valeur,
+        $valeurs,
+        true
+    );
+
+}
+
+
+function dateValide(
+    $date
+) {
+
+    if (
+        $date === null ||
+        $date === ""
+    ) {
+
+        return true;
+
+    }
+
+
+    if (
+        !is_string($date)
+    ) {
+
+        return false;
+
+    }
+
+
+    $objetDate =
+        DateTime::createFromFormat(
+            "Y-m-d",
+            $date
+        );
+
+
+    return (
+        $objetDate !== false &&
+        $objetDate->format("Y-m-d") ===
+        $date
+    );
+
+}
+
+
+function heureValide(
+    $heure
+) {
+
+    if (
+        $heure === null ||
+        $heure === ""
+    ) {
+
+        return true;
+
+    }
+
+
+    if (
+        !is_string($heure)
+    ) {
+
+        return false;
+
+    }
+
+
+    $objetHeure =
+        DateTime::createFromFormat(
+            "H:i",
+            $heure
+        );
+
+
+    return (
+        $objetHeure !== false &&
+        $objetHeure->format("H:i") ===
+        $heure
+    );
+
+}
+
+
+function validerSousTaches(
+    $sousTaches
+) {
+
+    if (
+        !is_array($sousTaches)
+    ) {
+
+        return false;
+
+    }
+
+
+    foreach (
+        $sousTaches as $sousTache
+    ) {
+
+        if (
+            !is_array($sousTache)
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            !array_key_exists(
+                "id",
+                $sousTache
+            )
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            !array_key_exists(
+                "texte",
+                $sousTache
+            )
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            !is_scalar(
+                $sousTache["id"]
+            )
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            !is_string(
+                $sousTache["texte"]
+            )
+        ) {
+
+            return false;
+
+        }
+
+
+        $texte =
+            trim(
+                $sousTache["texte"]
+            );
+
+
+        if (
+            $texte === ""
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            strlen($texte) >
+            500
+        ) {
+
+            return false;
+
+        }
+
+
+        if (
+            isset(
+                $sousTache["terminee"]
+            ) &&
+            !is_bool(
+                $sousTache["terminee"]
+            ) &&
+            !in_array(
+                $sousTache["terminee"],
+                [0, 1, "0", "1"],
+                true
+            )
+        ) {
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+// ============================================================
+// CONNEXION MYSQL
+// ============================================================
+
 try {
 
-    // =========================
-    // CONNEXION À MYSQL
-    // =========================
+    $pdo =
+        new PDO(
+            "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+            $username,
+            $password
+        );
 
-    $pdo = new PDO(
-        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-        $username,
-        $password
-    );
 
     $pdo->setAttribute(
         PDO::ATTR_ERRMODE,
@@ -23,76 +311,121 @@ try {
     );
 
 
-    // =========================
+    $pdo->setAttribute(
+        PDO::ATTR_DEFAULT_FETCH_MODE,
+        PDO::FETCH_ASSOC
+    );
+
+
+    // ========================================================
     // MÉTHODE HTTP
-    // =========================
+    // ========================================================
 
-    $method = $_SERVER["REQUEST_METHOD"];
-
-
-    // =========================================================
-    // GET : récupérer toutes les tâches
-    // =========================================================
-
-    if ($method === "GET") {
-
-        $requete = $pdo->query(
-            "SELECT
-                id,
-                user_id,
-                titre,
-                priorite,
-                categorie,
-                date_echeance,
-                heure_rappel,
-                rappel_active,
-                recurrence,
-                terminee,
-                sous_taches,
-                created_at,
-                updated_at
-             FROM tasks
-             ORDER BY id DESC"
-        );
+    $method =
+        $_SERVER["REQUEST_METHOD"];
 
 
-        $taches = $requete->fetchAll(
-            PDO::FETCH_ASSOC
-        );
+    // ========================================================
+    // VALEURS AUTORISÉES
+    // ========================================================
+
+    $prioritesAutorisees = [
+        "basse",
+        "moyenne",
+        "haute"
+    ];
 
 
-        /*
-         * Conversion des données MySQL
-         * vers les noms utilisés par JavaScript.
-         */
+    $categoriesAutorisees = [
+        "travail",
+        "etudes",
+        "personnel",
+        "projets",
+        "autre"
+    ];
 
-        foreach ($taches as &$tache) {
+
+    $recurrencesAutorisees = [
+        "aucune",
+        "quotidienne",
+        "hebdomadaire",
+        "mensuelle"
+    ];
+
+
+    // ========================================================
+    // GET
+    // RÉCUPÉRER LES TÂCHES
+    // ========================================================
+
+    if (
+        $method === "GET"
+    ) {
+
+        $requete =
+            $pdo->query(
+                "SELECT
+                    id,
+                    user_id,
+                    titre,
+                    priorite,
+                    categorie,
+                    date_echeance,
+                    heure_rappel,
+                    rappel_active,
+                    recurrence,
+                    terminee,
+                    sous_taches,
+                    created_at,
+                    updated_at
+                 FROM tasks
+                 ORDER BY id DESC"
+            );
+
+
+        $taches =
+            $requete->fetchAll();
+
+
+        foreach (
+            $taches as &$tache
+        ) {
 
             $tache["id"] =
-                (int) $tache["id"];
+                (int)
+                $tache["id"];
 
-            if ($tache["user_id"] !== null) {
+
+            if (
+                $tache["user_id"] !==
+                null
+            ) {
 
                 $tache["user_id"] =
-                    (int) $tache["user_id"];
+                    (int)
+                    $tache["user_id"];
+
             }
 
 
             $tache["terminee"] =
-                (bool) $tache["terminee"];
+                (bool)
+                $tache["terminee"];
 
 
             $tache["rappel_active"] =
-                (bool) $tache["rappel_active"];
+                (bool)
+                $tache["rappel_active"];
 
 
-            /*
-             * MySQL stocke les sous-tâches
-             * en JSON.
-             */
+            // -----------------------------------------------
+            // Sous-tâches JSON
+            // -----------------------------------------------
 
             if (
-                !empty($tache["sous_taches"])
+                !empty(
+                    $tache["sous_taches"]
+                )
             ) {
 
                 $sousTaches =
@@ -101,79 +434,64 @@ try {
                         true
                     );
 
+
                 if (
-                    is_array($sousTaches)
+                    is_array(
+                        $sousTaches
+                    )
                 ) {
 
-                    $tache["sous_taches"] =
+                    $tache["sousTaches"] =
                         $sousTaches;
 
                 } else {
 
-                    $tache["sous_taches"] =
+                    $tache["sousTaches"] =
                         [];
+
                 }
 
             } else {
 
-                $tache["sous_taches"] =
+                $tache["sousTaches"] =
                     [];
+
             }
 
-
-            /*
-             * Le JavaScript utilise
-             * sousTaches.
-             */
-
-            $tache["sousTaches"] =
-                $tache["sous_taches"];
 
             unset(
                 $tache["sous_taches"]
             );
+
         }
+
 
         unset($tache);
 
 
-        echo json_encode(
-            $taches,
-            JSON_UNESCAPED_UNICODE
+        repondre(
+            $taches
         );
 
-        exit;
     }
 
 
-    // =========================================================
-    // POST : créer une nouvelle tâche
-    // =========================================================
+    // ========================================================
+    // POST
+    // CRÉER UNE TÂCHE
+    // ========================================================
 
-    if ($method === "POST") {
+    if (
+        $method === "POST"
+    ) {
 
-        $donnees = json_decode(
-            file_get_contents("php://input"),
-            true
-        );
-
-
-        if (!$donnees) {
-
-            http_response_code(400);
-
-            echo json_encode([
-                "erreur" =>
-                    "Données invalides."
-            ]);
-
-            exit;
-        }
+        $donnees =
+            lireJSON();
 
 
-        // -------------------------
-        // Récupération des données
-        // -------------------------
+        // ----------------------------------------------------
+        // TITRE
+        // ----------------------------------------------------
 
         $titre =
             trim(
@@ -181,30 +499,152 @@ try {
             );
 
 
-        $priorite =
-            $donnees["priorite"]
-            ?? "moyenne";
+        if (
+            $titre === ""
+        ) {
 
+            repondre([
+                "erreur" =>
+                    "Le titre est obligatoire."
+            ], 400);
+
+        }
+
+
+        if (
+            mb_strlen($titre) >
+            500
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Le titre ne peut pas dépasser 500 caractères."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
+        // PRIORITÉ
+        // ----------------------------------------------------
+
+        $priorite =
+            $donnees["priorite"] ??
+            "moyenne";
+
+
+        if (
+            !valeurAutorisee(
+                $priorite,
+                $prioritesAutorisees
+            )
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Priorité invalide."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
+        // CATÉGORIE
+        // ----------------------------------------------------
 
         $categorie =
-            $donnees["categorie"]
-            ?? "autre";
+            $donnees["categorie"] ??
+            "autre";
 
+
+        if (
+            !valeurAutorisee(
+                $categorie,
+                $categoriesAutorisees
+            )
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Catégorie invalide."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
+        // DATE
+        // ----------------------------------------------------
 
         $dateEcheance =
-            $donnees["dateEcheance"]
-            ?? null;
+            $donnees["dateEcheance"] ??
+            null;
 
+
+        if (
+            !dateValide(
+                $dateEcheance
+            )
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Date d'échéance invalide."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
+        // HEURE
+        // ----------------------------------------------------
 
         $heureRappel =
-            $donnees["heureRappel"]
-            ?? null;
+            $donnees["heureRappel"] ??
+            null;
 
+
+        if (
+            !heureValide(
+                $heureRappel
+            )
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Heure de rappel invalide."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
+        // RÉCURRENCE
+        // ----------------------------------------------------
 
         $recurrence =
-            $donnees["recurrence"]
-            ?? "aucune";
+            $donnees["recurrence"] ??
+            "aucune";
 
+
+        if (
+            !valeurAutorisee(
+                $recurrence,
+                $recurrencesAutorisees
+            )
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Type de récurrence invalide."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
+        // STATUT
+        // ----------------------------------------------------
 
         $terminee =
             !empty(
@@ -214,31 +654,28 @@ try {
                 : 0;
 
 
+        // ----------------------------------------------------
+        // SOUS-TÂCHES
+        // ----------------------------------------------------
+
         $sousTaches =
-            $donnees["sousTaches"]
-            ?? [];
+            $donnees["sousTaches"] ??
+            [];
 
 
-        // -------------------------
-        // Vérification du titre
-        // -------------------------
+        if (
+            !validerSousTaches(
+                $sousTaches
+            )
+        ) {
 
-        if ($titre === "") {
-
-            http_response_code(400);
-
-            echo json_encode([
+            repondre([
                 "erreur" =>
-                    "Le titre est obligatoire."
-            ]);
+                    "Les sous-tâches sont invalides."
+            ], 400);
 
-            exit;
         }
 
-
-        // -------------------------
-        // Conversion sous-tâches
-        // -------------------------
 
         $sousTachesJson =
             json_encode(
@@ -247,9 +684,21 @@ try {
             );
 
 
-        // -------------------------
+        if (
+            $sousTachesJson === false
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Impossible d'enregistrer les sous-tâches."
+            ], 400);
+
+        }
+
+
+        // ----------------------------------------------------
         // INSERT
-        // -------------------------
+        // ----------------------------------------------------
 
         $requete =
             $pdo->prepare(
@@ -310,14 +759,11 @@ try {
 
             ":sous_taches" =>
                 $sousTachesJson
+
         ]);
 
 
-        // -------------------------
-        // Réponse
-        // -------------------------
-
-        echo json_encode([
+        repondre([
 
             "succes" =>
                 true,
@@ -326,79 +772,91 @@ try {
                 (int)
                 $pdo->lastInsertId()
 
-        ]);
+        ], 201);
 
-
-        exit;
     }
 
 
-    // =========================================================
-    // PUT : modifier une tâche
-    // =========================================================
+    // ========================================================
+    // PUT
+    // MODIFIER UNE TÂCHE
+    // ========================================================
 
-    if ($method === "PUT") {
+    if (
+        $method === "PUT"
+    ) {
 
-        $donnees = json_decode(
-            file_get_contents("php://input"),
-            true
-        );
-
-
-        // -------------------------
-        // Vérification des données
-        // -------------------------
-
-        if (!$donnees) {
-
-            http_response_code(400);
-
-            echo json_encode([
-                "erreur" =>
-                    "Données invalides."
-            ]);
-
-            exit;
-        }
+        $donnees =
+            lireJSON();
 
 
-        // -------------------------
-        // ID obligatoire
-        // -------------------------
+        // ----------------------------------------------------
+        // ID
+        // ----------------------------------------------------
 
         $id =
-            $donnees["id"]
-            ?? null;
+            $donnees["id"] ??
+            null;
 
 
-        if (!$id) {
+        if (
+            !is_numeric($id) ||
+            (int)$id <= 0
+        ) {
 
-            http_response_code(400);
-
-            echo json_encode([
+            repondre([
                 "erreur" =>
-                    "L'identifiant de la tâche est obligatoire."
-            ]);
+                    "Identifiant de tâche invalide."
+            ], 400);
 
-            exit;
         }
 
 
-        // -------------------------
-        // Champs à modifier
-        // -------------------------
+        $id =
+            (int)$id;
+
+
+        // ----------------------------------------------------
+        // VÉRIFIER QUE LA TÂCHE EXISTE
+        // ----------------------------------------------------
+
+        $verification =
+            $pdo->prepare(
+                "SELECT id
+                 FROM tasks
+                 WHERE id = :id"
+            );
+
+
+        $verification->execute([
+            ":id" =>
+                $id
+        ]);
+
+
+        if (
+            !$verification->fetch()
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Tâche introuvable."
+            ], 404);
+
+        }
+
 
         $champs = [];
 
-
         $parametres = [
-            ":id" => $id
+            ":id" =>
+                $id
         ];
 
 
-        // -------------------------
+        // ----------------------------------------------------
         // TITRE
-        // -------------------------
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -407,20 +865,50 @@ try {
             )
         ) {
 
+            $titre =
+                trim(
+                    $donnees["texte"]
+                );
+
+
+            if (
+                $titre === ""
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Le titre ne peut pas être vide."
+                ], 400);
+
+            }
+
+
+            if (
+                mb_strlen($titre) >
+                500
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Le titre ne peut pas dépasser 500 caractères."
+                ], 400);
+
+            }
+
+
             $champs[] =
                 "titre = :titre";
 
 
             $parametres[":titre"] =
-                trim(
-                    $donnees["texte"]
-                );
+                $titre;
+
         }
 
 
-        // -------------------------
+        // ----------------------------------------------------
         // PRIORITÉ
-        // -------------------------
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -429,18 +917,34 @@ try {
             )
         ) {
 
+            if (
+                !valeurAutorisee(
+                    $donnees["priorite"],
+                    $prioritesAutorisees
+                )
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Priorité invalide."
+                ], 400);
+
+            }
+
+
             $champs[] =
                 "priorite = :priorite";
 
 
             $parametres[":priorite"] =
                 $donnees["priorite"];
+
         }
 
 
-        // -------------------------
+        // ----------------------------------------------------
         // CATÉGORIE
-        // -------------------------
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -449,18 +953,34 @@ try {
             )
         ) {
 
+            if (
+                !valeurAutorisee(
+                    $donnees["categorie"],
+                    $categoriesAutorisees
+                )
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Catégorie invalide."
+                ], 400);
+
+            }
+
+
             $champs[] =
                 "categorie = :categorie";
 
 
             $parametres[":categorie"] =
                 $donnees["categorie"];
+
         }
 
 
-        // -------------------------
-        // DATE D'ÉCHÉANCE
-        // -------------------------
+        // ----------------------------------------------------
+        // DATE
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -469,19 +989,36 @@ try {
             )
         ) {
 
+            if (
+                !dateValide(
+                    $donnees["dateEcheance"]
+                )
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Date d'échéance invalide."
+                ], 400);
+
+            }
+
+
             $champs[] =
                 "date_echeance = :date_echeance";
 
 
-            $parametres[":date_echeance"] =
+            $parametres[
+                ":date_echeance"
+            ] =
                 $donnees["dateEcheance"]
                 ?: null;
+
         }
 
 
-        // -------------------------
-        // HEURE DU RAPPEL
-        // -------------------------
+        // ----------------------------------------------------
+        // RAPPEL
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -490,11 +1027,27 @@ try {
             )
         ) {
 
+            if (
+                !heureValide(
+                    $donnees["heureRappel"]
+                )
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Heure de rappel invalide."
+                ], 400);
+
+            }
+
+
             $champs[] =
                 "heure_rappel = :heure_rappel";
 
 
-            $parametres[":heure_rappel"] =
+            $parametres[
+                ":heure_rappel"
+            ] =
                 $donnees["heureRappel"]
                 ?: null;
 
@@ -503,18 +1056,21 @@ try {
                 "rappel_active = :rappel_active";
 
 
-            $parametres[":rappel_active"] =
+            $parametres[
+                ":rappel_active"
+            ] =
                 !empty(
                     $donnees["heureRappel"]
                 )
                     ? 1
                     : 0;
+
         }
 
 
-        // -------------------------
+        // ----------------------------------------------------
         // RÉCURRENCE
-        // -------------------------
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -523,18 +1079,36 @@ try {
             )
         ) {
 
+            if (
+                !valeurAutorisee(
+                    $donnees["recurrence"],
+                    $recurrencesAutorisees
+                )
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Type de récurrence invalide."
+                ], 400);
+
+            }
+
+
             $champs[] =
                 "recurrence = :recurrence";
 
 
-            $parametres[":recurrence"] =
+            $parametres[
+                ":recurrence"
+            ] =
                 $donnees["recurrence"];
+
         }
 
 
-        // -------------------------
-        // TÂCHE TERMINÉE
-        // -------------------------
+        // ----------------------------------------------------
+        // TERMINÉE
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -543,22 +1117,29 @@ try {
             )
         ) {
 
-            $champs[] =
-                "terminee = :terminee";
-
-
-            $parametres[":terminee"] =
+            $terminee =
                 !empty(
                     $donnees["terminee"]
                 )
                     ? 1
                     : 0;
+
+
+            $champs[] =
+                "terminee = :terminee";
+
+
+            $parametres[
+                ":terminee"
+            ] =
+                $terminee;
+
         }
 
 
-        // -------------------------
+        // ----------------------------------------------------
         // SOUS-TÂCHES
-        // -------------------------
+        // ----------------------------------------------------
 
         if (
             array_key_exists(
@@ -567,40 +1148,70 @@ try {
             )
         ) {
 
-            $champs[] =
-                "sous_taches = :sous_taches";
+            if (
+                !validerSousTaches(
+                    $donnees["sousTaches"]
+                )
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Les sous-tâches sont invalides."
+                ], 400);
+
+            }
 
 
-            $parametres[":sous_taches"] =
+            $sousTachesJson =
                 json_encode(
                     $donnees["sousTaches"],
                     JSON_UNESCAPED_UNICODE
                 );
+
+
+            if (
+                $sousTachesJson === false
+            ) {
+
+                repondre([
+                    "erreur" =>
+                        "Impossible d'enregistrer les sous-tâches."
+                ], 400);
+
+            }
+
+
+            $champs[] =
+                "sous_taches = :sous_taches";
+
+
+            $parametres[
+                ":sous_taches"
+            ] =
+                $sousTachesJson;
+
         }
 
 
-        // -------------------------
-        // Rien à modifier
-        // -------------------------
+        // ----------------------------------------------------
+        // RIEN À MODIFIER
+        // ----------------------------------------------------
 
         if (
             empty($champs)
         ) {
 
-            http_response_code(400);
-
-            echo json_encode([
+            repondre([
                 "erreur" =>
                     "Aucune donnée à modifier."
-            ]);
+            ], 400);
 
-            exit;
         }
 
 
-        // -------------------------
+        // ----------------------------------------------------
         // UPDATE
-        // -------------------------
+        // ----------------------------------------------------
 
         $sql =
             "UPDATE tasks SET " .
@@ -622,136 +1233,137 @@ try {
         );
 
 
-        // -------------------------
-        // Vérification existence
-        // -------------------------
-
-        if (
-            $requete->rowCount() === 0
-        ) {
-
-            $verification =
-                $pdo->prepare(
-                    "SELECT id
-                     FROM tasks
-                     WHERE id = :id"
-                );
-
-
-            $verification->execute([
-                ":id" => $id
-            ]);
-
-
-            if (
-                !$verification->fetch()
-            ) {
-
-                http_response_code(404);
-
-                echo json_encode([
-                    "erreur" =>
-                        "Tâche introuvable."
-                ]);
-
-                exit;
-            }
-        }
-
-
-        // -------------------------
-        // Réponse
-        // -------------------------
-
-        echo json_encode([
+        repondre([
 
             "succes" =>
                 true,
 
             "id" =>
-                (int) $id
+                $id
 
         ]);
 
-
-        exit;
     }
 
-    // =========================
-// DELETE : supprimer une tâche
-// =========================
 
-if ($method === "DELETE") {
+    // ========================================================
+    // DELETE
+    // SUPPRIMER UNE TÂCHE
+    // ========================================================
 
-    $donnees = json_decode(
-        file_get_contents("php://input"),
-        true
-    );
+    if (
+        $method === "DELETE"
+    ) {
 
-    $id = $donnees["id"] ?? $_GET["id"] ?? null;
+        $donnees =
+            lireJSON();
 
-    if (!$id || !is_numeric($id)) {
 
-        http_response_code(400);
+        $id =
+            $donnees["id"] ??
+            $_GET["id"] ??
+            null;
 
-        echo json_encode([
-            "erreur" => "ID de tâche invalide."
+
+        if (
+            !is_numeric($id) ||
+            (int)$id <= 0
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "ID de tâche invalide."
+            ], 400);
+
+        }
+
+
+        $id =
+            (int)$id;
+
+
+        $requete =
+            $pdo->prepare(
+                "DELETE FROM tasks
+                 WHERE id = :id"
+            );
+
+
+        $requete->execute([
+            ":id" =>
+                $id
         ]);
 
-        exit;
-    }
 
-    $requete = $pdo->prepare(
-        "DELETE FROM tasks WHERE id = :id"
-    );
+        if (
+            $requete->rowCount() ===
+            0
+        ) {
 
-    $requete->execute([
-        ":id" => $id
-    ]);
+            repondre([
+                "erreur" =>
+                    "Tâche introuvable."
+            ], 404);
 
-    if ($requete->rowCount() === 0) {
+        }
 
-        http_response_code(404);
 
-        echo json_encode([
-            "erreur" => "Tâche introuvable."
+        repondre([
+
+            "succes" =>
+                true,
+
+            "message" =>
+                "Tâche supprimée.",
+
+            "id" =>
+                $id
+
         ]);
 
-        exit;
     }
 
-    echo json_encode([
-        "succes" => true,
-        "message" => "Tâche supprimée.",
-        "id" => (int) $id
-    ]);
 
-    exit;
-}
+    // ========================================================
+    // MÉTHODE INCONNUE
+    // ========================================================
 
-    // =========================================================
-    // MÉTHODE HTTP INCONNUE
-    // =========================================================
-
-    http_response_code(405);
-
-
-    echo json_encode([
+    repondre([
         "erreur" =>
             "Méthode HTTP non autorisée."
-    ]);
+    ], 405);
+
+
 }
+catch (
+    PDOException $e
+) {
+
+    error_log(
+        "SEDAKOR PDO ERROR: " .
+        $e->getMessage()
+    );
 
 
-catch (PDOException $e) {
-
-    http_response_code(500);
-
-
-    echo json_encode([
-
+    repondre([
         "erreur" =>
-            $e->getMessage()
+            "Erreur interne de la base de données."
+    ], 500);
 
-    ]);
+}
+catch (
+    Throwable $e
+) {
+
+    error_log(
+        "SEDAKOR API ERROR: " .
+        $e->getMessage()
+    );
+
+
+    repondre([
+        "erreur" =>
+            "Une erreur interne est survenue."
+    ], 500);
+
 }
