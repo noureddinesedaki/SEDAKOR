@@ -66,6 +66,8 @@ const progression =
         "#progression"
     );
 
+const API_URL = "/TaskFlow/backend/tasks.php";
+
 
 let taches = [];
 
@@ -80,25 +82,72 @@ let triActuel = "recentes";
 // CHARGEMENT
 // =========================
 
-const tachesSauvegardees =
-    localStorage.getItem("taches");
-
-
-if (tachesSauvegardees) {
+async function chargerTaches() {
 
     try {
 
-        taches =
-            JSON.parse(
-                tachesSauvegardees
+        const reponse =
+            await fetch(API_URL);
+
+        if (!reponse.ok) {
+            throw new Error(
+                "Erreur HTTP : " + reponse.status
             );
+        }
+
+        const donnees =
+            await reponse.json();
+
+        taches = donnees.map(function (tache) {
+
+            return {
+                id: Number(tache.id),
+
+                user_id:
+                    tache.user_id ?? null,
+
+                texte:
+                    tache.titre,
+
+                terminee:
+                    Boolean(Number(tache.terminee)),
+
+                priorite:
+                    tache.priorite || "moyenne",
+
+                categorie:
+                    tache.categorie || "autre",
+
+                dateEcheance:
+                    tache.date_echeance || "",
+
+                heureRappel:
+                    tache.heure_rappel || "",
+
+                rappelActive:
+                    Boolean(Number(tache.rappel_active)),
+
+                recurrence:
+                    tache.recurrence || "aucune",
+
+                sousTaches:
+                    Array.isArray(tache.sous_taches)
+                        ? tache.sous_taches
+                        : []
+            };
+
+        });
+
+        afficherTaches();
 
     } catch (erreur) {
 
-        taches = [];
+        console.error(
+            "Impossible de charger les tâches :",
+            erreur
+        );
 
     }
-
 }
 
 
@@ -197,10 +246,8 @@ localStorage.setItem(
 
 function sauvegarderTaches() {
 
-    localStorage.setItem(
-        "taches",
-        JSON.stringify(taches)
-    );
+    // La sauvegarde se fera désormais
+    // directement dans MySQL via l'API.
 
 }
 
@@ -1962,29 +2009,64 @@ function afficherTache(
     // SUPPRIMER
     // =========================
 
-    supprimer.addEventListener(
-        "click",
-        function () {
+supprimer.addEventListener(
+    "click",
+    async function () {
 
-            taches =
-                taches.filter(
-                    function (element) {
+        const confirmer = confirm(
+            "Voulez-vous vraiment supprimer cette tâche ?"
+        );
 
-                        return (
-                            element.id !==
-                            tache.id
-                        );
-
-                    }
-                );
-
-
-            sauvegarderTaches();
-
-            afficherTaches();
-
+        if (!confirmer) {
+            return;
         }
-    );
+
+        try {
+
+            const response = await fetch(
+                "/TaskFlow/backend/tasks.php",
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: tache.id
+                    })
+                }
+            );
+
+            const resultat = await response.json();
+
+            if (!response.ok) {
+
+                throw new Error(
+                    resultat.erreur ||
+                    "Impossible de supprimer la tâche."
+                );
+            }
+
+            console.log(
+                "Tâche supprimée :",
+                resultat
+            );
+
+            // Recharge les tâches depuis MySQL
+            await chargerTaches();
+
+        } catch (error) {
+
+            console.error(
+                "Erreur lors de la suppression :",
+                error
+            );
+
+            alert(
+                "Impossible de supprimer la tâche."
+            );
+        }
+    }
+);
 
 
     // =========================
@@ -2495,7 +2577,7 @@ function afficherTaches() {
 
 formulaire.addEventListener(
     "submit",
-    function (event) {
+    async function (event) {
 
         event.preventDefault();
 
@@ -2513,23 +2595,75 @@ formulaire.addEventListener(
         }
 
 
-        const nouvelleTache =
-            creerTache(
-                texte,
-                priorite.value,
-                categorie.value,
-                dateEcheance.value,
-                recurrence.value,
-                heureRappel.value
-            );
+        try {
 
+    const reponse =
+        await fetch(API_URL, {
 
-        taches.push(
-            nouvelleTache
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+
+                texte: texte,
+
+                priorite:
+                    priorite.value,
+
+                categorie:
+                    categorie.value,
+
+                dateEcheance:
+                    dateEcheance.value || null,
+
+                heureRappel:
+                    heureRappel.value || null,
+
+                recurrence:
+                    recurrence.value,
+
+                terminee: false
+
+            })
+
+        });
+
+    const resultat =
+        await reponse.json();
+
+    if (!reponse.ok) {
+
+        throw new Error(
+            resultat.erreur ||
+            "Erreur lors de la création."
         );
 
+    }
 
-        sauvegarderTaches();
+    console.log(
+        "Tâche créée en base :",
+        resultat
+    );
+
+    await chargerTaches();
+
+} catch (erreur) {
+
+    console.error(
+        "Erreur création tâche :",
+        erreur
+    );
+
+    alert(
+        "Impossible d'enregistrer la tâche."
+    );
+
+    return;
+}
 
 
         champTache.value =
@@ -2656,7 +2790,7 @@ boutonNotifications.addEventListener(
     demanderAutorisationNotifications
 );
 
-afficherTaches();
+chargerTaches();
 
 verifierRappels();
 
