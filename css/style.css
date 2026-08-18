@@ -3944,3 +3944,287 @@ h2 {
 .bouton-supprimer-commentaire:hover {
     opacity: 1;
 }
+
+/* ============================================================
+   SEDAKOR V17 — DASHBOARD PREMIUM
+   UI/UX portfolio
+============================================================ */
+
+.dashboard-v10 {
+    animation: dashboard-apparition 0.45s ease-out;
+}
+
+@keyframes dashboard-apparition {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================
+   INTRODUCTION
+========================= */
+
+.dashboard-introduction h2 {
+    letter-spacing: -0.02em;
+}
+
+.dashboard-date {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.dashboard-date:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================
+   STATISTIQUES
+========================= */
+
+.dashboard-statistique {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--bordure);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.dashboard-statistique::after {
+    content: "";
+    position: absolute;
+    right: -25px;
+    bottom: -25px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primaire);
+    opacity: 0.035;
+    pointer-events: none;
+}
+
+.dashboard-statistique:hover {
+    transform: translateY(-3px);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+}
+
+
+/* =========================
+   PROGRESSION
+========================= */
+
+.dashboard-progression {
+    padding: 18px;
+    background: #f9fafb;
+    border: 1px solid var(--bordure);
+    border-radius: 14px;
+}
+
+.dashboard-progression .progression-barre {
+    overflow: hidden;
+    border-radius: 999px;
+}
+
+.dashboard-progression
+.progression-barre
+.progression-remplie {
+    transition: width 0.6s ease;
+}
+
+
+/* =========================
+   BLOCS
+========================= */
+
+.dashboard-bloc {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.dashboard-bloc:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-bloc-icone {
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.dashboard-bloc:hover .dashboard-bloc-icone {
+    transform: scale(1.05);
+}
+
+
+/* =========================
+   TÂCHES DU JOUR
+========================= */
+
+.dashboard-tache {
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.dashboard-tache:hover {
+    transform: translateX(3px);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-tache-statut {
+    transition: transform 0.2s ease;
+}
+
+.dashboard-tache:hover .dashboard-tache-statut {
+    transform: scale(1.25);
+}
+
+
+/* =========================
+   PRIORITÉS
+========================= */
+
+.dashboard-priorite {
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.dashboard-priorite:hover {
+    transform: translateX(3px);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.dashboard-point {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.dashboard-priorite:hover .dashboard-point {
+    transform: scale(1.2);
+}
+
+
+/* =========================
+   CATÉGORIES
+========================= */
+
+.dashboard-categorie {
+    transition:
+        transform 0.18s ease,
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.dashboard-categorie:hover {
+    transform: translateY(-2px);
+    border-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-categorie-barre {
+    background-color: #e5e7eb;
+}
+
+.dashboard-categorie-barre-remplie {
+    transition: width 0.6s ease;
+}
+
+
+/* =========================
+   ÉTAT VIDE
+========================= */
+
+.dashboard-vide {
+    padding: 28px 15px;
+    border: 1px dashed var(--bordure);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+
+/* =========================
+   ACCESSIBILITÉ
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dashboard-v10,
+    .dashboard-statistique,
+    .dashboard-bloc,
+    .dashboard-tache,
+    .dashboard-priorite,
+    .dashboard-categorie,
+    .dashboard-date {
+        animation: none;
+        transition: none;
+    }
+
+}
+
+
+/* =========================
+   RESPONSIVE V17
+========================= */
+
+@media (max-width: 700px) {
+
+    .dashboard-introduction {
+        gap: 18px;
+        margin-bottom: 22px;
+    }
+
+    .dashboard-introduction h2 {
+        font-size: 27px;
+    }
+
+    .dashboard-bloc {
+        padding: 16px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .dashboard-introduction h2 {
+        font-size: 23px;
+    }
+
+    .dashboard-progression {
+        padding: 15px;
+    }
+
+    .dashboard-bloc {
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .dashboard-statistique:hover,
+    .dashboard-bloc:hover,
+    .dashboard-categorie:hover {
+        transform: none;
+    }
+
+}
