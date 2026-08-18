@@ -35,7 +35,12 @@ const heureRappel =
 const boutonNotifications =
     document.querySelector("#bouton-notifications");
 
-const statutNotifications =
+const boutonToutLire =
+    document.querySelector(
+        "#bouton-toutes-lues"
+    );
+
+    const statutNotifications =
     document.querySelector("#statut-notifications");
 
 const listeTaches =
@@ -3104,14 +3109,15 @@ async function terminerTache(
                 );
 
             const prochaineTache =
-                creerTache(
-                    tache.texte,
-                    tache.priorite,
-                    tache.categorie,
-                    prochaineDate,
-                    tache.recurrence,
-                    tache.heureRappel
-                );
+    creerTache(
+        tache.texte,
+        tache.priorite,
+        tache.categorie,
+        prochaineDate,
+        tache.recurrence,
+        tache.heureRappel,
+        tache.projectId
+    );
 
             await creerTacheAPI(
                 prochaineTache
@@ -6476,4 +6482,568 @@ ajusterSidebarResponsive();
 window.addEventListener(
     "resize",
     ajusterSidebarResponsive
+);
+
+// ============================================================
+// V21 — AUTOMATISATION & PRODUCTIVITÉ
+// ============================================================
+
+const V21_CLES_NOTIFICATIONS =
+    "sedakor_notifications_v21";
+
+let notificationsV21 = [];
+
+
+// ============================================================
+// CHARGER LES NOTIFICATIONS
+// ============================================================
+
+function chargerNotificationsV21() {
+
+    try {
+
+        const sauvegarde =
+            localStorage.getItem(
+                V21_CLES_NOTIFICATIONS
+            );
+
+        notificationsV21 =
+            sauvegarde
+                ? JSON.parse(sauvegarde)
+                : [];
+
+        if (
+            !Array.isArray(
+                notificationsV21
+            )
+        ) {
+
+            notificationsV21 = [];
+
+        }
+
+    }
+    catch (erreur) {
+
+        console.error(
+            "Erreur notifications V21 :",
+            erreur
+        );
+
+        notificationsV21 = [];
+
+    }
+
+}
+
+
+// ============================================================
+// SAUVEGARDER LES NOTIFICATIONS
+// ============================================================
+
+function sauvegarderNotificationsV21() {
+
+    localStorage.setItem(
+        V21_CLES_NOTIFICATIONS,
+        JSON.stringify(
+            notificationsV21
+        )
+    );
+
+}
+
+
+// ============================================================
+// AJOUTER UNE NOTIFICATION
+// ============================================================
+
+function ajouterNotificationV21(
+    titre,
+    message,
+    type = "info"
+) {
+
+    const maintenant =
+        Date.now();
+
+    const existe =
+        notificationsV21.some(
+            function (notification) {
+
+                return (
+                    notification.titre ===
+                        titre &&
+                    notification.message ===
+                        message &&
+                    maintenant -
+                        notification.date <
+                        86400000
+                );
+
+            }
+        );
+
+    if (existe) {
+
+        return;
+
+    }
+
+    notificationsV21.unshift({
+
+        id:
+            maintenant,
+
+        titre:
+            titre,
+
+        message:
+            message,
+
+        type:
+            type,
+
+        date:
+            maintenant,
+
+        lue:
+            false
+
+    });
+
+    notificationsV21 =
+        notificationsV21.slice(
+            0,
+            30
+        );
+
+    sauvegarderNotificationsV21();
+
+    afficherNotificationsV21();
+
+}
+
+
+// ============================================================
+// AFFICHER LES NOTIFICATIONS
+// ============================================================
+
+function afficherNotificationsV21() {
+
+    const liste =
+        document.querySelector(
+            "#liste-notifications"
+        );
+
+    const compteur =
+        document.querySelector(
+            "#notifications-compteur"
+        );
+
+    const boutonToutLire =
+        document.querySelector(
+            "#bouton-toutes-lues"
+        );
+
+    if (!liste) {
+
+        return;
+
+    }
+
+    const nonLues =
+        notificationsV21.filter(
+            function (notification) {
+
+                return !notification.lue;
+
+            }
+        );
+
+    if (compteur) {
+
+        compteur.textContent =
+            nonLues.length;
+
+        compteur.hidden =
+            nonLues.length === 0;
+
+    }
+
+    if (boutonToutLire) {
+
+        boutonToutLire.hidden =
+            nonLues.length === 0;
+
+    }
+
+    if (
+        notificationsV21.length ===
+        0
+    ) {
+
+        liste.innerHTML =
+
+            `<p class="notifications-vide">
+                Aucune nouvelle notification.
+            </p>`;
+
+        return;
+
+    }
+
+    liste.innerHTML = "";
+
+    notificationsV21.forEach(
+        function (notification) {
+
+            const element =
+                document.createElement(
+                    "article"
+                );
+
+            element.classList.add(
+                "notification-v21"
+            );
+
+            if (
+                notification.lue
+            ) {
+
+                element.classList.add(
+                    "notification-lue"
+                );
+
+            }
+
+            const contenu =
+                document.createElement(
+                    "div"
+                );
+
+            contenu.innerHTML =
+
+                `<strong>
+                    ${notification.titre}
+                </strong>
+
+                <p>
+                    ${notification.message}
+                </p>`;
+
+            const bouton =
+                document.createElement(
+                    "button"
+                );
+
+            bouton.type =
+                "button";
+
+            bouton.textContent =
+                notification.lue
+                    ? "✓"
+                    : "Lu";
+
+            bouton.addEventListener(
+                "click",
+                function () {
+
+                    notification.lue =
+                        true;
+
+                    sauvegarderNotificationsV21();
+
+                    afficherNotificationsV21();
+
+                }
+            );
+
+            element.appendChild(
+                contenu
+            );
+
+            element.appendChild(
+                bouton
+            );
+
+            liste.appendChild(
+                element
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// TOUT MARQUER COMME LU
+// ============================================================
+
+function marquerToutesNotificationsLuesV21() {
+
+    notificationsV21.forEach(
+        function (notification) {
+
+            notification.lue =
+                true;
+
+        }
+    );
+
+    sauvegarderNotificationsV21();
+
+    afficherNotificationsV21();
+
+}
+
+
+// ============================================================
+// ANALYSE AUTOMATIQUE DES TÂCHES
+// ============================================================
+
+function analyserProductiviteV21() {
+
+    const maintenant =
+        new Date();
+
+    const aujourdHui =
+        maintenant
+            .toISOString()
+            .slice(
+                0,
+                10
+            );
+
+    taches.forEach(
+        function (tache) {
+
+            if (
+                tache.terminee
+            ) {
+
+                return;
+
+            }
+
+            // ------------------------------------------------
+            // TÂCHE EN RETARD
+            // ------------------------------------------------
+
+            if (
+                tache.dateEcheance &&
+                tache.dateEcheance <
+                    aujourdHui
+            ) {
+
+                ajouterNotificationV21(
+
+                    "⚠️ Tâche en retard",
+
+                    `"${tache.texte}" est en retard.`,
+
+                    "retard"
+
+                );
+
+            }
+
+            // ------------------------------------------------
+            // ÉCHÉANCE AUJOURD'HUI
+            // ------------------------------------------------
+
+            else if (
+                tache.dateEcheance ===
+                aujourdHui
+            ) {
+
+                ajouterNotificationV21(
+
+                    "📅 Échéance aujourd'hui",
+
+                    `"${tache.texte}" doit être terminée aujourd'hui.`,
+
+                    "echeance"
+
+                );
+
+            }
+
+            // ------------------------------------------------
+            // RAPPEL
+            // ------------------------------------------------
+
+            if (
+                tache.dateEcheance ===
+                    aujourdHui &&
+                tache.heureRappel
+            ) {
+
+                const maintenantMinutes =
+                    maintenant.getHours() *
+                        60 +
+                    maintenant.getMinutes();
+
+                const morceaux =
+                    tache.heureRappel
+                        .split(":");
+
+                const rappelMinutes =
+                    Number(
+                        morceaux[0]
+                    ) *
+                        60 +
+                    Number(
+                        morceaux[1]
+                    );
+
+                if (
+                    Math.abs(
+                        maintenantMinutes -
+                        rappelMinutes
+                    ) <= 5
+                ) {
+
+                    ajouterNotificationV21(
+
+                        "⏰ Rappel",
+
+                        `C'est le moment de : "${tache.texte}".`,
+
+                        "rappel"
+
+                    );
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// PRODUCTIVITÉ DU JOUR
+// ============================================================
+
+function afficherProductiviteV21() {
+
+    const aujourdHui =
+        new Date()
+            .toISOString()
+            .slice(
+                0,
+                10
+            );
+
+    const duJour =
+        taches.filter(
+            function (tache) {
+
+                return (
+                    tache.dateEcheance ===
+                    aujourdHui
+                );
+
+            }
+        );
+
+    const terminees =
+        duJour.filter(
+            function (tache) {
+
+                return tache.terminee;
+
+            }
+        );
+
+    if (
+        dashboardMessage
+    ) {
+
+        if (
+            duJour.length ===
+            0
+        ) {
+
+            dashboardMessage.textContent =
+                "Aucune échéance aujourd'hui. Profitez-en pour avancer sur vos projets.";
+
+        }
+        else {
+
+            dashboardMessage.textContent =
+                `${terminees.length} tâche${
+                    terminees.length > 1
+                        ? "s"
+                        : ""
+                } terminée${
+                    terminees.length > 1
+                        ? "s"
+                        : ""
+                } sur ${
+                    duJour.length
+                } aujourd'hui.`;
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// INITIALISATION V21
+// ============================================================
+
+chargerNotificationsV21();
+
+afficherNotificationsV21();
+
+if (
+    typeof boutonToutLire !==
+    "undefined"
+) {
+
+    boutonToutLire.addEventListener(
+        "click",
+        marquerToutesNotificationsLuesV21
+    );
+
+}
+
+window.addEventListener(
+    "sedakor:tache-modifiee",
+    function () {
+
+        analyserProductiviteV21();
+
+        afficherProductiviteV21();
+
+    }
+);
+
+setTimeout(
+    function () {
+
+        analyserProductiviteV21();
+
+        afficherProductiviteV21();
+
+    },
+    1000
+);
+
+
+// Vérification automatique toutes les minutes.
+
+setInterval(
+    function () {
+
+        analyserProductiviteV21();
+
+    },
+    60000
 );

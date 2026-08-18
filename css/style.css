@@ -6825,3 +6825,63 @@ h2 {
 
     font-size: 14px;
 }
+
+/* ============================================================
+   V21 — NOTIFICATIONS
+============================================================ */
+
+.liste-notifications {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+.notification-v21 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 18px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    background: #ffffff;
+    transition: 0.2s ease;
+}
+
+
+.notification-v21:hover {
+    transform: translateY(-1px);
+}
+
+
+.notification-v21 strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+
+.notification-v21 p {
+    margin: 0;
+    color: #6b7280;
+}
+
+
+.notification-v21 button {
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 8px;
+    padding: 7px 12px;
+    cursor: pointer;
+}
+
+
+.notification-lue {
+    opacity: 0.55;
+}
+
+
+.notifications-vide {
+    margin: 0;
+    color: #6b7280;
+}
