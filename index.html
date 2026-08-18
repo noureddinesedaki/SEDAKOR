@@ -21,13 +21,57 @@
 
     </div>
 
-    <button
-        type="button"
-        id="logoutButton"
-        class="logout-button"
-    >
-        Déconnexion
-    </button>
+
+    <div class="utilisateur-menu">
+
+        <button
+            type="button"
+            id="userMenuButton"
+            class="user-menu-button"
+            aria-expanded="false"
+            aria-haspopup="true"
+        >
+
+            <span class="user-menu-avatar">
+                👤
+            </span>
+
+            <span id="userMenuNom">
+                Utilisateur
+            </span>
+
+            <span class="user-menu-fleche">
+                ▾
+            </span>
+
+        </button>
+
+
+        <div
+            id="userMenuDropdown"
+            class="user-menu-dropdown"
+            hidden
+        >
+
+            <a
+                href="compte.html"
+                class="user-menu-item"
+            >
+                👤 Mon compte
+            </a>
+
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="user-menu-item user-menu-logout"
+            >
+                🚪 Déconnexion
+            </button>
+
+        </div>
+
+    </div>
 
 </header>
 
@@ -208,5 +252,6 @@
 <script src="js/script.js"></script>
 <script src="js/logout.js"></script>
 <script src="js/auth-guard.js"></script>
+<script src="js/account.js"></script>
 </body>
 </html>

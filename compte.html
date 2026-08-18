@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>SEDAKOR - Mon compte</title>
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+    <div class="site-header-titre">
+
+        <h1>SEDAKOR</h1>
+
+        <p>
+            Mon compte
+        </p>
+
+    </div>
+
+
+    <button
+        type="button"
+        id="logoutButton"
+        class="logout-button"
+    >
+        Déconnexion
+    </button>
+
+</header>
+
+
+<main>
+
+
+    <section class="compte-section">
+
+        <div class="compte-entete">
+
+            <div class="compte-avatar">
+                👤
+            </div>
+
+            <div>
+
+                <h2>
+                    Mon compte
+                </h2>
+
+                <p>
+                    Gérez vos informations personnelles.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="compte-message"
+            class="compte-message"
+        ></div>
+
+        <form
+    id="formulaire-profil"
+    class="formulaire-profil"
+    hidden
+>
+
+    <div class="champ-profil">
+
+        <label for="profil-nom">
+            Nom
+        </label>
+
+        <input
+            type="text"
+            id="profil-nom"
+            name="nom"
+            maxlength="100"
+            required
+        >
+
+    </div>
+
+
+    <div class="champ-profil">
+
+        <label for="profil-email">
+            Adresse email
+        </label>
+
+        <input
+            type="email"
+            id="profil-email"
+            name="email"
+            maxlength="255"
+            required
+        >
+
+    </div>
+
+
+    <div class="profil-form-actions">
+
+        <button
+            type="submit"
+            class="bouton-principal"
+            id="enregistrerProfilButton"
+        >
+            Enregistrer les modifications
+        </button>
+
+
+        <button
+            type="button"
+            class="bouton-secondaire"
+            id="annulerProfilButton"
+        >
+            Annuler
+        </button>
+
+    </div>
+
+</form>
+
+
+        <div class="compte-informations">
+
+
+            <div class="compte-information">
+
+                <span class="compte-label">
+                    Nom
+                </span>
+
+                <strong
+                    id="compte-nom"
+                    class="compte-valeur"
+                >
+                    Chargement...
+                </strong>
+
+            </div>
+
+
+            <div class="compte-information">
+
+                <span class="compte-label">
+                    Adresse email
+                </span>
+
+                <strong
+                    id="compte-email"
+                    class="compte-valeur"
+                >
+                    Chargement...
+                </strong>
+
+            </div>
+
+
+            <div class="compte-information">
+
+                <span class="compte-label">
+                    Mot de passe
+                </span>
+
+                <strong class="compte-valeur">
+                    ••••••••••••
+                </strong>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="compte-actions">
+
+           <button
+    type="button"
+    id="modifierProfilButton"
+    class="bouton-principal"
+>
+    Modifier mon profil
+</button>
+
+
+            <button
+    type="button"
+    id="modifierMotDePasseButton"
+    class="bouton-secondaire"
+>
+    🔐 Changer mon mot de passe
+</button>
+
+<form
+    id="formulaire-mot-de-passe"
+    class="formulaire-profil"
+    hidden
+>
+
+    <div class="champ-profil">
+
+        <label for="ancien-mot-de-passe">
+            Ancien mot de passe
+        </label>
+
+        <input
+            type="password"
+            id="ancien-mot-de-passe"
+            name="ancien_mot_de_passe"
+            autocomplete="current-password"
+            required
+        >
+
+    </div>
+
+
+    <div class="champ-profil">
+
+        <label for="nouveau-mot-de-passe">
+            Nouveau mot de passe
+        </label>
+
+        <input
+            type="password"
+            id="nouveau-mot-de-passe"
+            name="nouveau_mot_de_passe"
+            minlength="8"
+            maxlength="255"
+            autocomplete="new-password"
+            required
+        >
+
+        <small>
+            Minimum 8 caractères.
+        </small>
+
+    </div>
+
+
+    <div class="champ-profil">
+
+        <label for="confirmation-mot-de-passe">
+            Confirmer le nouveau mot de passe
+        </label>
+
+        <input
+            type="password"
+            id="confirmation-mot-de-passe"
+            name="confirmation"
+            minlength="8"
+            maxlength="255"
+            autocomplete="new-password"
+            required
+        >
+
+    </div>
+
+
+    <div class="profil-form-actions">
+
+        <button
+            type="submit"
+            class="bouton-principal"
+            id="enregistrerMotDePasseButton"
+        >
+            Modifier le mot de passe
+        </button>
+
+
+        <button
+            type="button"
+            class="bouton-secondaire"
+            id="annulerMotDePasseButton"
+        >
+            Annuler
+        </button>
+
+    </div>
+
+</form>
+
+
+            <a
+                href="index.html"
+                class="bouton-retour"
+            >
+                ← Retour à SEDAKOR
+            </a>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<script src="js/auth-guard.js"></script>
+<script src="js/account.js"></script>
+<script src="js/logout.js"></script>
+
+</body>
+
+</html>
