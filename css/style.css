@@ -6941,3 +6941,126 @@ h2 {
     }
 
 }
+
+/* ============================================================
+   V22 — ASSISTANT IA
+============================================================ */
+
+.sedakor-assistant {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+
+.sedakor-assistant-header {
+    margin-bottom: 24px;
+}
+
+
+.assistant-conversation {
+    min-height: 420px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 24px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.05);
+}
+
+
+.assistant-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 80%;
+    margin-bottom: 20px;
+}
+
+
+.assistant-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #eef2ff;
+    font-size: 20px;
+}
+
+
+.assistant-message-contenu {
+    padding: 14px 17px;
+    border-radius: 14px;
+    background: #f8fafc;
+}
+
+
+.assistant-message-contenu strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+
+.assistant-message-contenu p {
+    margin: 0;
+    line-height: 1.55;
+    color: #475569;
+}
+
+
+.assistant-formulaire {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+
+#assistant-message {
+    flex: 1;
+    min-height: 52px;
+    padding: 0 17px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    outline: none;
+    font: inherit;
+}
+
+
+#assistant-message:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+
+.assistant-formulaire button {
+    width: 54px;
+    min-width: 54px;
+    border: 0;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 20px;
+    background: #6366f1;
+    color: #ffffff;
+}
+
+
+.assistant-formulaire button:hover {
+    opacity: 0.9;
+}
+
+
+@media (max-width: 700px) {
+
+    .assistant-conversation {
+        min-height: 350px;
+        padding: 16px;
+    }
+
+    .assistant-message {
+        max-width: 95%;
+    }
+
+}
