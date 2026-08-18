@@ -16,6 +16,50 @@ function repondre($donnees, $code = 200)
     exit;
 }
 
+// ============================================================
+// V16 — CRÉER UNE NOTIFICATION
+// ============================================================
+
+function creerNotification(
+    $pdo,
+    $userId,
+    $taskId,
+    $type,
+    $message
+) {
+    $requete =
+        $pdo->prepare(
+            "INSERT INTO notifications
+            (
+                user_id,
+                task_id,
+                type,
+                message
+            )
+            VALUES
+            (
+                :user_id,
+                :task_id,
+                :type,
+                :message
+            )"
+        );
+
+    $requete->execute([
+        ":user_id" =>
+            $userId,
+
+        ":task_id" =>
+            $taskId,
+
+        ":type" =>
+            $type,
+
+        ":message" =>
+            $message
+    ]);
+}
+
 if (
     !isset($_SESSION["user_id"]) ||
     !is_numeric($_SESSION["user_id"]) ||
@@ -244,6 +288,91 @@ if ($method === "POST") {
 
         $commentId =
             (int) $pdo->lastInsertId();
+// ========================================================
+// V16 — NOTIFIER LE PROPRIÉTAIRE ET LES MEMBRES
+// ========================================================
+
+$destinataires = [];
+
+
+// Propriétaire de la tâche
+$requete =
+    $pdo->prepare(
+        "SELECT user_id
+         FROM tasks
+         WHERE id = :task_id
+         LIMIT 1"
+    );
+
+$requete->execute([
+    ":task_id" =>
+        $taskId
+]);
+
+$proprietaireId =
+    $requete->fetchColumn();
+
+if (
+    $proprietaireId !== false &&
+    (int) $proprietaireId !== $userId
+) {
+    $destinataires[] =
+        (int) $proprietaireId;
+}
+
+
+// Membres de la tâche
+$requete =
+    $pdo->prepare(
+        "SELECT user_id
+         FROM task_members
+         WHERE task_id = :task_id
+           AND user_id != :user_id"
+    );
+
+$requete->execute([
+    ":task_id" =>
+        $taskId,
+
+    ":user_id" =>
+        $userId
+]);
+
+$membres =
+    $requete->fetchAll(
+        PDO::FETCH_COLUMN
+    );
+
+foreach ($membres as $membreId) {
+
+    $membreId =
+        (int) $membreId;
+
+    if (
+        $membreId > 0 &&
+        !in_array(
+            $membreId,
+            $destinataires,
+            true
+        )
+    ) {
+        $destinataires[] =
+            $membreId;
+    }
+}
+
+
+// Créer les notifications
+foreach ($destinataires as $destinataireId) {
+
+    creerNotification(
+        $pdo,
+        $destinataireId,
+        $taskId,
+        "commentaire",
+        "Nouveau commentaire sur une tâche à laquelle vous avez accès."
+    );
+}
 
         repondre([
             "succes" => true,

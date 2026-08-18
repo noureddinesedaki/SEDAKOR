@@ -3659,3 +3659,288 @@ h2 {
     }
 
 }
+/* ============================================================
+   V16 — INTERFACE NOTIFICATIONS COMPACTE
+============================================================ */
+
+#notifications {
+    position: relative;
+    margin-bottom: 20px;
+    padding: 14px 18px;
+    border: 1px solid var(--bordure);
+    border-radius: 10px;
+    background-color: white;
+}
+
+.notifications-entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.notifications-titre {
+    min-width: 0;
+}
+
+.notifications-titre h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 18px;
+}
+
+#statut-notifications {
+    margin: 4px 0 0;
+    color: var(--texte-secondaire);
+    font-size: 12px;
+}
+
+.notifications-compteur {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    background-color: var(--primaire);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.notifications-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#bouton-notifications,
+#bouton-toutes-lues {
+    padding: 8px 11px;
+    border: none;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#bouton-notifications {
+    background-color: var(--primaire);
+    color: white;
+}
+
+#bouton-notifications:hover {
+    background-color: var(--primaire-hover);
+}
+
+.bouton-notifications-secondaire {
+    background-color: #f3f4f6;
+    color: var(--texte);
+}
+
+.bouton-notifications-secondaire:hover {
+    background-color: #e5e7eb;
+}
+
+
+/* ============================================================
+   LISTE DES NOTIFICATIONS
+============================================================ */
+
+.liste-notifications {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.notifications-vide {
+    margin: 0;
+    padding: 8px 0;
+    color: var(--texte-secondaire);
+    font-size: 12px;
+}
+
+.notification-element {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    background-color: #f8fafc;
+}
+
+.notification-element.notification-non-lue {
+    background-color: #eff6ff;
+}
+
+.notification-icone {
+    flex: 0 0 auto;
+    font-size: 15px;
+}
+
+.notification-contenu {
+    min-width: 0;
+    flex: 1;
+}
+
+.notification-message {
+    margin: 0;
+    overflow: hidden;
+    color: var(--texte);
+    font-size: 12px;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notification-date {
+    margin-top: 2px;
+    color: var(--texte-secondaire);
+    font-size: 10px;
+}
+
+.notification-supprimer {
+    flex: 0 0 auto;
+    padding: 3px 6px;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--texte-secondaire);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.notification-supprimer:hover {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+
+/* ============================================================
+   RESPONSIVE V16
+============================================================ */
+
+@media (max-width: 600px) {
+
+    #notifications {
+        padding: 12px;
+    }
+
+    .notifications-entete {
+        align-items: flex-start;
+    }
+
+    .notifications-actions {
+        flex-shrink: 0;
+    }
+
+    #bouton-notifications,
+    #bouton-toutes-lues {
+        padding: 7px 9px;
+    }
+
+    .liste-notifications {
+        max-height: 180px;
+    }
+}
+
+/* ============================================================
+   V14 — COMMENTAIRES
+   ============================================================ */
+
+.commentaires {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.commentaires-entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.commentaires-titre {
+    font-weight: 600;
+}
+
+.liste-commentaires {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.commentaire {
+    padding: 9px 11px;
+    border-radius: 8px;
+    background: #f7f7f8;
+}
+
+.commentaire-contenu {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.commentaire-informations {
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.65;
+}
+
+.commentaires-vide,
+.commentaires-erreur {
+    margin: 5px 0;
+    font-size: 13px;
+    opacity: 0.65;
+}
+
+.formulaire-commentaire {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.champ-commentaire {
+    flex: 1;
+    min-height: 42px;
+    max-height: 120px;
+    resize: vertical;
+    padding: 9px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.bouton-commentaire {
+    align-self: flex-end;
+    padding: 9px 14px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.bouton-commentaire:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.bouton-supprimer-commentaire {
+    margin-top: 6px;
+    padding: 3px 7px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.65;
+}
+
+.bouton-supprimer-commentaire:hover {
+    opacity: 1;
+}

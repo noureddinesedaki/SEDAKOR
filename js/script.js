@@ -1357,6 +1357,502 @@ async function demanderAutorisationNotifications() {
 
 }
 
+// ============================================================
+// V16 — NOTIFICATIONS SEDAKOR
+// ============================================================
+
+const notificationsCompteur =
+    document.querySelector(
+        "#notifications-compteur"
+    );
+
+const listeNotifications =
+    document.querySelector(
+        "#liste-notifications"
+    );
+
+const boutonToutesLues =
+    document.querySelector(
+        "#bouton-toutes-lues"
+    );
+
+const API_TASK_COMMENTS =
+    "backend/task-comments.php";
+
+const API_NOTIFICATIONS =
+    "/TaskFlow/backend/notifications.php";
+
+// ============================================================
+// ICÔNE SELON LE TYPE
+// ============================================================
+
+function iconeNotification(type) {
+
+    if (type === "tache_partagee") {
+        return "👥";
+    }
+
+    if (type === "commentaire") {
+        return "💬";
+    }
+
+    if (type === "rappel") {
+        return "⏰";
+    }
+
+    if (type === "echeance") {
+        return "⚠️";
+    }
+
+    return "🔔";
+}
+
+
+// ============================================================
+// FORMATER LA DATE
+// ============================================================
+
+function formaterDateNotification(dateTexte) {
+
+    if (!dateTexte) {
+        return "";
+    }
+
+    const date =
+        new Date(
+            dateTexte.replace(" ", "T")
+        );
+
+    if (Number.isNaN(date.getTime())) {
+        return "";
+    }
+
+    return date.toLocaleString(
+        "fr-FR",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
+
+
+// ============================================================
+// CHARGER LES NOTIFICATIONS
+// ============================================================
+
+async function chargerNotifications() {
+
+    try {
+
+        const reponse =
+            await fetch(
+                API_NOTIFICATIONS
+            );
+
+        if (!reponse.ok) {
+            throw new Error(
+                "Erreur HTTP : " +
+                reponse.status
+            );
+        }
+
+        const donnees =
+            await reponse.json();
+
+        if (!donnees.succes) {
+            throw new Error(
+                donnees.erreur ||
+                "Erreur notifications."
+            );
+        }
+
+        afficherNotifications(
+            donnees.notifications || [],
+            donnees.non_lues || 0
+        );
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur chargement notifications :",
+            erreur
+        );
+
+    }
+}
+
+
+// ============================================================
+// AFFICHER LES NOTIFICATIONS
+// ============================================================
+
+function afficherNotifications(
+    notifications,
+    nonLues
+) {
+
+    if (!listeNotifications) {
+        return;
+    }
+
+    listeNotifications.innerHTML = "";
+
+    if (notificationsCompteur) {
+
+        notificationsCompteur.textContent =
+            nonLues;
+
+        notificationsCompteur.hidden =
+            nonLues === 0;
+    }
+
+    if (boutonToutesLues) {
+
+        boutonToutesLues.hidden =
+            nonLues === 0;
+    }
+
+
+    if (notifications.length === 0) {
+
+        const vide =
+            document.createElement(
+                "p"
+            );
+
+        vide.classList.add(
+            "notifications-vide"
+        );
+
+        vide.textContent =
+            "Aucune nouvelle notification.";
+
+        listeNotifications.appendChild(
+            vide
+        );
+
+        return;
+    }
+
+
+    notifications
+        .slice(0, 20)
+        .forEach(
+            function (notification) {
+
+                const element =
+                    document.createElement(
+                        "div"
+                    );
+
+                element.classList.add(
+                    "notification-element"
+                );
+
+                if (!notification.lue) {
+
+                    element.classList.add(
+                        "notification-non-lue"
+                    );
+
+                }
+
+
+                const icone =
+                    document.createElement(
+                        "span"
+                    );
+
+                icone.classList.add(
+                    "notification-icone"
+                );
+
+                icone.textContent =
+                    iconeNotification(
+                        notification.type
+                    );
+
+
+                const contenu =
+                    document.createElement(
+                        "div"
+                    );
+
+                contenu.classList.add(
+                    "notification-contenu"
+                );
+
+
+                const message =
+                    document.createElement(
+                        "p"
+                    );
+
+                message.classList.add(
+                    "notification-message"
+                );
+
+                message.textContent =
+                    notification.message;
+
+
+                const date =
+                    document.createElement(
+                        "div"
+                    );
+
+                date.classList.add(
+                    "notification-date"
+                );
+
+                date.textContent =
+                    formaterDateNotification(
+                        notification.created_at
+                    );
+
+
+                contenu.appendChild(
+                    message
+                );
+
+                contenu.appendChild(
+                    date
+                );
+
+
+                const supprimer =
+                    document.createElement(
+                        "button"
+                    );
+
+                supprimer.type =
+                    "button";
+
+                supprimer.classList.add(
+                    "notification-supprimer"
+                );
+
+                supprimer.textContent =
+                    "×";
+
+                supprimer.title =
+                    "Supprimer";
+
+
+                supprimer.addEventListener(
+                    "click",
+                    async function (evenement) {
+
+                        evenement.stopPropagation();
+
+                        await supprimerNotification(
+                            notification.id
+                        );
+
+                    }
+                );
+
+
+                element.appendChild(
+                    icone
+                );
+
+                element.appendChild(
+                    contenu
+                );
+
+                element.appendChild(
+                    supprimer
+                );
+
+
+                element.addEventListener(
+                    "click",
+                    async function () {
+
+                        if (
+                            !notification.lue
+                        ) {
+
+                            await marquerNotificationLue(
+                                notification.id
+                            );
+
+                        }
+
+                    }
+                );
+
+
+                listeNotifications.appendChild(
+                    element
+                );
+
+            }
+        );
+}
+
+
+// ============================================================
+// MARQUER UNE NOTIFICATION COMME LUE
+// ============================================================
+
+async function marquerNotificationLue(
+    notificationId
+) {
+
+    try {
+
+        const reponse =
+            await fetch(
+                API_NOTIFICATIONS,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            notification_id:
+                                notificationId
+                        })
+                }
+            );
+
+        if (!reponse.ok) {
+            throw new Error(
+                "Impossible de modifier la notification."
+            );
+        }
+
+        await chargerNotifications();
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur notification :",
+            erreur
+        );
+
+    }
+}
+
+
+// ============================================================
+// TOUT MARQUER COMME LU
+// ============================================================
+
+async function marquerToutesNotificationsLues() {
+
+    try {
+
+        const reponse =
+            await fetch(
+                API_NOTIFICATIONS,
+                {
+                    method: "PUT",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            toutes: true
+                        })
+                }
+            );
+
+        if (!reponse.ok) {
+            throw new Error(
+                "Impossible de modifier les notifications."
+            );
+        }
+
+        await chargerNotifications();
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur notifications :",
+            erreur
+        );
+
+    }
+}
+
+
+if (boutonToutesLues) {
+
+    boutonToutesLues.addEventListener(
+        "click",
+        marquerToutesNotificationsLues
+    );
+
+}
+
+
+// ============================================================
+// SUPPRIMER UNE NOTIFICATION
+// ============================================================
+
+async function supprimerNotification(
+    notificationId
+) {
+
+    try {
+
+        const reponse =
+            await fetch(
+                API_NOTIFICATIONS,
+                {
+                    method: "DELETE",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            notification_id:
+                                notificationId
+                        })
+                }
+            );
+
+        if (!reponse.ok) {
+            throw new Error(
+                "Impossible de supprimer la notification."
+            );
+        }
+
+        await chargerNotifications();
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur suppression notification :",
+            erreur
+        );
+
+    }
+}
+
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+
+chargerNotifications();
+
 
 // ============================================================
 // RAPPELS
@@ -1417,13 +1913,17 @@ function dateHeureRappel(
 
     }
 
-    const date =
-        new Date(
-            tache.dateEcheance +
-            "T" +
-            tache.heureRappel +
-            ":00"
-        );
+    const heure =
+    tache.heureRappel.length === 5
+        ? tache.heureRappel + ":00"
+        : tache.heureRappel;
+
+const date =
+    new Date(
+        tache.dateEcheance +
+        "T" +
+        heure
+    );
 
     if (
         Number.isNaN(
@@ -1514,55 +2014,121 @@ function rappelEstDu(
 }
 
 
-function verifierRappels() {
+// ============================================================
+// V16 — VÉRIFIER LES RAPPELS
+// ============================================================
 
-    if (
-        !notificationsDisponibles() ||
-        Notification.permission !==
-        "granted"
-    ) {
-
-        return;
-
-    }
+async function verifierRappels() {
 
     taches.forEach(
-        function (tache) {
+        async function (tache) {
 
             if (
                 !tache.heureRappel ||
                 !tache.dateEcheance ||
                 tache.terminee
             ) {
-
                 return;
-
             }
+
 
             if (
                 rappelEstDu(tache) &&
                 !rappelDejaEnvoye(tache)
             ) {
 
-                new Notification(
-                    "🔔 Rappel SEDAKOR",
-                    {
-                        body:
-                            tache.texte +
-                            " — rappel prévu à " +
-                            tache.heureRappel
+                // ------------------------------------------------
+                // V16 — NOTIFICATION PERSISTANTE
+                // ------------------------------------------------
+
+                try {
+
+                    const reponse =
+                        await fetch(
+                            API_NOTIFICATIONS,
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify({
+                                        task_id:
+                                            tache.id,
+
+                                        type:
+                                            "rappel",
+
+                                        message:
+                                            "Rappel : " +
+                                            tache.texte +
+                                            " — prévu à " +
+                                            tache.heureRappel
+                                    })
+                            }
+                        );
+
+                    if (!reponse.ok) {
+
+                        throw new Error(
+                            "Erreur HTTP : " +
+                            reponse.status
+                        );
                     }
-                );
 
-                enregistrerRappelEnvoye(
-                    tache
-                );
 
+                    // --------------------------------------------
+                    // NOTIFICATION NAVIGATEUR
+                    // --------------------------------------------
+
+                    if (
+                        notificationsDisponibles() &&
+                        Notification.permission ===
+                            "granted"
+                    ) {
+
+                        new Notification(
+                            "🔔 Rappel SEDAKOR",
+                            {
+                                body:
+                                    tache.texte +
+                                    " — rappel prévu à " +
+                                    tache.heureRappel
+                            }
+                        );
+
+                    }
+
+
+                    // --------------------------------------------
+                    // EMPÊCHER LES DOUBLONS
+                    // --------------------------------------------
+
+                    enregistrerRappelEnvoye(
+                        tache
+                    );
+
+
+                    // --------------------------------------------
+                    // ACTUALISER LE COMPTEUR
+                    // --------------------------------------------
+
+                    await chargerNotifications();
+
+                } catch (erreur) {
+
+                    console.error(
+                        "Erreur création notification rappel :",
+                        erreur
+                    );
+
+                }
             }
-
         }
     );
-
 }
 
 
@@ -3519,6 +4085,127 @@ async function ouvrirFenetrePartage(
 
 }
 
+// ============================================================
+// V14 — COMMENTAIRES
+// ============================================================
+
+async function chargerCommentaires(
+    taskId
+) {
+
+    const reponse =
+        await fetch(
+            API_TASK_COMMENTS +
+            "?task_id=" +
+            encodeURIComponent(taskId)
+        );
+
+    const donnees =
+        await reponse.json();
+
+    if (
+        !reponse.ok ||
+        !donnees.succes
+    ) {
+
+        throw new Error(
+            donnees.erreur ||
+            "Impossible de charger les commentaires."
+        );
+
+    }
+
+    return donnees.commentaires || [];
+}
+
+
+async function ajouterCommentaire(
+    taskId,
+    contenu
+) {
+
+    const reponse =
+        await fetch(
+            API_TASK_COMMENTS,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+                        task_id:
+                            taskId,
+
+                        contenu:
+                            contenu
+                    })
+            }
+        );
+
+    const donnees =
+        await reponse.json();
+
+    if (
+        !reponse.ok ||
+        !donnees.succes
+    ) {
+
+        throw new Error(
+            donnees.erreur ||
+            "Impossible d'ajouter le commentaire."
+        );
+
+    }
+
+    return donnees.commentaire;
+}
+
+
+async function supprimerCommentaire(
+    commentId
+) {
+
+    const reponse =
+        await fetch(
+            API_TASK_COMMENTS,
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+                        comment_id:
+                            commentId
+                    })
+            }
+        );
+
+    const donnees =
+        await reponse.json();
+
+    if (
+        !reponse.ok ||
+        !donnees.succes
+    ) {
+
+        throw new Error(
+            donnees.erreur ||
+            "Impossible de supprimer le commentaire."
+        );
+
+    }
+
+    return donnees;
+}
+
 function afficherTache(
     tache
 ) {
@@ -4141,6 +4828,384 @@ function afficherTache(
         blocSousTaches
     );
 
+    // --------------------------------------------------------
+// V14 — COMMENTAIRES
+// --------------------------------------------------------
+
+const blocCommentaires =
+    document.createElement(
+        "div"
+    );
+
+blocCommentaires.classList.add(
+    "commentaires"
+);
+
+
+const enteteCommentaires =
+    document.createElement(
+        "div"
+    );
+
+enteteCommentaires.classList.add(
+    "commentaires-entete"
+);
+
+
+const titreCommentaires =
+    document.createElement(
+        "span"
+    );
+
+titreCommentaires.classList.add(
+    "commentaires-titre"
+);
+
+titreCommentaires.textContent =
+    "💬 Commentaires";
+
+
+const listeCommentaires =
+    document.createElement(
+        "div"
+    );
+
+listeCommentaires.classList.add(
+    "liste-commentaires"
+);
+
+
+const formulaireCommentaire =
+    document.createElement(
+        "div"
+    );
+
+formulaireCommentaire.classList.add(
+    "formulaire-commentaire"
+);
+
+
+const champCommentaire =
+    document.createElement(
+        "textarea"
+    );
+
+champCommentaire.placeholder =
+    "Écrire un commentaire...";
+
+champCommentaire.maxLength =
+    5000;
+
+champCommentaire.classList.add(
+    "champ-commentaire"
+);
+
+
+const boutonCommentaire =
+    document.createElement(
+        "button"
+    );
+
+boutonCommentaire.type =
+    "button";
+
+boutonCommentaire.textContent =
+    "Envoyer";
+
+boutonCommentaire.classList.add(
+    "bouton-commentaire"
+);
+
+
+enteteCommentaires.appendChild(
+    titreCommentaires
+);
+
+blocCommentaires.appendChild(
+    enteteCommentaires
+);
+
+blocCommentaires.appendChild(
+    listeCommentaires
+);
+
+
+formulaireCommentaire.appendChild(
+    champCommentaire
+);
+
+formulaireCommentaire.appendChild(
+    boutonCommentaire
+);
+
+blocCommentaires.appendChild(
+    formulaireCommentaire
+);
+
+
+async function afficherCommentaires() {
+
+    listeCommentaires.innerHTML =
+        "";
+
+    try {
+
+        const commentaires =
+            await chargerCommentaires(
+                tache.id
+            );
+
+        if (
+            commentaires.length === 0
+        ) {
+
+            const vide =
+                document.createElement(
+                    "p"
+                );
+
+            vide.classList.add(
+                "commentaires-vide"
+            );
+
+            vide.textContent =
+                "Aucun commentaire.";
+
+            listeCommentaires.appendChild(
+                vide
+            );
+
+            return;
+        }
+
+
+        commentaires.forEach(
+            function (commentaire) {
+
+                const elementCommentaire =
+                    document.createElement(
+                        "div"
+                    );
+
+                elementCommentaire.classList.add(
+                    "commentaire"
+                );
+
+
+                const contenu =
+                    document.createElement(
+                        "div"
+                    );
+
+                contenu.classList.add(
+                    "commentaire-contenu"
+                );
+
+                contenu.textContent =
+                    commentaire.contenu;
+
+
+                const informations =
+                    document.createElement(
+                        "div"
+                    );
+
+                informations.classList.add(
+                    "commentaire-informations"
+                );
+
+                informations.textContent =
+                    (
+                        commentaire.nom ||
+                        commentaire.email ||
+                        "Utilisateur"
+                    ) +
+                    " • " +
+                    commentaire.created_at;
+
+
+                elementCommentaire.appendChild(
+                    contenu
+                );
+
+                elementCommentaire.appendChild(
+                    informations
+                );
+
+
+                if (
+                    Number(
+                        commentaire.user_id
+                    ) ===
+                    Number(
+                        utilisateurConnecteId
+                    )
+                ) {
+
+                    const boutonSupprimer =
+                        document.createElement(
+                            "button"
+                        );
+
+                    boutonSupprimer.type =
+                        "button";
+
+                    boutonSupprimer.textContent =
+                        "Supprimer";
+
+                    boutonSupprimer.classList.add(
+                        "bouton-supprimer-commentaire"
+                    );
+
+
+                    boutonSupprimer.addEventListener(
+                        "click",
+                        async function () {
+
+                            try {
+
+                                await supprimerCommentaire(
+                                    commentaire.id
+                                );
+
+                                await afficherCommentaires();
+
+                            } catch (erreur) {
+
+                                console.error(
+                                    "Erreur suppression commentaire :",
+                                    erreur
+                                );
+
+                                alert(
+                                    "Impossible de supprimer le commentaire."
+                                );
+
+                            }
+
+                        }
+                    );
+
+
+                    elementCommentaire.appendChild(
+                        boutonSupprimer
+                    );
+
+                }
+
+
+                listeCommentaires.appendChild(
+                    elementCommentaire
+                );
+
+            }
+        );
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur chargement commentaires :",
+            erreur
+        );
+
+        const erreurElement =
+            document.createElement(
+                "p"
+            );
+
+        erreurElement.classList.add(
+            "commentaires-erreur"
+        );
+
+        erreurElement.textContent =
+            "Impossible de charger les commentaires.";
+
+        listeCommentaires.appendChild(
+            erreurElement
+        );
+
+    }
+
+}
+
+
+boutonCommentaire.addEventListener(
+    "click",
+    async function () {
+
+        const contenu =
+            champCommentaire.value.trim();
+
+        if (!contenu) {
+
+            champCommentaire.focus();
+
+            return;
+        }
+
+
+        boutonCommentaire.disabled =
+            true;
+
+        try {
+
+            await ajouterCommentaire(
+                tache.id,
+                contenu
+            );
+
+            champCommentaire.value =
+                "";
+
+            await afficherCommentaires();
+
+        } catch (erreur) {
+
+            console.error(
+                "Erreur ajout commentaire :",
+                erreur
+            );
+
+            alert(
+                erreur.message ||
+                "Impossible d'ajouter le commentaire."
+            );
+
+        } finally {
+
+            boutonCommentaire.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+champCommentaire.addEventListener(
+    "keydown",
+    function (event) {
+
+        if (
+            event.key === "Enter" &&
+            !event.shiftKey
+        ) {
+
+            event.preventDefault();
+
+            boutonCommentaire.click();
+
+        }
+
+    }
+);
+
+
+element.appendChild(
+    blocCommentaires
+);
+
+afficherCommentaires();
 
     // --------------------------------------------------------
     // TERMINER

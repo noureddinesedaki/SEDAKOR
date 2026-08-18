@@ -466,20 +466,64 @@
     <!-- =========================
          V7 : NOTIFICATIONS
     ========================== -->
-    <section id="notifications">
-        <div class="notifications-entete">
-            <div>
-                <h2>🔔 Rappels et notifications</h2>
-                <p id="statut-notifications">
-                    Les notifications sont désactivées.
-                </p>
-            </div>
+   <!-- =========================
+     V16 : NOTIFICATIONS
+========================== -->
+<section id="notifications">
 
-            <button type="button" id="bouton-notifications">
-                Activer les notifications
-            </button>
+    <div class="notifications-entete">
+
+        <div class="notifications-titre">
+
+            <h2>
+                🔔 Notifications
+                <span
+                    id="notifications-compteur"
+                    class="notifications-compteur"
+                    hidden
+                >
+                    0
+                </span>
+            </h2>
+
+            <p id="statut-notifications">
+                Les notifications sont désactivées.
+            </p>
+
         </div>
-    </section>
+
+        <div class="notifications-actions">
+
+            <button
+                type="button"
+                id="bouton-notifications"
+            >
+                Activer
+            </button>
+
+            <button
+                type="button"
+                id="bouton-toutes-lues"
+                class="bouton-notifications-secondaire"
+                hidden
+            >
+                Tout lire
+            </button>
+
+        </div>
+
+    </div>
+
+    <div
+        id="liste-notifications"
+        class="liste-notifications"
+    >
+        <p class="notifications-vide">
+            Aucune nouvelle notification.
+        </p>
+    </div>
+
+</section>
 
     <!-- =========================
          AJOUTER UNE TÂCHE
