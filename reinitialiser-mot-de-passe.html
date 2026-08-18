@@ -2,7 +2,6 @@
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,15 +9,13 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Se connecter — SEDAKOR</title>
+    <title>Nouveau mot de passe — SEDAKOR</title>
 
     <link
         rel="stylesheet"
         href="css/style.css"
     >
-
 </head>
-
 
 <body>
 
@@ -31,85 +28,72 @@
                 <h1>SEDAKOR</h1>
 
                 <p>
-                    Connectez-vous à votre compte
+                    Créez votre nouveau mot de passe
                 </p>
 
             </div>
 
-
             <form
-                id="loginForm"
+                id="resetPasswordForm"
                 class="auth-form"
             >
 
                 <div class="form-group">
 
-                    <label for="email">
-                        Adresse email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="vous@exemple.com"
-                        maxlength="255"
-                        autocomplete="email"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
                     <label for="password">
-                        Mot de passe
+                        Nouveau mot de passe
                     </label>
 
                     <input
                         type="password"
                         id="password"
                         name="password"
-                        placeholder="Votre mot de passe"
-                        autocomplete="current-password"
+                        placeholder="Nouveau mot de passe"
+                        minlength="8"
+                        autocomplete="new-password"
                         required
                     >
 
                 </div>
 
-                <div class="auth-forgot">
-                    <a href="mot-de-passe-oublie.html">
-                        Mot de passe oublié ?
-                    </a>
+                <div class="form-group">
+
+                    <label for="confirmation">
+                        Confirmer le mot de passe
+                    </label>
+
+                    <input
+                        type="password"
+                        id="confirmation"
+                        name="confirmation"
+                        placeholder="Confirmez votre mot de passe"
+                        minlength="8"
+                        autocomplete="new-password"
+                        required
+                    >
+
                 </div>
 
                 <div
-                    id="loginMessage"
+                    id="resetPasswordMessage"
                     class="auth-message"
                     aria-live="polite"
                 ></div>
 
-
                 <button
                     type="submit"
                     class="auth-button"
-                    id="loginButton"
+                    id="resetPasswordButton"
                 >
-                    Se connecter
+                    Enregistrer le nouveau mot de passe
                 </button>
 
             </form>
 
-
             <div class="auth-footer">
 
-                <p>
-                    Vous n'avez pas encore de compte ?
-                </p>
-
-                <a href="inscription.html">
-                    Créer un compte
+                <a href="connexion.html">
+                    Retour à la connexion
                 </a>
 
             </div>
@@ -118,8 +102,7 @@
 
     </main>
 
-
-    <script src="js/login.js"></script>
+    <script src="js/password-reset.js"></script>
 
 </body>
 

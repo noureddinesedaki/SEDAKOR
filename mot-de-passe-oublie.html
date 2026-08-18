@@ -2,7 +2,6 @@
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,15 +9,13 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Se connecter — SEDAKOR</title>
+    <title>Mot de passe oublié — SEDAKOR</title>
 
     <link
         rel="stylesheet"
         href="css/style.css"
     >
-
 </head>
-
 
 <body>
 
@@ -31,14 +28,13 @@
                 <h1>SEDAKOR</h1>
 
                 <p>
-                    Connectez-vous à votre compte
+                    Réinitialisez votre mot de passe
                 </p>
 
             </div>
 
-
             <form
-                id="loginForm"
+                id="resetRequestForm"
                 class="auth-form"
             >
 
@@ -60,56 +56,26 @@
 
                 </div>
 
-
-                <div class="form-group">
-
-                    <label for="password">
-                        Mot de passe
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="Votre mot de passe"
-                        autocomplete="current-password"
-                        required
-                    >
-
-                </div>
-
-                <div class="auth-forgot">
-                    <a href="mot-de-passe-oublie.html">
-                        Mot de passe oublié ?
-                    </a>
-                </div>
-
                 <div
-                    id="loginMessage"
+                    id="resetRequestMessage"
                     class="auth-message"
                     aria-live="polite"
                 ></div>
 
-
                 <button
                     type="submit"
                     class="auth-button"
-                    id="loginButton"
+                    id="resetRequestButton"
                 >
-                    Se connecter
+                    Réinitialiser mon mot de passe
                 </button>
 
             </form>
 
-
             <div class="auth-footer">
 
-                <p>
-                    Vous n'avez pas encore de compte ?
-                </p>
-
-                <a href="inscription.html">
-                    Créer un compte
+                <a href="connexion.html">
+                    Retour à la connexion
                 </a>
 
             </div>
@@ -118,8 +84,7 @@
 
     </main>
 
-
-    <script src="js/login.js"></script>
+    <script src="js/password-reset-request.js"></script>
 
 </body>
 
