@@ -7064,3 +7064,70 @@ h2 {
     }
 
 }
+
+/* ============================================================
+   ASSISTANT SEDAKOR — FORMATAGE DES RÉPONSES IA
+   ============================================================ */
+
+.assistant-message-texte {
+    line-height: 1.65;
+}
+
+
+.assistant-message-texte p {
+    margin: 0 0 12px;
+}
+
+
+.assistant-message-texte p:last-child {
+    margin-bottom: 0;
+}
+
+
+.assistant-message-texte h3,
+.assistant-message-texte h4 {
+    margin: 18px 0 10px;
+    color: #1f2937;
+    line-height: 1.3;
+}
+
+
+.assistant-message-texte h3 {
+    font-size: 18px;
+}
+
+
+.assistant-message-texte h4 {
+    font-size: 16px;
+}
+
+
+.assistant-message-texte strong {
+    font-weight: 700;
+    color: #1f2937;
+}
+
+
+.assistant-message-texte em {
+    font-style: italic;
+}
+
+
+.assistant-message-texte ul,
+.assistant-message-texte ol {
+    margin: 8px 0 16px;
+    padding-left: 24px;
+}
+
+
+.assistant-message-texte li {
+    margin: 7px 0;
+    padding-left: 3px;
+}
+
+
+.assistant-message-texte hr {
+    border: 0;
+    border-top: 1px solid #e5e7eb;
+    margin: 18px 0;
+}
