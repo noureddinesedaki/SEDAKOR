@@ -6885,3 +6885,59 @@ h2 {
     margin: 0;
     color: #6b7280;
 }
+
+/* ============================================================
+   AJUSTEMENT FORMULAIRE — AJOUTER UNE TÂCHE
+============================================================ */
+
+#formulaire-tache {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Champ principal */
+#formulaire-tache #tache {
+    flex: 1 1 260px;
+    min-width: 240px;
+}
+
+/* Sélecteurs */
+#formulaire-tache select {
+    min-width: 125px;
+}
+
+/* Date */
+#formulaire-tache #date-echeance {
+    min-width: 135px;
+}
+
+/* Heure */
+#formulaire-tache #heure-rappel {
+    min-width: 105px;
+}
+
+/* Bouton Ajouter */
+#formulaire-tache button[type="submit"] {
+    min-width: 180px;
+    height: 52px;
+    margin-top: 0;
+}
+
+/* Sur écran plus petit */
+@media (max-width: 900px) {
+
+    #formulaire-tache {
+        align-items: stretch;
+    }
+
+    #formulaire-tache #tache {
+        flex-basis: 100%;
+    }
+
+    #formulaire-tache button[type="submit"] {
+        flex: 1 1 180px;
+    }
+
+}
