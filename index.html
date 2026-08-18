@@ -80,54 +80,321 @@
     <!-- =========================
          DASHBOARD
     ========================== -->
-    <section id="dashboard">
-        <h2>Tableau de bord</h2>
+    <section id="dashboard" class="dashboard-v10">
 
-        <div class="statistiques">
-            <div class="statistique">
-                <span class="statistique-icone">📝</span>
-                <div>
-                    <span class="statistique-label">Total</span>
-                    <strong id="stat-total" class="statistique-valeur">0</strong>
-                </div>
-            </div>
+    <div class="dashboard-introduction">
 
-            <div class="statistique">
-                <span class="statistique-icone">🔵</span>
-                <div>
-                    <span class="statistique-label">En cours</span>
-                    <strong id="stat-en-cours" class="statistique-valeur">0</strong>
-                </div>
-            </div>
+        <div>
+            <span class="dashboard-sur-titre">
+                TABLEAU DE BORD
+            </span>
 
-            <div class="statistique">
-                <span class="statistique-icone">✅</span>
-                <div>
-                    <span class="statistique-label">Terminées</span>
-                    <strong id="stat-terminees" class="statistique-valeur">0</strong>
-                </div>
-            </div>
+            <h2>
+                Votre activité
+            </h2>
 
-            <div class="statistique">
-                <span class="statistique-icone">🔴</span>
-                <div>
-                    <span class="statistique-label">En retard</span>
-                    <strong id="stat-en-retard" class="statistique-valeur">0</strong>
-                </div>
-            </div>
+            <p id="dashboard-message">
+                Voici un aperçu de votre productivité.
+            </p>
         </div>
 
-        <div class="progression">
-            <div class="progression-entete">
-                <span>Progression</span>
-                <strong id="pourcentage-progression">0%</strong>
+        <div class="dashboard-date">
+            <span>Aujourd'hui</span>
+            <strong id="dashboard-date"></strong>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         STATISTIQUES
+    ========================== -->
+
+    <div class="statistiques dashboard-statistiques">
+
+        <div class="statistique dashboard-statistique-total">
+
+            <span class="statistique-icone">
+                📝
+            </span>
+
+            <div>
+                <span class="statistique-label">
+                    Total
+                </span>
+
+                <strong
+                    id="stat-total"
+                    class="statistique-valeur"
+                >
+                    0
+                </strong>
             </div>
 
-            <div class="barre-progression">
-                <div id="progression" class="progression-remplie"></div>
-            </div>
         </div>
-    </section>
+
+
+        <div class="statistique dashboard-statistique-cours">
+
+            <span class="statistique-icone">
+                🔵
+            </span>
+
+            <div>
+                <span class="statistique-label">
+                    En cours
+                </span>
+
+                <strong
+                    id="stat-en-cours"
+                    class="statistique-valeur"
+                >
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="statistique dashboard-statistique-terminees">
+
+            <span class="statistique-icone">
+                ✅
+            </span>
+
+            <div>
+                <span class="statistique-label">
+                    Terminées
+                </span>
+
+                <strong
+                    id="stat-terminees"
+                    class="statistique-valeur"
+                >
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="statistique dashboard-statistique-retard">
+
+            <span class="statistique-icone">
+                🔴
+            </span>
+
+            <div>
+                <span class="statistique-label">
+                    En retard
+                </span>
+
+                <strong
+                    id="stat-en-retard"
+                    class="statistique-valeur"
+                >
+                    0
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PROGRESSION
+    ========================== -->
+
+    <div class="progression dashboard-progression">
+
+        <div class="progression-entete">
+
+            <div>
+                <span>
+                    Progression globale
+                </span>
+
+                <small>
+                    Tâches terminées
+                </small>
+            </div>
+
+            <strong id="pourcentage-progression">
+                0%
+            </strong>
+
+        </div>
+
+
+        <div class="barre-progression">
+
+            <div
+                id="progression"
+                class="progression-remplie"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         BLOCS INFÉRIEURS
+    ========================== -->
+
+    <div class="dashboard-grille">
+
+
+        <!-- AUJOURD'HUI -->
+
+        <div class="dashboard-bloc">
+
+            <div class="dashboard-bloc-entete">
+
+                <div>
+                    <span class="dashboard-bloc-icone">
+                        📅
+                    </span>
+
+                    <div>
+                        <h3>
+                            Aujourd'hui
+                        </h3>
+
+                        <p>
+                            Vos tâches du jour
+                        </p>
+                    </div>
+                </div>
+
+                <strong id="dashboard-compteur-aujourd-hui">
+                    0
+                </strong>
+
+            </div>
+
+            <div
+                id="dashboard-aujourd-hui"
+                class="dashboard-liste"
+            >
+            </div>
+
+        </div>
+
+
+        <!-- PRIORITÉS -->
+
+        <div class="dashboard-bloc">
+
+            <div class="dashboard-bloc-entete">
+
+                <div>
+                    <span class="dashboard-bloc-icone">
+                        ⚡
+                    </span>
+
+                    <div>
+                        <h3>
+                            Priorités
+                        </h3>
+
+                        <p>
+                            Répartition de vos tâches
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-priorites">
+
+                <div class="dashboard-priorite">
+
+                    <div>
+                        <span class="dashboard-point dashboard-point-haute"></span>
+                        <span>Haute</span>
+                    </div>
+
+                    <strong id="dashboard-priorite-haute">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-priorite">
+
+                    <div>
+                        <span class="dashboard-point dashboard-point-moyenne"></span>
+                        <span>Moyenne</span>
+                    </div>
+
+                    <strong id="dashboard-priorite-moyenne">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="dashboard-priorite">
+
+                    <div>
+                        <span class="dashboard-point dashboard-point-basse"></span>
+                        <span>Basse</span>
+                    </div>
+
+                    <strong id="dashboard-priorite-basse">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         CATÉGORIES
+    ========================== -->
+
+    <div class="dashboard-bloc dashboard-categories-bloc">
+
+        <div class="dashboard-bloc-entete">
+
+            <div>
+                <span class="dashboard-bloc-icone">
+                    📊
+                </span>
+
+                <div>
+                    <h3>
+                        Catégories
+                    </h3>
+
+                    <p>
+                        Répartition de vos tâches
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div
+            id="dashboard-categories"
+            class="dashboard-categories"
+        >
+        </div>
+
+    </div>
+
+</section>
 
     <!-- =========================
          V7 : NOTIFICATIONS

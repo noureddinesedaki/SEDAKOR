@@ -71,6 +71,46 @@ const pourcentageProgression =
 const progression =
     document.querySelector("#progression");
 
+    const dashboardDate =
+    document.querySelector(
+        "#dashboard-date"
+    );
+
+const dashboardMessage =
+    document.querySelector(
+        "#dashboard-message"
+    );
+
+const dashboardAujourdHui =
+    document.querySelector(
+        "#dashboard-aujourd-hui"
+    );
+
+const dashboardCompteurAujourdHui =
+    document.querySelector(
+        "#dashboard-compteur-aujourd-hui"
+    );
+
+const dashboardPrioriteHaute =
+    document.querySelector(
+        "#dashboard-priorite-haute"
+    );
+
+const dashboardPrioriteMoyenne =
+    document.querySelector(
+        "#dashboard-priorite-moyenne"
+    );
+
+const dashboardPrioriteBasse =
+    document.querySelector(
+        "#dashboard-priorite-basse"
+    );
+
+const dashboardCategories =
+    document.querySelector(
+        "#dashboard-categories"
+    );
+
 
 // ============================================================
 // VARIABLES
@@ -1249,29 +1289,29 @@ function mettreAJourDashboard() {
     const total =
         taches.length;
 
+
     const terminees =
         taches.filter(
             function (tache) {
-
                 return tache.terminee;
-
             }
         ).length;
+
 
     const enCours =
         total -
         terminees;
 
+
     const enRetard =
         taches.filter(
             function (tache) {
-
                 return dateEstEnRetard(
                     tache
                 );
-
             }
         ).length;
+
 
     const pourcentage =
         total === 0
@@ -1283,6 +1323,11 @@ function mettreAJourDashboard() {
                 ) *
                 100
             );
+
+
+    /* =========================
+       STATISTIQUES PRINCIPALES
+    ========================== */
 
     statTotal.textContent =
         total;
@@ -1296,6 +1341,7 @@ function mettreAJourDashboard() {
     statEnRetard.textContent =
         enRetard;
 
+
     pourcentageProgression.textContent =
         pourcentage +
         "%";
@@ -1303,6 +1349,428 @@ function mettreAJourDashboard() {
     progression.style.width =
         pourcentage +
         "%";
+
+
+    /* =========================
+       DATE
+    ========================== */
+
+    const maintenant =
+        new Date();
+
+    const dateFormatee =
+        maintenant.toLocaleDateString(
+            "fr-FR",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+    dashboardDate.textContent =
+        dateFormatee;
+
+
+    /* =========================
+       MESSAGE
+    ========================== */
+
+    if (total === 0) {
+
+        dashboardMessage.textContent =
+            "Commencez par ajouter votre première tâche.";
+
+    }
+    else if (enRetard > 0) {
+
+        dashboardMessage.textContent =
+            "Vous avez " +
+            enRetard +
+            (
+                enRetard > 1
+                    ? " tâches"
+                    : " tâche"
+            ) +
+            " en retard à traiter.";
+
+    }
+    else if (enCours === 0) {
+
+        dashboardMessage.textContent =
+            "Excellent travail, toutes vos tâches sont terminées.";
+
+    }
+    else {
+
+        dashboardMessage.textContent =
+            "Vous avez " +
+            enCours +
+            (
+                enCours > 1
+                    ? " tâches"
+                    : " tâche"
+            ) +
+            " en cours.";
+
+    }
+
+
+    /* =========================
+       AUJOURD'HUI
+    ========================== */
+
+    const aujourdHui =
+        maintenant
+            .toISOString()
+            .split("T")[0];
+
+
+    const tachesAujourdHui =
+        taches.filter(
+            function (tache) {
+
+                return (
+                    tache.dateEcheance ===
+                    aujourdHui
+                );
+
+            }
+        );
+
+
+    dashboardCompteurAujourdHui.textContent =
+        tachesAujourdHui.length;
+
+
+    dashboardAujourdHui.innerHTML =
+        "";
+
+
+    if (
+        tachesAujourdHui.length ===
+        0
+    ) {
+
+        dashboardAujourdHui.innerHTML =
+            '<div class="dashboard-vide">' +
+            '🎉 Aucune tâche prévue aujourd’hui.' +
+            '</div>';
+
+    }
+    else {
+
+        tachesAujourdHui
+            .slice(0, 5)
+            .forEach(
+                function (tache) {
+
+                    const element =
+                        document.createElement(
+                            "div"
+                        );
+
+                    element.classList.add(
+                        "dashboard-tache"
+                    );
+
+
+                    if (tache.terminee) {
+
+                        element.classList.add(
+                            "dashboard-tache-terminee"
+                        );
+
+                    }
+
+
+                    const statut =
+                        document.createElement(
+                            "span"
+                        );
+
+                    statut.classList.add(
+                        "dashboard-tache-statut"
+                    );
+
+
+                    const texte =
+                        document.createElement(
+                            "span"
+                        );
+
+                    texte.classList.add(
+                        "dashboard-tache-texte"
+                    );
+
+                    texte.textContent =
+                        tache.texte;
+
+
+                    const priorite =
+                        document.createElement(
+                            "span"
+                        );
+
+                    priorite.classList.add(
+                        "dashboard-tache-priorite"
+                    );
+
+
+                    if (
+                        tache.priorite ===
+                        "haute"
+                    ) {
+
+                        priorite.textContent =
+                            "Haute";
+
+                    }
+                    else if (
+                        tache.priorite ===
+                        "moyenne"
+                    ) {
+
+                        priorite.textContent =
+                            "Moyenne";
+
+                    }
+                    else {
+
+                        priorite.textContent =
+                            "Basse";
+
+                    }
+
+
+                    element.appendChild(
+                        statut
+                    );
+
+                    element.appendChild(
+                        texte
+                    );
+
+                    element.appendChild(
+                        priorite
+                    );
+
+
+                    dashboardAujourdHui.appendChild(
+                        element
+                    );
+
+                }
+            );
+
+    }
+
+
+    /* =========================
+       PRIORITÉS
+    ========================== */
+
+    const prioriteHaute =
+        taches.filter(
+            function (tache) {
+
+                return (
+                    tache.priorite ===
+                    "haute"
+                );
+
+            }
+        ).length;
+
+
+    const prioriteMoyenne =
+        taches.filter(
+            function (tache) {
+
+                return (
+                    tache.priorite ===
+                    "moyenne"
+                );
+
+            }
+        ).length;
+
+
+    const prioriteBasse =
+        taches.filter(
+            function (tache) {
+
+                return (
+                    tache.priorite ===
+                    "basse"
+                );
+
+            }
+        ).length;
+
+
+    dashboardPrioriteHaute.textContent =
+        prioriteHaute;
+
+    dashboardPrioriteMoyenne.textContent =
+        prioriteMoyenne;
+
+    dashboardPrioriteBasse.textContent =
+        prioriteBasse;
+
+
+    /* =========================
+       CATÉGORIES
+    ========================== */
+
+    const categories = [
+        [
+            "💼 Travail",
+            "travail"
+        ],
+        [
+            "📚 Études",
+            "etudes"
+        ],
+        [
+            "🏠 Personnel",
+            "personnel"
+        ],
+        [
+            "🚀 Projets",
+            "projets"
+        ],
+        [
+            "📦 Autre",
+            "autre"
+        ]
+    ];
+
+
+    dashboardCategories.innerHTML =
+        "";
+
+
+    categories.forEach(
+        function (categorie) {
+
+            const nom =
+                categorie[0];
+
+            const valeur =
+                categorie[1];
+
+
+            const nombre =
+                taches.filter(
+                    function (tache) {
+
+                        return (
+                            tache.categorie ===
+                            valeur
+                        );
+
+                    }
+                ).length;
+
+
+            const pourcentageCategorie =
+                total === 0
+                    ? 0
+                    : Math.round(
+                        (
+                            nombre /
+                            total
+                        ) *
+                        100
+                    );
+
+
+            const bloc =
+                document.createElement(
+                    "div"
+                );
+
+            bloc.classList.add(
+                "dashboard-categorie"
+            );
+
+
+            const nomElement =
+                document.createElement(
+                    "span"
+                );
+
+            nomElement.classList.add(
+                "dashboard-categorie-nom"
+            );
+
+            nomElement.textContent =
+                nom;
+
+
+            const valeurElement =
+                document.createElement(
+                    "strong"
+                );
+
+            valeurElement.classList.add(
+                "dashboard-categorie-valeur"
+            );
+
+            valeurElement.textContent =
+                nombre;
+
+
+            const barre =
+                document.createElement(
+                    "div"
+                );
+
+            barre.classList.add(
+                "dashboard-categorie-barre"
+            );
+
+
+            const remplie =
+                document.createElement(
+                    "div"
+                );
+
+            remplie.classList.add(
+                "dashboard-categorie-barre-remplie"
+            );
+
+            remplie.style.width =
+                pourcentageCategorie +
+                "%";
+
+
+            barre.appendChild(
+                remplie
+            );
+
+
+            bloc.appendChild(
+                nomElement
+            );
+
+            bloc.appendChild(
+                valeurElement
+            );
+
+            bloc.appendChild(
+                barre
+            );
+
+
+            dashboardCategories.appendChild(
+                bloc
+            );
+
+        }
+    );
 
 }
 
@@ -2749,11 +3217,6 @@ function afficherTache(
                         await chargerTaches();
 
                     } catch (erreur) {
-
-                        Object.assign(
-                            tache,
-                            ancienneValeur
-                        );
 
                         console.error(
                             "Erreur modification tâche :",
