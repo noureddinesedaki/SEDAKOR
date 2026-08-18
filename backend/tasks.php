@@ -393,21 +393,28 @@ if (
     $requete =
     $pdo->prepare(
         "SELECT
-            t.id,
-            t.user_id,
-            t.titre,
-            t.priorite,
-            t.categorie,
-            t.date_echeance,
+	    t.id,
+	    t.user_id,
+	    t.titre,
+	    t.project_id,
+	    t.priorite,
+	    t.categorie,
+	    t.date_echeance,
             t.heure_rappel,
             t.rappel_active,
             t.recurrence,
             t.terminee,
             t.sous_taches,
+            t.project_id,
+            p.nom AS project_nom,
+            p.couleur AS project_couleur,
             t.created_at,
             t.updated_at
 
         FROM tasks t
+
+        LEFT JOIN projects p
+            ON p.id = t.project_id
 
         WHERE
             t.user_id = :user_id
@@ -724,6 +731,66 @@ if (
 
         }
 
+        // ----------------------------------------------------
+// PROJET
+// ----------------------------------------------------
+
+$projectId =
+    $donnees["projectId"] ?? null;
+
+if (
+    $projectId !== null &&
+    $projectId !== ""
+) {
+
+    $projectId =
+        (int) $projectId;
+
+    if ($projectId <= 0) {
+
+        repondre([
+            "erreur" =>
+                "Projet invalide."
+        ], 400);
+
+    }
+
+    // Vérifier que le projet appartient
+    // bien à l'utilisateur connecté.
+
+    $requeteProjet =
+        $pdo->prepare(
+            "SELECT id
+             FROM projects
+             WHERE id = :id
+               AND user_id = :user_id
+             LIMIT 1"
+        );
+
+    $requeteProjet->execute([
+        ":id" =>
+            $projectId,
+
+        ":user_id" =>
+            $userId
+    ]);
+
+    if (
+        !$requeteProjet->fetch()
+    ) {
+
+        repondre([
+            "erreur" =>
+                "Projet introuvable."
+        ], 404);
+
+    }
+
+} else {
+
+    $projectId = null;
+
+}
 
         $sousTachesJson =
             json_encode(
@@ -753,6 +820,7 @@ if (
         "INSERT INTO tasks
         (
             user_id,
+            project_id,
             titre,
             priorite,
             categorie,
@@ -766,6 +834,7 @@ if (
         VALUES
         (
             :user_id,
+            :project_id,
             :titre,
             :priorite,
             :categorie,
@@ -782,6 +851,9 @@ if (
 
             ":user_id" =>
                 $userId,
+
+            ":project_id" =>
+                $projectId,
 
             ":titre" =>
                 $titre,
@@ -1044,6 +1116,103 @@ if (
 
         }
 
+        // ----------------------------------------------------
+// PROJET
+// ----------------------------------------------------
+
+if (
+    array_key_exists(
+        "projectId",
+        $donnees
+    )
+) {
+
+    $projectId =
+        $donnees["projectId"];
+
+
+    // Autoriser explicitement
+    // l'absence de projet.
+
+    if (
+        $projectId === null ||
+        $projectId === ""
+    ) {
+
+        $champs[] =
+            "project_id = :project_id";
+
+        $parametres[
+            ":project_id"
+        ] = null;
+
+    } else {
+
+        if (
+            !is_numeric($projectId) ||
+            (int) $projectId <= 0
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Projet invalide."
+            ], 400);
+
+        }
+
+
+        $projectId =
+            (int) $projectId;
+
+
+        // Vérifier que le projet
+        // appartient à l'utilisateur.
+
+        $verificationProjet =
+            $pdo->prepare(
+                "SELECT id
+                 FROM projects
+                 WHERE id = :id
+                   AND user_id = :user_id
+                 LIMIT 1"
+            );
+
+
+        $verificationProjet->execute([
+
+            ":id" =>
+                $projectId,
+
+            ":user_id" =>
+                $userId
+
+        ]);
+
+
+        if (
+            !$verificationProjet->fetch()
+        ) {
+
+            repondre([
+                "erreur" =>
+                    "Projet introuvable."
+            ], 404);
+
+        }
+
+
+        $champs[] =
+            "project_id = :project_id";
+
+
+        $parametres[
+            ":project_id"
+        ] =
+            $projectId;
+
+    }
+
+}
 
         // ----------------------------------------------------
         // DATE

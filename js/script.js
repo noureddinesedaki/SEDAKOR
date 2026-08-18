@@ -20,6 +20,9 @@ const priorite =
 const categorie =
     document.querySelector("#categorie");
 
+const projetTache =
+    document.querySelector("#projet-tache");
+
 const dateEcheance =
     document.querySelector("#date-echeance");
 
@@ -714,12 +717,25 @@ async function chargerTaches() {
                         "moyenne",
 
                     categorie:
-                        tache.categorie ||
-                        "autre",
+                    tache.categorie ||
+                    "autre",
 
-                    dateEcheance:
-                        tache.date_echeance ||
+                    projectId:
+                    tache.project_id
+                        ? Number(tache.project_id)
+                        : null,
+
+                    project_nom:
+                        tache.project_nom ||
                         "",
+
+project_couleur:
+    tache.project_couleur ||
+    "",
+
+dateEcheance:
+    tache.date_echeance ||
+    "",
 
                     heureRappel:
                         tache.heure_rappel ||
@@ -767,6 +783,19 @@ async function chargerTaches() {
     }
 
 }
+
+// ============================================================
+// SYNCHRONISATION AVEC LES PROJETS
+// ============================================================
+
+window.addEventListener(
+    "sedakor:tache-modifiee",
+    async function () {
+
+        await chargerTaches();
+
+    }
+);
 
 
 // ============================================================
@@ -847,7 +876,8 @@ function creerTache(
     categorieTache,
     date,
     recurrenceTache,
-    heure
+    heure,
+    projetId
 ) {
 
     return {
@@ -869,6 +899,10 @@ function creerTache(
         categorie:
             categorieTache ||
             "autre",
+
+        projectId:
+            projetId ||
+            null,
 
         dateEcheance:
             date ||
@@ -947,6 +981,9 @@ async function creerTacheAPI(
                         priorite:
                             tache.priorite,
 
+                        projectId:
+                            tache.projectId || null,
+
                         categorie:
                             tache.categorie,
 
@@ -1023,6 +1060,9 @@ async function sauvegarderTache(
 
                         priorite:
                             tache.priorite,
+
+                        projectId:
+                            tache.projectId || null,
 
                         categorie:
                             tache.categorie,
@@ -3081,7 +3121,13 @@ async function terminerTache(
 
         await chargerTaches();
 
-    } catch (erreur) {
+            window.dispatchEvent(
+                new CustomEvent(
+            "sedakor:tache-modifiee"
+            )
+        );
+
+} catch (erreur) {
 
         tache.terminee =
             ancienStatut;
@@ -4451,6 +4497,48 @@ function afficherTache(
     informations.appendChild(
         badgeCategorie
     );
+
+    // Projet
+
+if (
+    tache.projectId &&
+    tache.project_nom
+) {
+
+    const badgeProjet =
+        document.createElement(
+            "span"
+        );
+
+    badgeProjet.classList.add(
+        "projet-badge"
+    );
+
+    badgeProjet.textContent =
+        "📁 " +
+        tache.project_nom;
+
+    if (
+        tache.project_couleur
+    ) {
+
+        badgeProjet.style.borderColor =
+            tache.project_couleur;
+
+        badgeProjet.style.color =
+            tache.project_couleur;
+
+        badgeProjet.style.backgroundColor =
+            tache.project_couleur +
+            "15";
+
+    }
+
+    informations.appendChild(
+        badgeProjet
+    );
+
+}
 
 
     // Échéance
@@ -5938,7 +6026,10 @@ formulaire.addEventListener(
                 categorie.value,
                 dateEcheance.value,
                 recurrence.value,
-                heureRappel.value
+                heureRappel.value,
+                projetTache
+                    ? projetTache.value
+                    : null
             );
 
 
@@ -5968,6 +6059,13 @@ formulaire.addEventListener(
 
             heureRappel.value =
                 "";
+
+            if (projetTache) {
+
+                projetTache.value =
+                "";
+
+            }
 
 
             champTache.focus();

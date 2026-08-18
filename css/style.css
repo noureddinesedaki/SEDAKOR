@@ -6166,3 +6166,662 @@ h2 {
     }
 
 }
+
+/* ============================================================
+   V20 — PROJETS
+   ============================================================ */
+
+.sedakor-projects {
+    margin-top: 32px;
+    padding: 32px;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border, #e5e7eb);
+    border-radius: 20px;
+}
+
+.sedakor-projects-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.sedakor-projects-header h2 {
+    margin: 6px 0;
+}
+
+.sedakor-projects-header p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.bouton-projet {
+    border: 0;
+    border-radius: 10px;
+    padding: 11px 18px;
+    background: #6366f1;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.bouton-projet:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+
+/* ============================================================
+   CARTES PROJETS
+   ============================================================ */
+
+.liste-projets {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(260px, 1fr)
+    );
+    gap: 18px;
+}
+
+.projet-carte {
+    position: relative;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.projet-carte::before {
+    content: "";
+    display: block;
+    height: 5px;
+    background: var(--projet-couleur);
+}
+
+.projet-carte:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.projet-carte-contenu {
+    padding: 22px;
+}
+
+.projet-carte h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.projet-carte p {
+    min-height: 42px;
+    margin: 0 0 20px;
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.projet-statistiques {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.projet-progression {
+    height: 7px;
+    overflow: hidden;
+    background: #eef2f7;
+    border-radius: 999px;
+}
+
+.projet-progression-barre {
+    height: 100%;
+    min-width: 0;
+    background: var(--projet-couleur);
+    border-radius: inherit;
+    transition: width 0.3s ease;
+}
+
+.projet-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.projet-supprimer {
+    border: 0;
+    background: transparent;
+    color: #9ca3af;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.projet-supprimer:hover {
+    color: #ef4444;
+}
+
+
+/* ============================================================
+   AUCUN PROJET
+   ============================================================ */
+
+.projets-vide {
+    padding: 50px 20px;
+    text-align: center;
+    color: #6b7280;
+}
+
+.projets-vide-icone {
+    margin-bottom: 12px;
+    font-size: 42px;
+}
+
+.projets-vide h3 {
+    margin: 0 0 8px;
+    color: #111827;
+}
+
+.projets-vide p {
+    margin: 0;
+}
+
+
+/* ============================================================
+   MODAL PROJET
+   ============================================================ */
+
+.modal-projet {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.45);
+}
+
+.modal-projet-contenu {
+    width: min(100%, 480px);
+    padding: 28px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.2);
+}
+
+.modal-projet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.modal-projet-header h3 {
+    margin: 0;
+    font-size: 21px;
+}
+
+.modal-projet-fermer {
+    width: 34px;
+    height: 34px;
+    border: 0;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #374151;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+#formulaire-projet {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#formulaire-projet label {
+    margin-top: 8px;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#formulaire-projet input[type="text"],
+#formulaire-projet textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+    font: inherit;
+}
+
+#formulaire-projet input[type="text"]:focus,
+#formulaire-projet textarea:focus {
+    border-color: #6366f1;
+    box-shadow:
+        0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+#formulaire-projet input[type="color"] {
+    width: 60px;
+    height: 38px;
+    padding: 3px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    cursor: pointer;
+}
+
+.modal-projet-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.modal-projet-actions button {
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.modal-projet-actions button[type="button"] {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.modal-projet-actions button[type="submit"] {
+    background: #6366f1;
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 700px) {
+
+    .sedakor-projects {
+        padding: 22px;
+        border-radius: 16px;
+    }
+
+    .sedakor-projects-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .bouton-projet {
+        width: 100%;
+    }
+
+    .liste-projets {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-projet-contenu {
+        padding: 22px;
+    }
+
+}
+
+/* ============================================================
+   CORRECTION MODAL PROJET — hidden
+   ============================================================ */
+
+.modal-projet[hidden] {
+    display: none !important;
+}
+
+/* ============================================================
+   V20 — BADGE PROJET
+============================================================ */
+
+.projet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 5px 9px;
+
+    border: 1px solid;
+
+    border-radius: 999px;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+/* ============================================================
+   DÉTAIL D'UN PROJET
+   ============================================================ */
+
+#projet-detail {
+    margin-top: 30px;
+}
+
+
+/* ------------------------------------------------------------
+   BOUTON RETOUR
+   ------------------------------------------------------------ */
+
+#bouton-retour-projets {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    margin-bottom: 18px;
+    padding: 9px 15px;
+
+    border: 1px solid #d9dee8;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #475569;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+#bouton-retour-projets:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #1e293b;
+    transform: translateX(-2px);
+}
+
+
+/* ------------------------------------------------------------
+   EN-TÊTE DU PROJET
+   ------------------------------------------------------------ */
+
+#projet-detail-nom {
+    margin: 0 0 8px;
+
+    color: #1e293b;
+
+    font-size: 30px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+#projet-detail-description {
+    margin: 0 0 22px;
+
+    color: #64748b;
+
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+
+/* ------------------------------------------------------------
+   PROGRESSION
+   ------------------------------------------------------------ */
+
+.projet-detail-progression {
+    margin: 20px 0 30px;
+}
+
+.projet-detail-progression-entete {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 9px;
+}
+
+.projet-detail-progression-entete span {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#projet-detail-pourcentage {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.projet-detail-progression-fond {
+    width: 100%;
+    height: 9px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #e2e8f0;
+}
+
+#projet-detail-barre-progression {
+    width: 0;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background: #2563eb;
+
+    transition: width 0.3s ease;
+}
+
+
+/* ------------------------------------------------------------
+   SECTION TÂCHES
+   ------------------------------------------------------------ */
+
+.projet-detail-section {
+    margin-top: 28px;
+}
+
+.projet-detail-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 14px;
+}
+
+.projet-detail-section-header h3 {
+    margin: 0;
+
+    color: #1e293b;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+#projet-detail-compteur {
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background: #eff6ff;
+    color: #2563eb;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* ------------------------------------------------------------
+   CARTE D'UNE TÂCHE
+   ------------------------------------------------------------ */
+
+.projet-detail-tache {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    width: 100%;
+    box-sizing: border-box;
+
+    margin-bottom: 10px;
+    padding: 16px 18px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.projet-detail-tache:hover {
+    border-color: #cbd5e1;
+
+    box-shadow:
+        0 4px 12px rgba(15, 23, 42, 0.06);
+
+    transform: translateY(-1px);
+}
+
+
+/* ------------------------------------------------------------
+   CHECKBOX
+   ------------------------------------------------------------ */
+
+.projet-detail-tache input[type="checkbox"] {
+    flex: 0 0 auto;
+
+    width: 19px;
+    height: 19px;
+
+    margin: 2px 0 0;
+
+    accent-color: #2563eb;
+}
+
+
+/* ------------------------------------------------------------
+   INFORMATIONS TÂCHE
+   ------------------------------------------------------------ */
+
+.projet-detail-tache-informations {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    min-width: 0;
+}
+
+.projet-detail-tache-informations strong {
+    display: block;
+
+    color: #1e293b;
+
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+
+    word-break: break-word;
+}
+
+.projet-detail-tache-informations span {
+    display: block;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    text-transform: capitalize;
+}
+
+
+/* ------------------------------------------------------------
+   TÂCHE TERMINÉE
+   ------------------------------------------------------------ */
+
+.projet-detail-tache.terminee {
+    background: #f8fafc;
+}
+
+.projet-detail-tache.terminee strong {
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+
+.projet-detail-tache.terminee span {
+    color: #94a3b8;
+}
+
+
+/* ------------------------------------------------------------
+   AUCUNE TÂCHE
+   ------------------------------------------------------------ */
+
+.projet-detail-vide {
+    padding: 35px 20px;
+
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+
+    background: #f8fafc;
+
+    text-align: center;
+}
+
+.projet-detail-vide > div {
+    margin-bottom: 10px;
+
+    font-size: 30px;
+}
+
+.projet-detail-vide h4 {
+    margin: 0 0 6px;
+
+    color: #334155;
+
+    font-size: 17px;
+}
+
+.projet-detail-vide p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+/* ------------------------------------------------------------
+   ERREUR
+   ------------------------------------------------------------ */
+
+.projet-detail-erreur {
+    padding: 15px;
+
+    border-radius: 10px;
+
+    background: #fef2f2;
+    color: #b91c1c;
+
+    font-size: 14px;
+}

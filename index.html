@@ -51,6 +51,11 @@
                 <span>Mes tâches</span>
             </a>
 
+            <a href="#projets">
+                <span class="icone">▣</span>
+                <span>Projets</span>
+            </a>
+
             <a href="#calendrier">
                 <span class="icone">▣</span>
                 <span>Calendrier</span>
@@ -484,6 +489,258 @@
 
 </section>
 
+        <!-- =========================
+     PROJETS
+========================== -->
+
+<section
+    id="projets"
+    class="sedakor-projects"
+>
+
+    <div class="sedakor-projects-header">
+
+        <div>
+
+            <span class="dashboard-sur-titre">
+                ORGANISATION
+            </span>
+
+            <h2>
+                Mes projets
+            </h2>
+
+            <p>
+                Regroupez vos tâches et suivez votre progression.
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            id="bouton-nouveau-projet"
+            class="bouton-projet"
+        >
+            ＋ Nouveau projet
+        </button>
+
+    </div>
+
+
+    <div
+        id="liste-projets"
+        class="liste-projets"
+    ></div>
+
+
+    <div
+        id="projets-vide"
+        class="projets-vide"
+        hidden
+    >
+
+        <div class="projets-vide-icone">
+            📁
+        </div>
+
+        <h3>
+            Aucun projet
+        </h3>
+
+        <p>
+            Créez votre premier projet pour organiser vos tâches.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- ========================================================
+     VUE DÉTAILLÉE D'UN PROJET
+========================================================= -->
+
+<section
+    id="projet-detail"
+    class="sedakor-projet-detail"
+    hidden
+>
+
+    <div class="projet-detail-header">
+
+        <button
+            type="button"
+            id="bouton-retour-projets"
+            class="bouton-retour-projets"
+        >
+            ← Retour aux projets
+        </button>
+
+    </div>
+
+
+    <div class="projet-detail-introduction">
+
+        <div>
+
+            <span class="dashboard-sur-titre">
+                PROJET
+            </span>
+
+            <h2 id="projet-detail-nom">
+                Projet
+            </h2>
+
+            <p id="projet-detail-description">
+                Description du projet.
+            </p>
+
+        </div>
+
+        <div class="projet-detail-progression">
+
+            <span>
+                Progression
+            </span>
+
+            <strong id="projet-detail-pourcentage">
+                0%
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="projet-detail-barre">
+
+        <div
+            id="projet-detail-barre-progression"
+        ></div>
+
+    </div>
+
+
+    <div class="projet-detail-taches">
+
+        <div class="projet-detail-taches-header">
+
+            <div>
+
+                <span class="dashboard-sur-titre">
+                    ORGANISATION
+                </span>
+
+                <h3>
+                    Tâches du projet
+                </h3>
+
+            </div>
+
+            <span
+                id="projet-detail-compteur"
+                class="projet-detail-compteur"
+            >
+                0 tâche
+            </span>
+
+        </div>
+
+
+        <div
+            id="projet-detail-liste-taches"
+            class="projet-detail-liste-taches"
+        ></div>
+
+    </div>
+
+</section>
+
+        <div
+    id="modal-projet"
+    class="modal-projet"
+    hidden
+>
+
+    <div class="modal-projet-contenu">
+
+        <div class="modal-projet-header">
+
+            <h3>
+                Nouveau projet
+            </h3>
+
+            <button
+                type="button"
+                id="fermer-modal-projet"
+                class="modal-projet-fermer"
+                aria-label="Fermer"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="formulaire-projet">
+
+            <label for="projet-nom">
+                Nom du projet
+            </label>
+
+            <input
+                type="text"
+                id="projet-nom"
+                maxlength="150"
+                placeholder="Ex. Lancement de SEDAKOR"
+                required
+            >
+
+
+            <label for="projet-description">
+                Description
+            </label>
+
+            <textarea
+                id="projet-description"
+                rows="4"
+                placeholder="Décrivez votre projet..."
+            ></textarea>
+
+
+            <label for="projet-couleur">
+                Couleur
+            </label>
+
+            <input
+                type="color"
+                id="projet-couleur"
+                value="#6366f1"
+            >
+
+
+            <div class="modal-projet-actions">
+
+                <button
+                    type="button"
+                    id="annuler-projet"
+                >
+                    Annuler
+                </button>
+
+                <button
+                    type="submit"
+                >
+                    Créer le projet
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
     <!-- =========================
      V11 : CALENDRIER
 ========================== -->
@@ -630,6 +887,10 @@
                 autocomplete="off"
             >
 
+            <select id="projet-tache">
+                <option value="">📁 Aucun projet</option>
+            </select>
+
             <select id="priorite">
                 <option value="basse">Priorité basse</option>
                 <option value="moyenne" selected>Priorité moyenne</option>
@@ -754,5 +1015,6 @@
 <script src="js/logout.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/account.js"></script>
+<script src="js/projects.js"></script>
 </body>
 </html>
