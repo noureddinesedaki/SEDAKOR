@@ -32,6 +32,49 @@ function repondre(
 
 }
 
+// ============================================================
+// V16 — CRÉER UNE NOTIFICATION
+// ============================================================
+
+function creerNotification(
+    $pdo,
+    $userId,
+    $taskId,
+    $type,
+    $message
+) {
+    $requete =
+        $pdo->prepare(
+            "INSERT INTO notifications
+            (
+                user_id,
+                task_id,
+                type,
+                message
+            )
+            VALUES
+            (
+                :user_id,
+                :task_id,
+                :type,
+                :message
+            )"
+        );
+
+    $requete->execute([
+        ":user_id" =>
+            $userId,
+
+        ":task_id" =>
+            $taskId,
+
+        ":type" =>
+            $type,
+
+        ":message" =>
+            $message
+    ]);
+}
 
 // ============================================================
 // SESSION
@@ -632,6 +675,13 @@ if (
         ]
     );
 
+creerNotification(
+    $pdo,
+    $membreId,
+    $taskId,
+    "tache_partagee",
+    "Une tâche vous a été partagée."
+);
 
     repondre(
         [

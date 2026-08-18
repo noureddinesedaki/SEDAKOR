@@ -391,31 +391,44 @@ if (
     // ----------------------------------------------------
 
     $requete =
-        $pdo->prepare(
-            "SELECT
-                id,
-                user_id,
-                titre,
-                priorite,
-                categorie,
-                date_echeance,
-                heure_rappel,
-                rappel_active,
-                recurrence,
-                terminee,
-                sous_taches,
-                created_at,
-                updated_at
-            FROM tasks
-            WHERE user_id = :user_id
-            ORDER BY id DESC"
-        );
+    $pdo->prepare(
+        "SELECT
+            t.id,
+            t.user_id,
+            t.titre,
+            t.priorite,
+            t.categorie,
+            t.date_echeance,
+            t.heure_rappel,
+            t.rappel_active,
+            t.recurrence,
+            t.terminee,
+            t.sous_taches,
+            t.created_at,
+            t.updated_at
+
+        FROM tasks t
+
+        WHERE
+            t.user_id = :user_id
+            OR EXISTS (
+                SELECT 1
+                FROM task_members tm
+                WHERE tm.task_id = t.id
+                  AND tm.user_id = :member_id
+            )
+
+        ORDER BY t.id DESC"
+    );
 
 
     $requete->execute([
-        ":user_id" =>
-            $userId
-    ]);
+    ":user_id" =>
+        $userId,
+
+    ":member_id" =>
+        $userId
+]);
 
 
     $taches =
