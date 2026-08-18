@@ -124,6 +124,453 @@ let filtreCategorieActuel = "toutes";
 
 let triActuel = "recentes";
 
+// ============================================================
+// V11 — CALENDRIER
+// ============================================================
+
+const calendrierMois =
+    document.querySelector(
+        "#calendrier-mois"
+    );
+
+const calendrierGrille =
+    document.querySelector(
+        "#calendrier-grille"
+    );
+
+const calendrierPrecedent =
+    document.querySelector(
+        "#calendrier-mois-precedent"
+    );
+
+const calendrierSuivant =
+    document.querySelector(
+        "#calendrier-mois-suivant"
+    );
+
+const calendrierAujourdHui =
+    document.querySelector(
+        "#calendrier-aujourd-hui"
+    );
+
+
+let dateCalendrier =
+    new Date();
+
+
+function formaterDateCalendrier(
+    date
+) {
+
+    const annee =
+        date.getFullYear();
+
+    const mois =
+        String(
+            date.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const jour =
+        String(
+            date.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return (
+        annee +
+        "-" +
+        mois +
+        "-" +
+        jour
+    );
+
+}
+
+
+function afficherCalendrier() {
+
+    if (
+        !calendrierGrille ||
+        !calendrierMois
+    ) {
+
+        return;
+
+    }
+
+    const annee =
+        dateCalendrier.getFullYear();
+
+    const mois =
+        dateCalendrier.getMonth();
+
+
+    const premierJour =
+        new Date(
+            annee,
+            mois,
+            1
+        );
+
+
+    const dernierJour =
+        new Date(
+            annee,
+            mois + 1,
+            0
+        );
+
+
+    /*
+     * En JavaScript :
+     * dimanche = 0
+     * lundi = 1
+     *
+     * On transforme pour commencer
+     * la semaine par lundi.
+     */
+
+    let premierJourSemaine =
+        premierJour.getDay();
+
+    if (
+        premierJourSemaine === 0
+    ) {
+
+        premierJourSemaine =
+            7;
+
+    }
+
+
+    calendrierMois.textContent =
+        dateCalendrier.toLocaleDateString(
+            "fr-FR",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    calendrierGrille.innerHTML =
+        "";
+
+
+    /*
+     * Jours de la semaine
+     */
+
+    const joursSemaine = [
+        "Lun",
+        "Mar",
+        "Mer",
+        "Jeu",
+        "Ven",
+        "Sam",
+        "Dim"
+    ];
+
+
+    joursSemaine.forEach(
+        function (jour) {
+
+            const cellule =
+                document.createElement(
+                    "div"
+                );
+
+            cellule.classList.add(
+                "calendrier-jour-semaine"
+            );
+
+            cellule.textContent =
+                jour;
+
+            calendrierGrille.appendChild(
+                cellule
+            );
+
+        }
+    );
+
+
+    /*
+     * Cases vides avant le premier jour
+     */
+
+    for (
+        let i = 1;
+        i < premierJourSemaine;
+        i++
+    ) {
+
+        const cellule =
+            document.createElement(
+                "div"
+            );
+
+        cellule.classList.add(
+            "calendrier-case",
+            "calendrier-case-vide"
+        );
+
+        calendrierGrille.appendChild(
+            cellule
+        );
+
+    }
+
+
+    /*
+     * Jours du mois
+     */
+
+    for (
+        let jour = 1;
+        jour <= dernierJour.getDate();
+        jour++
+    ) {
+
+        const cellule =
+            document.createElement(
+                "div"
+            );
+
+        cellule.classList.add(
+            "calendrier-case"
+        );
+
+
+        const dateJour =
+            new Date(
+                annee,
+                mois,
+                jour
+            );
+
+
+        const dateTexte =
+            formaterDateCalendrier(
+                dateJour
+            );
+
+
+        /*
+         * Numéro du jour
+         */
+
+        const numero =
+            document.createElement(
+                "div"
+            );
+
+        numero.classList.add(
+            "calendrier-numero"
+        );
+
+        numero.textContent =
+            jour;
+
+
+        /*
+         * Aujourd'hui
+         */
+
+        const aujourdHui =
+            new Date();
+
+        if (
+            formaterDateCalendrier(
+                aujourdHui
+            ) === dateTexte
+        ) {
+
+            cellule.classList.add(
+                "calendrier-aujourd-hui"
+            );
+
+        }
+
+
+        cellule.appendChild(
+            numero
+        );
+
+
+        /*
+         * Tâches du jour
+         */
+
+        const tachesDuJour =
+            taches.filter(
+                function (tache) {
+
+                    return (
+                        tache.dateEcheance ===
+                        dateTexte
+                    );
+
+                }
+            );
+
+
+        tachesDuJour.forEach(
+            function (tache) {
+
+                const tacheElement =
+                    document.createElement(
+                        "div"
+                    );
+
+                tacheElement.classList.add(
+                    "calendrier-tache"
+                );
+
+
+                if (
+                    tache.terminee
+                ) {
+
+                    tacheElement.classList.add(
+                        "calendrier-tache-terminee"
+                    );
+
+                }
+
+
+                /*
+                 * Priorité
+                 */
+
+                tacheElement.classList.add(
+                    "calendrier-priorite-" +
+                    tache.priorite
+                );
+
+
+                tacheElement.textContent =
+                    tache.texte;
+
+
+                tacheElement.title =
+                    tache.texte;
+
+
+                /*
+                 * Clic sur une tâche :
+                 * on revient à la liste
+                 */
+
+                tacheElement.addEventListener(
+                    "click",
+                    function () {
+
+                        const elementTache =
+                            document.querySelector(
+                                ".tache"
+                            );
+
+                        if (
+                            elementTache
+                        ) {
+
+                            elementTache.scrollIntoView({
+                                behavior:
+                                    "smooth",
+                                block:
+                                    "center"
+                            });
+
+                        }
+
+                    }
+                );
+
+
+                cellule.appendChild(
+                    tacheElement
+                );
+
+            }
+        );
+
+
+        calendrierGrille.appendChild(
+            cellule
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// NAVIGATION CALENDRIER
+// ============================================================
+
+if (
+    calendrierPrecedent
+) {
+
+    calendrierPrecedent.addEventListener(
+        "click",
+        function () {
+
+            dateCalendrier.setMonth(
+                dateCalendrier.getMonth() - 1
+            );
+
+            afficherCalendrier();
+
+        }
+    );
+
+}
+
+
+if (
+    calendrierSuivant
+) {
+
+    calendrierSuivant.addEventListener(
+        "click",
+        function () {
+
+            dateCalendrier.setMonth(
+                dateCalendrier.getMonth() + 1
+            );
+
+            afficherCalendrier();
+
+        }
+    );
+
+}
+
+
+if (
+    calendrierAujourdHui
+) {
+
+    calendrierAujourdHui.addEventListener(
+        "click",
+        function () {
+
+            dateCalendrier =
+                new Date();
+
+            afficherCalendrier();
+
+        }
+    );
+
+}
 
 // ============================================================
 // API
@@ -226,6 +673,8 @@ async function chargerTaches() {
         normaliserTaches();
 
         afficherTaches();
+
+        afficherCalendrier();
 
     } catch (erreur) {
 
