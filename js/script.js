@@ -125,6 +125,12 @@ let filtreCategorieActuel = "toutes";
 let triActuel = "recentes";
 
 // ============================================================
+// V12 — UTILISATEUR CONNECTÉ
+// ============================================================
+
+let utilisateurConnecteId = null;
+
+// ============================================================
 // V11 — CALENDRIER
 // ============================================================
 
@@ -573,6 +579,63 @@ if (
 }
 
 // ============================================================
+// V12 — CHARGER L'UTILISATEUR CONNECTÉ
+// ============================================================
+
+async function chargerUtilisateurConnecte() {
+
+    try {
+
+        const reponse =
+            await fetch(
+                "/TaskFlow/backend/session.php"
+            );
+
+        if (
+            !reponse.ok
+        ) {
+
+            throw new Error(
+                "Impossible de récupérer la session."
+            );
+
+        }
+
+        const donnees =
+            await reponse.json();
+
+        if (
+            !donnees.connecte ||
+            !donnees.utilisateur
+        ) {
+
+            utilisateurConnecteId =
+                null;
+
+            return;
+
+        }
+
+        utilisateurConnecteId =
+            Number(
+                donnees.utilisateur.id
+            );
+
+    } catch (erreur) {
+
+        console.error(
+            "Erreur récupération utilisateur connecté :",
+            erreur
+        );
+
+        utilisateurConnecteId =
+            null;
+
+    }
+
+}
+
+// ============================================================
 // API
 // ============================================================
 
@@ -587,6 +650,8 @@ const API_URL =
 async function chargerTaches() {
 
     try {
+
+        await chargerUtilisateurConnecte();
 
         const reponse =
             await fetch(API_URL);
@@ -2647,6 +2712,813 @@ function afficherSousTache(
 // AFFICHER UNE TÂCHE
 // ============================================================
 
+// ============================================================
+// V12 — FENÊTRE DE PARTAGE
+// ============================================================
+
+async function ouvrirFenetrePartage(
+    tache
+) {
+
+    // --------------------------------------------------------
+    // FENÊTRE
+    // --------------------------------------------------------
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+    overlay.classList.add(
+        "partage-overlay"
+    );
+
+
+    const fenetre =
+        document.createElement(
+            "div"
+        );
+
+    fenetre.classList.add(
+        "partage-fenetre"
+    );
+
+
+    // --------------------------------------------------------
+    // EN-TÊTE
+    // --------------------------------------------------------
+
+    const entete =
+        document.createElement(
+            "div"
+        );
+
+    entete.classList.add(
+        "partage-entete"
+    );
+
+
+    const titre =
+        document.createElement(
+            "h2"
+        );
+
+    titre.textContent =
+        "Partager la tâche";
+
+
+    const fermer =
+        document.createElement(
+            "button"
+        );
+
+    fermer.type =
+        "button";
+
+    fermer.classList.add(
+        "partage-fermer"
+    );
+
+    fermer.textContent =
+        "×";
+
+
+    fermer.addEventListener(
+        "click",
+        function () {
+
+            overlay.remove();
+
+        }
+    );
+
+
+    entete.appendChild(
+        titre
+    );
+
+    entete.appendChild(
+        fermer
+    );
+
+
+    // --------------------------------------------------------
+    // TÂCHE
+    // --------------------------------------------------------
+
+    const nomTache =
+        document.createElement(
+            "p"
+        );
+
+    nomTache.classList.add(
+        "partage-tache"
+    );
+
+    nomTache.textContent =
+        tache.texte;
+
+
+    // --------------------------------------------------------
+    // RECHERCHE
+    // --------------------------------------------------------
+
+    const rechercheUtilisateur =
+        document.createElement(
+            "input"
+        );
+
+    rechercheUtilisateur.type =
+        "text";
+
+    rechercheUtilisateur.placeholder =
+        "Rechercher un nom ou un email...";
+
+    rechercheUtilisateur.autocomplete =
+        "off";
+
+    rechercheUtilisateur.classList.add(
+        "partage-recherche"
+    );
+
+
+    const resultats =
+        document.createElement(
+            "div"
+        );
+
+    resultats.classList.add(
+        "partage-resultats"
+    );
+
+
+    // --------------------------------------------------------
+    // MEMBRES
+    // --------------------------------------------------------
+
+    const titreMembres =
+        document.createElement(
+            "h3"
+        );
+
+    titreMembres.textContent =
+        "Collaborateurs";
+
+
+    const membres =
+        document.createElement(
+            "div"
+        );
+
+    membres.classList.add(
+        "partage-membres"
+    );
+
+
+    // --------------------------------------------------------
+    // CHARGER LES MEMBRES
+    // --------------------------------------------------------
+
+    async function chargerMembres() {
+
+        membres.innerHTML =
+            "<p>Chargement...</p>";
+
+
+        try {
+
+            const reponse =
+                await fetch(
+                    "/TaskFlow/backend/task-members.php?task_id=" +
+                    encodeURIComponent(
+                        tache.id
+                    )
+                );
+
+
+            const donnees =
+                await reponse.json();
+
+
+            if (
+                !reponse.ok
+            ) {
+
+                throw new Error(
+                    donnees.erreur ||
+                    "Impossible de charger les membres."
+                );
+
+            }
+
+
+            membres.innerHTML =
+                "";
+
+
+            if (
+                !donnees.membres ||
+                donnees.membres.length === 0
+            ) {
+
+                const vide =
+                    document.createElement(
+                        "p"
+                    );
+
+                vide.textContent =
+                    "Aucun collaborateur.";
+
+                membres.appendChild(
+                    vide
+                );
+
+                return;
+
+            }
+
+
+            donnees.membres.forEach(
+                function (membre) {
+
+                    const ligne =
+                        document.createElement(
+                            "div"
+                        );
+
+                    ligne.classList.add(
+                        "partage-membre"
+                    );
+
+
+                    const informations =
+                        document.createElement(
+                            "div"
+                        );
+
+                    informations.classList.add(
+                        "partage-membre-informations"
+                    );
+
+
+                    const nom =
+                        document.createElement(
+                            "strong"
+                        );
+
+                    nom.textContent =
+                        membre.nom;
+
+
+                    const email =
+                        document.createElement(
+                            "small"
+                        );
+
+                    email.textContent =
+                        membre.email;
+
+
+                    informations.appendChild(
+                        nom
+                    );
+
+                    informations.appendChild(
+                        email
+                    );
+
+
+                    const retirer =
+                        document.createElement(
+                            "button"
+                        );
+
+                    retirer.type =
+                        "button";
+
+                    retirer.textContent =
+                        "Retirer";
+
+                    retirer.classList.add(
+                        "partage-retirer"
+                    );
+
+
+                    retirer.addEventListener(
+                        "click",
+                        async function () {
+
+                            const confirmer =
+                                confirm(
+                                    "Retirer " +
+                                    membre.nom +
+                                    " de cette tâche ?"
+                                );
+
+
+                            if (
+                                !confirmer
+                            ) {
+
+                                return;
+
+                            }
+
+
+                            try {
+
+                                const reponse =
+                                    await fetch(
+                                        "/TaskFlow/backend/task-members.php",
+                                        {
+                                            method:
+                                                "DELETE",
+
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+
+                                            body:
+                                                JSON.stringify(
+                                                    {
+                                                        task_id:
+                                                            tache.id,
+
+                                                        user_id:
+                                                            membre.user_id
+                                                    }
+                                                )
+                                        }
+                                    );
+
+
+                                const donnees =
+                                    await reponse.json();
+
+
+                                if (
+                                    !reponse.ok
+                                ) {
+
+                                    throw new Error(
+                                        donnees.erreur ||
+                                        "Impossible de retirer le collaborateur."
+                                    );
+
+                                }
+
+
+                                await chargerMembres();
+
+                            }
+                            catch (
+                                erreur
+                            ) {
+
+                                console.error(
+                                    "Erreur retrait collaborateur :",
+                                    erreur
+                                );
+
+
+                                alert(
+                                    erreur.message
+                                );
+
+                            }
+
+                        }
+                    );
+
+
+                    ligne.appendChild(
+                        informations
+                    );
+
+                    ligne.appendChild(
+                        retirer
+                    );
+
+
+                    membres.appendChild(
+                        ligne
+                    );
+
+                }
+            );
+
+        }
+        catch (
+            erreur
+        ) {
+
+            console.error(
+                "Erreur chargement collaborateurs :",
+                erreur
+            );
+
+
+            membres.innerHTML =
+                "";
+
+
+            const erreurElement =
+                document.createElement(
+                    "p"
+                );
+
+            erreurElement.textContent =
+                erreur.message;
+
+
+            membres.appendChild(
+                erreurElement
+            );
+
+        }
+
+    }
+
+
+    // --------------------------------------------------------
+    // RECHERCHER DES UTILISATEURS
+    // --------------------------------------------------------
+
+    let temporisationRecherche =
+        null;
+
+
+    async function rechercherUtilisateurs() {
+
+        const valeur =
+            rechercheUtilisateur.value.trim();
+
+
+        resultats.innerHTML =
+            "";
+
+
+        if (
+            valeur.length < 2
+        ) {
+
+            return;
+
+        }
+
+
+        const chargement =
+            document.createElement(
+                "p"
+            );
+
+        chargement.textContent =
+            "Recherche...";
+
+
+        resultats.appendChild(
+            chargement
+        );
+
+
+        try {
+
+            const reponse =
+                await fetch(
+                    "/TaskFlow/backend/users.php?recherche=" +
+                    encodeURIComponent(
+                        valeur
+                    )
+                );
+
+
+            const donnees =
+                await reponse.json();
+
+
+            if (
+                !reponse.ok
+            ) {
+
+                throw new Error(
+                    donnees.erreur ||
+                    "Impossible d'effectuer la recherche."
+                );
+
+            }
+
+
+            resultats.innerHTML =
+                "";
+
+
+            if (
+                !donnees.utilisateurs ||
+                donnees.utilisateurs.length === 0
+            ) {
+
+                const vide =
+                    document.createElement(
+                        "p"
+                    );
+
+                vide.textContent =
+                    "Aucun utilisateur trouvé.";
+
+                resultats.appendChild(
+                    vide
+                );
+
+                return;
+
+            }
+
+
+            donnees.utilisateurs.forEach(
+                function (utilisateur) {
+
+                    const ligne =
+                        document.createElement(
+                            "div"
+                        );
+
+                    ligne.classList.add(
+                        "partage-resultat"
+                    );
+
+
+                    const informations =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    const nom =
+                        document.createElement(
+                            "strong"
+                        );
+
+                    nom.textContent =
+                        utilisateur.nom;
+
+
+                    const email =
+                        document.createElement(
+                            "small"
+                        );
+
+                    email.textContent =
+                        utilisateur.email;
+
+
+                    informations.appendChild(
+                        nom
+                    );
+
+                    informations.appendChild(
+                        email
+                    );
+
+
+                    const ajouter =
+                        document.createElement(
+                            "button"
+                        );
+
+                    ajouter.type =
+                        "button";
+
+                    ajouter.textContent =
+                        "Ajouter";
+
+                    ajouter.classList.add(
+                        "partage-ajouter"
+                    );
+
+
+                    ajouter.addEventListener(
+                        "click",
+                        async function () {
+
+                            ajouter.disabled =
+                                true;
+
+                            ajouter.textContent =
+                                "Ajout...";
+
+
+                            try {
+
+                                const reponse =
+                                    await fetch(
+                                        "/TaskFlow/backend/task-members.php",
+                                        {
+                                            method:
+                                                "POST",
+
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json"
+                                            },
+
+                                            body:
+                                                JSON.stringify(
+                                                    {
+                                                        task_id:
+                                                            tache.id,
+
+                                                        user_id:
+                                                            utilisateur.id
+                                                    }
+                                                )
+                                        }
+                                    );
+
+
+                                const donnees =
+                                    await reponse.json();
+
+
+                                if (
+                                    !reponse.ok
+                                ) {
+
+                                    throw new Error(
+                                        donnees.erreur ||
+                                        "Impossible d'ajouter le collaborateur."
+                                    );
+
+                                }
+
+
+                                ajouter.textContent =
+                                    "Ajouté";
+
+
+                                await chargerMembres();
+
+                            }
+                            catch (
+                                erreur
+                            ) {
+
+                                console.error(
+                                    "Erreur ajout collaborateur :",
+                                    erreur
+                                );
+
+
+                                alert(
+                                    erreur.message
+                                );
+
+
+                                ajouter.disabled =
+                                    false;
+
+                                ajouter.textContent =
+                                    "Ajouter";
+
+                            }
+
+                        }
+                    );
+
+
+                    ligne.appendChild(
+                        informations
+                    );
+
+                    ligne.appendChild(
+                        ajouter
+                    );
+
+
+                    resultats.appendChild(
+                        ligne
+                    );
+
+                }
+            );
+
+        }
+        catch (
+            erreur
+        ) {
+
+            console.error(
+                "Erreur recherche utilisateurs :",
+                erreur
+            );
+
+
+            resultats.innerHTML =
+                "";
+
+
+            const erreurElement =
+                document.createElement(
+                    "p"
+                );
+
+            erreurElement.textContent =
+                erreur.message;
+
+
+            resultats.appendChild(
+                erreurElement
+            );
+
+        }
+
+    }
+
+
+    rechercheUtilisateur.addEventListener(
+        "input",
+        function () {
+
+            clearTimeout(
+                temporisationRecherche
+            );
+
+
+            temporisationRecherche =
+                setTimeout(
+                    rechercherUtilisateurs,
+                    300
+                );
+
+        }
+    );
+
+
+    // --------------------------------------------------------
+    // CONSTRUCTION
+    // --------------------------------------------------------
+
+    fenetre.appendChild(
+        entete
+    );
+
+    fenetre.appendChild(
+        nomTache
+    );
+
+    fenetre.appendChild(
+        rechercheUtilisateur
+    );
+
+    fenetre.appendChild(
+        resultats
+    );
+
+    fenetre.appendChild(
+        titreMembres
+    );
+
+    fenetre.appendChild(
+        membres
+    );
+
+
+    overlay.appendChild(
+        fenetre
+    );
+
+
+    // Fermer en cliquant
+    // hors de la fenêtre
+
+    overlay.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target ===
+                overlay
+            ) {
+
+                overlay.remove();
+
+            }
+
+        }
+    );
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    await chargerMembres();
+
+    rechercheUtilisateur.focus();
+
+}
+
 function afficherTache(
     tache
 ) {
@@ -2716,6 +3588,50 @@ function afficherTache(
         "tache-actions"
     );
 
+        // --------------------------------------------------------
+    // PARTAGER — V12
+    // --------------------------------------------------------
+
+    if (
+        Number(tache.user_id) ===
+        Number(utilisateurConnecteId)
+    ) {
+
+        const partager =
+            document.createElement(
+                "button"
+            );
+
+        partager.type =
+            "button";
+
+        partager.textContent =
+            "Partager";
+
+        partager.classList.add(
+            "partager"
+        );
+
+        partager.addEventListener(
+            "click",
+            function () {
+
+                ouvrirFenetrePartage(
+                    tache
+                );
+
+            }
+        );
+
+        actions.appendChild(
+            partager
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // MODIFIER
 
     // Bouton modifier
 
