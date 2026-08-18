@@ -7131,3 +7131,45 @@ h2 {
     border-top: 1px solid #e5e7eb;
     margin: 18px 0;
 }
+
+/* ============================================================
+   DÉCONNEXION
+   ============================================================ */
+
+.sedakor-logout {
+    width: calc(100% - 24px);
+    margin: 10px 12px 8px;
+    padding: 10px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: transparent;
+    color: #6b7280;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+.sedakor-logout:hover {
+    background: #f3f4f6;
+    color: #dc2626;
+}
+
+.sedakor-logout-icon {
+    font-size: 18px;
+    line-height: 1;
+}
