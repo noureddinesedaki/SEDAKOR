@@ -9,71 +9,159 @@
 
 <body>
 
-<header class="site-header">
+<div class="sedakor-app">
 
-    <div class="site-header-titre">
+    <!-- ========================================================
+         SIDEBAR SEDAKOR
+    ========================================================= -->
 
-        <h1>SEDAKOR</h1>
+    <aside class="sedakor-sidebar">
 
-        <p>
-            Organisez. Agissez. Progressez.
-        </p>
+        <div class="sedakor-logo">
 
-    </div>
+            <div class="sedakor-logo-mark">
+                S
+            </div>
 
+            <div class="sedakor-logo-text">
 
-    <div class="utilisateur-menu">
+                <strong>SEDAKOR</strong>
 
-        <button
-            type="button"
-            id="userMenuButton"
-            class="user-menu-button"
-            aria-expanded="false"
-            aria-haspopup="true"
-        >
+                <span>
+                    Organisez. Agissez. Progressez.
+                </span>
 
-            <span class="user-menu-avatar">
-                👤
-            </span>
-
-            <span id="userMenuNom">
-                Utilisateur
-            </span>
-
-            <span class="user-menu-fleche">
-                ▾
-            </span>
-
-        </button>
-
-
-        <div
-            id="userMenuDropdown"
-            class="user-menu-dropdown"
-            hidden
-        >
-
-            <a
-                href="compte.html"
-                class="user-menu-item"
-            >
-                👤 Mon compte
-            </a>
-
-
-            <button
-                type="button"
-                id="logoutButton"
-                class="user-menu-item user-menu-logout"
-            >
-                🚪 Déconnexion
-            </button>
+            </div>
 
         </div>
 
+
+        <nav class="sedakor-navigation">
+
+            <a
+                href="#dashboard"
+                class="actif"
+            >
+                <span class="icone">▦</span>
+                <span>Tableau de bord</span>
+            </a>
+
+            <a href="#liste-taches">
+                <span class="icone">✓</span>
+                <span>Mes tâches</span>
+            </a>
+
+            <a href="#calendrier">
+                <span class="icone">▣</span>
+                <span>Calendrier</span>
+            </a>
+
+            <a href="#ajout-tache">
+                <span class="icone">＋</span>
+                <span>Nouvelle tâche</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sedakor-sidebar-bottom">
+
+            <div class="sedakor-notifications">
+
+                <div class="sedakor-notifications-header">
+
+                    <span class="sedakor-notifications-title">
+
+                        <span>🔔</span>
+
+                        Notifications
+
+                        <span
+                            id="sidebar-notifications-compteur"
+                            class="sedakor-notifications-compteur"
+                            hidden
+                        >
+                            0
+                        </span>
+
+                    </span>
+
+                </div>
+
+                <a href="#notifications">
+                    Voir les notifications
+                </a>
+
+            </div>
+
+        </div>
+
+        <a
+    href="compte.html"
+    class="sedakor-profile"
+    id="sidebar-profile"
+>
+
+    <div class="sedakor-profile-avatar">
+        👤
     </div>
 
-</header>
+    <div class="sedakor-profile-informations">
+
+        <strong id="sidebar-user-name">
+            Mon compte
+        </strong>
+
+        <span>
+            Profil et paramètres
+        </span>
+
+    </div>
+
+    <span class="sedakor-profile-arrow">
+        ›
+    </span>
+
+</a>
+
+    </aside>
+
+
+    <!-- ========================================================
+         APPLICATION PRINCIPALE
+    ========================================================= -->
+
+    <div class="sedakor-main">
+
+        <header class="sedakor-header">
+
+            <button
+                type="button"
+                class="sedakor-header-menu"
+                id="sedakor-menu-button"
+                aria-label="Ouvrir le menu"
+            >
+                ☰
+            </button>
+
+
+            <div class="sedakor-header-title">
+
+                <strong>
+                    SEDAKOR
+                </strong>
+
+                <span>
+                    Organisez. Agissez. Progressez.
+                </span>
+
+            </div>
+
+        </header>
+
+
+        <main class="sedakor-content">
+
 
 <main>
 
@@ -592,38 +680,73 @@
         >
 
         <div id="filtres">
-            <button type="button" data-filtre="toutes">Toutes</button>
-            <button type="button" data-filtre="en-cours">En cours</button>
-            <button type="button" data-filtre="terminees">Terminées</button>
-        </div>
+    <button type="button" data-filtre="toutes">Toutes</button>
+    <button type="button" data-filtre="en-cours">En cours</button>
+    <button type="button" data-filtre="terminees">Terminées</button>
+</div>
 
-        <div id="filtre-categorie">
-            <label for="filtre-categories">Catégorie :</label>
+<div id="filtres-avances">
 
-            <select id="filtre-categories">
-                <option value="toutes">Toutes les catégories</option>
-                <option value="travail">💼 Travail</option>
-                <option value="etudes">📚 Études</option>
-                <option value="personnel">🏠 Personnel</option>
-                <option value="projets">🚀 Projets</option>
-                <option value="autre">📦 Autre</option>
-            </select>
-        </div>
+    <div id="filtre-categorie">
+        <label for="filtre-categories">Catégorie :</label>
+        <select id="filtre-categories">
+            <option value="toutes">Toutes les catégories</option>
+            <option value="travail">💼 Travail</option>
+            <option value="etudes">📚 Études</option>
+            <option value="personnel">🏠 Personnel</option>
+            <option value="projets">🚀 Projets</option>
+            <option value="autre">📦 Autre</option>
+        </select>
+    </div>
 
-        <div id="tri">
-            <label for="tri-taches">Trier par :</label>
+    <div>
+        <label for="filtre-priorite">Priorité :</label>
+        <select id="filtre-priorite">
+            <option value="toutes">Toutes</option>
+            <option value="haute">🔴 Haute</option>
+            <option value="moyenne">🟠 Moyenne</option>
+            <option value="basse">🟢 Basse</option>
+        </select>
+    </div>
 
-            <select id="tri-taches">
-                <option value="recentes">Plus récentes</option>
-                <option value="anciennes">Plus anciennes</option>
-                <option value="priorite-haute">Priorité haute → basse</option>
-                <option value="priorite-basse">Priorité basse → haute</option>
-                <option value="echeance">Échéance la plus proche</option>
-            </select>
-        </div>
+    <div>
+        <label for="filtre-echeance">Échéance :</label>
+        <select id="filtre-echeance">
+            <option value="toutes">Toutes</option>
+            <option value="aujourd-hui">Aujourd'hui</option>
+            <option value="semaine">Cette semaine</option>
+            <option value="sans-echeance">Sans échéance</option>
+        </select>
+    </div>
+
+    <div id="tri">
+        <label for="tri-taches">Trier par :</label>
+        <select id="tri-taches">
+            <option value="recentes">Plus récentes</option>
+            <option value="anciennes">Plus anciennes</option>
+            <option value="priorite-haute">Priorité haute → basse</option>
+            <option value="priorite-basse">Priorité basse → haute</option>
+            <option value="echeance">Échéance la plus proche</option>
+        </select>
+    </div>
+
+    <button
+        type="button"
+        id="reinitialiser-filtres"
+    >
+        ♻️ Réinitialiser
+    </button>
+
+</div>
 
         <div id="taches"></div>
     </section>
+
+            </main>
+
+    </div>
+
+</div>
 
 </main>
 

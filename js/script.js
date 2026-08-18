@@ -53,6 +53,18 @@ const triTaches =
 const filtreCategories =
     document.querySelector("#filtre-categories");
 
+const filtrePriorite =
+    document.getElementById("filtre-priorite");
+
+const filtreEcheance =
+    document.getElementById("filtre-echeance");
+
+const boutonReinitialiserFiltres =
+    document.getElementById("reinitialiser-filtres");
+
+let filtrePrioriteActuel = "toutes";
+let filtreEcheanceActuel = "toutes";
+
 const statTotal =
     document.querySelector("#stat-total");
 
@@ -5764,6 +5776,113 @@ function afficherTaches() {
 
     }
 
+    // FILTRE PRIORITÉ
+
+if (
+    filtrePrioriteActuel !==
+    "toutes"
+) {
+
+    resultat =
+        resultat.filter(
+            function (tache) {
+
+                return (
+                    tache.priorite ===
+                    filtrePrioriteActuel
+                );
+
+            }
+        );
+
+}
+
+
+// FILTRE ÉCHÉANCE
+
+if (
+    filtreEcheanceActuel !==
+    "toutes"
+) {
+
+    const aujourdHui =
+        new Date();
+
+    aujourdHui.setHours(
+        0,
+        0,
+        0,
+        0
+    );
+
+    resultat =
+        resultat.filter(
+            function (tache) {
+
+                if (
+                    filtreEcheanceActuel ===
+                    "sans-echeance"
+                ) {
+
+                    return !tache.dateEcheance;
+
+                }
+
+                if (
+                    !tache.dateEcheance
+                ) {
+
+                    return false;
+
+                }
+
+                const dateEcheance =
+                    new Date(
+                        tache.dateEcheance +
+                        "T00:00:00"
+                    );
+
+                if (
+                    filtreEcheanceActuel ===
+                    "aujourd-hui"
+                ) {
+
+                    return (
+                        dateEcheance.getTime() ===
+                        aujourdHui.getTime()
+                    );
+
+                }
+
+                if (
+                    filtreEcheanceActuel ===
+                    "semaine"
+                ) {
+
+                    const finSemaine =
+                        new Date(
+                            aujourdHui
+                        );
+
+                    finSemaine.setDate(
+                        finSemaine.getDate() + 7
+                    );
+
+                    return (
+                        dateEcheance >=
+                        aujourdHui &&
+                        dateEcheance <=
+                        finSemaine
+                    );
+
+                }
+
+                return true;
+
+            }
+        );
+
+}
 
     resultat =
         trierTaches(
@@ -5936,6 +6055,98 @@ filtreCategories.addEventListener(
     }
 );
 
+// ============================================================
+// FILTRE PRIORITÉ
+// ============================================================
+
+filtrePriorite.addEventListener(
+    "change",
+    function () {
+
+        filtrePrioriteActuel =
+            filtrePriorite.value;
+
+        afficherTaches();
+
+    }
+);
+
+
+// ============================================================
+// FILTRE ÉCHÉANCE
+// ============================================================
+
+filtreEcheance.addEventListener(
+    "change",
+    function () {
+
+        filtreEcheanceActuel =
+            filtreEcheance.value;
+
+        afficherTaches();
+
+    }
+);
+
+
+// ============================================================
+// RÉINITIALISER LES FILTRES
+// ============================================================
+
+boutonReinitialiserFiltres.addEventListener(
+    "click",
+    function () {
+
+        recherche.value =
+            "";
+
+        filtreActuel =
+            "toutes";
+
+        filtreCategorieActuel =
+            "toutes";
+
+        filtrePrioriteActuel =
+            "toutes";
+
+        filtreEcheanceActuel =
+            "toutes";
+
+        filtreCategories.value =
+            "toutes";
+
+        filtrePriorite.value =
+            "toutes";
+
+        filtreEcheance.value =
+            "toutes";
+
+        boutonsFiltres.forEach(
+            function (bouton) {
+
+                bouton.classList.remove(
+                    "actif"
+                );
+
+                if (
+                    bouton.dataset.filtre ===
+                    "toutes"
+                ) {
+
+                    bouton.classList.add(
+                        "actif"
+                    );
+
+                }
+
+            }
+        );
+
+        afficherTaches();
+
+    }
+);
+
 
 // ============================================================
 // TRI
@@ -5994,4 +6205,177 @@ boutonsFiltres.forEach(
         }
 
     }
+);
+
+// ============================================================
+// SIDEBAR — OUVRIR / FERMER
+// ============================================================
+
+const sedakorMenuButton =
+    document.querySelector(
+        "#sedakor-menu-button"
+    );
+
+const sedakorApp =
+    document.querySelector(
+        ".sedakor-app"
+    );
+
+
+if (
+    sedakorMenuButton &&
+    sedakorApp
+) {
+
+    sedakorMenuButton.addEventListener(
+        "click",
+        function () {
+
+            sedakorApp.classList.toggle(
+                "sidebar-masquee"
+            );
+
+        }
+    );
+
+}
+
+// ============================================================
+// SIDEBAR — ÉTAT INITIAL RESPONSIVE
+// ============================================================
+
+// ============================================================
+// SIDEBAR — ÉTAT RESPONSIVE
+// ============================================================
+
+let largeurPrecedente =
+    window.innerWidth;
+
+
+function ajusterSidebarResponsive() {
+
+    if (!sedakorApp) {
+        return;
+    }
+
+    const largeurActuelle =
+        window.innerWidth;
+
+
+    /*
+     * Si on vient de passer d'un grand écran
+     * vers un écran moyen ou mobile,
+     * on ferme automatiquement la sidebar.
+     */
+
+    if (
+        largeurPrecedente > 1100 &&
+        largeurActuelle <= 1100
+    ) {
+
+        sedakorApp.classList.add(
+            "sidebar-masquee"
+        );
+
+    }
+
+
+    /*
+     * Si on revient sur un grand écran,
+     * on réouvre automatiquement la sidebar.
+     */
+
+    if (
+        largeurPrecedente <= 1100 &&
+        largeurActuelle > 1100
+    ) {
+
+        sedakorApp.classList.remove(
+            "sidebar-masquee"
+        );
+
+    }
+
+
+    largeurPrecedente =
+        largeurActuelle;
+
+}
+
+// ============================================================
+// SIDEBAR — FERMETURE EN CLIQUANT EN DEHORS
+// ============================================================
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        if (!sedakorApp) {
+            return;
+        }
+
+        // Uniquement sur écran réduit
+        if (window.innerWidth > 1100) {
+            return;
+        }
+
+        // Sidebar déjà fermée
+        if (
+            sedakorApp.classList.contains(
+                "sidebar-masquee"
+            )
+        ) {
+            return;
+        }
+
+        const sidebar =
+            document.querySelector(
+                ".sedakor-sidebar"
+            );
+
+        const boutonMenu =
+            document.querySelector(
+                "#sedakor-menu-button"
+            );
+
+        // Clic dans la sidebar → on ne ferme pas
+        if (
+            sidebar &&
+            sidebar.contains(event.target)
+        ) {
+            return;
+        }
+
+        // Clic sur le bouton menu → le bouton
+        // gère lui-même l'ouverture/fermeture
+        if (
+            boutonMenu &&
+            boutonMenu.contains(event.target)
+        ) {
+            return;
+        }
+
+        // Clic ailleurs → fermeture
+        sedakorApp.classList.add(
+            "sidebar-masquee"
+        );
+
+    }
+);
+
+ajusterSidebarResponsive();
+
+
+window.addEventListener(
+    "resize",
+    ajusterSidebarResponsive
+);
+
+
+ajusterSidebarResponsive();
+
+
+window.addEventListener(
+    "resize",
+    ajusterSidebarResponsive
 );
