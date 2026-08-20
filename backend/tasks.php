@@ -86,15 +86,148 @@ function lireJSON()
 
 
 function valeurAutorisee(
+
     $valeur,
+
     $valeurs
+
 ) {
 
     return in_array(
+
         $valeur,
+
         $valeurs,
+
         true
+
     );
+
+}
+
+
+// ============================================================
+// V23.2 — VÉRIFIER LES PERMISSIONS D'UNE TÂCHE
+// ============================================================
+
+function obtenirPermissionTache(
+
+    PDO $pdo,
+
+    int $taskId,
+
+    int $userId
+
+) {
+
+    // Propriétaire = tous les droits
+
+    $stmt = $pdo->prepare(
+
+        "
+
+        SELECT user_id
+
+        FROM tasks
+
+        WHERE id = :task_id
+
+        LIMIT 1
+
+        "
+
+    );
+
+
+    $stmt->execute([
+
+        ":task_id" =>
+
+            $taskId
+
+    ]);
+
+
+    $proprietaireId =
+
+        $stmt->fetchColumn();
+
+
+    if (
+
+        $proprietaireId === false
+
+    ) {
+
+        return null;
+
+    }
+
+
+    if (
+
+        (int) $proprietaireId ===
+
+        $userId
+
+    ) {
+
+        return "owner";
+
+    }
+
+
+    // Vérifier le partage
+
+    $stmt = $pdo->prepare(
+
+        "
+
+        SELECT role
+
+        FROM task_members
+
+        WHERE task_id = :task_id
+
+          AND user_id = :user_id
+
+        LIMIT 1
+
+        "
+
+    );
+
+
+    $stmt->execute([
+
+        ":task_id" =>
+
+            $taskId,
+
+        ":user_id" =>
+
+            $userId
+
+    ]);
+
+
+    $role =
+
+        $stmt->fetchColumn();
+
+
+    if (
+
+        $role === false
+
+    ) {
+
+        return null;
+
+    }
+
+
+    return $role;
 
 }
 
@@ -971,17 +1104,21 @@ if (
 
 }
 
-if (
-    $userId !== null &&
-    $tacheExistante["user_id"] !== null &&
-    (int) $tacheExistante["user_id"] !== $userId
-) {
+$permission =
+    obtenirPermissionTache(
+        $pdo,
+        $id,
+        $userId
+    );
 
+if (
+    $permission !== "owner" &&
+    $permission !== "member_edit"
+) {
     repondre([
         "erreur" =>
-            "Vous n'êtes pas autorisé à modifier cette tâche."
+            "Vous n'avez pas la permission de modifier cette tâche."
     ], 403);
-
 }
 
 
@@ -1518,51 +1655,29 @@ if (
         (int)$id;
 
 
-    // ----------------------------------------------------
-    // MODE PUBLIC
-    // ----------------------------------------------------
+    if ($userId === null) {
+    repondre([
+        "erreur" =>
+            "Vous devez être connecté."
+    ], 401);
+}
 
-    if (
-        $userId === null
-    ) {
+$requete =
+    $pdo->prepare(
+        "
+        DELETE FROM tasks
+        WHERE id = :id
+          AND user_id = :user_id
+        "
+    );
 
-        $requete =
-            $pdo->prepare(
-                "DELETE FROM tasks
-                 WHERE id = :id"
-            );
+$requete->execute([
+    ":id" =>
+        $id,
 
-
-        $requete->execute([
-            ":id" =>
-                $id
-        ]);
-
-    }
-
-    // ----------------------------------------------------
-    // UTILISATEUR CONNECTÉ
-    // ----------------------------------------------------
-
-    else {
-
-        $requete =
-            $pdo->prepare(
-                "DELETE FROM tasks
-                 WHERE id = :id
-                 AND user_id = :user_id"
-            );
-
-
-        $requete->execute([
-            ":id" =>
-                $id,
-
-            ":user_id" =>
-                $userId
-        ]);
-
-    }
+    ":user_id" =>
+        $userId
+]);
 
 
     // ----------------------------------------------------

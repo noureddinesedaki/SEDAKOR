@@ -3471,6 +3471,64 @@ async function ouvrirFenetrePartage(
         "partage-recherche"
     );
 
+    // --------------------------------------------------------
+// PERMISSION DE PARTAGE
+// --------------------------------------------------------
+
+const conteneurPermission =
+    document.createElement("div");
+
+conteneurPermission.classList.add(
+    "partage-permission"
+);
+
+const labelPermission =
+    document.createElement("label");
+
+labelPermission.textContent =
+    "Permission";
+
+const selectPermission =
+    document.createElement("select");
+
+selectPermission.classList.add(
+    "partage-permission-select"
+);
+
+const optionLecture =
+    document.createElement("option");
+
+optionLecture.value =
+    "member_read";
+
+optionLecture.textContent =
+    "Lecture";
+
+const optionModification =
+    document.createElement("option");
+
+optionModification.value =
+    "member_edit";
+
+optionModification.textContent =
+    "Modification";
+
+selectPermission.appendChild(
+    optionLecture
+);
+
+selectPermission.appendChild(
+    optionModification
+);
+
+conteneurPermission.appendChild(
+    labelPermission
+);
+
+conteneurPermission.appendChild(
+    selectPermission
+);
+
 
     const resultats =
         document.createElement(
@@ -3616,6 +3674,22 @@ async function ouvrirFenetrePartage(
                     informations.appendChild(
                         email
                     );
+
+                    const permission =
+    document.createElement("small");
+
+permission.textContent =
+    membre.role === "member_edit"
+        ? "✏️ Modification"
+        : "👁️ Lecture";
+
+permission.classList.add(
+    "partage-permission-affichage"
+);
+
+informations.appendChild(
+    permission
+);
 
 
                     const retirer =
@@ -3953,15 +4027,18 @@ async function ouvrirFenetrePartage(
                                             },
 
                                             body:
-                                                JSON.stringify(
-                                                    {
-                                                        task_id:
-                                                            tache.id,
+    JSON.stringify(
+        {
+            task_id:
+                tache.id,
 
-                                                        user_id:
-                                                            utilisateur.id
-                                                    }
-                                                )
+            user_id:
+                utilisateur.id,
+
+            role:
+                selectPermission.value
+        }
+    )
                                         }
                                     );
 
@@ -4099,6 +4176,10 @@ async function ouvrirFenetrePartage(
     fenetre.appendChild(
         rechercheUtilisateur
     );
+
+    fenetre.appendChild(
+    conteneurPermission
+);
 
     fenetre.appendChild(
         resultats
@@ -5399,8 +5480,10 @@ afficherCommentaires();
                 "aucune";
 
             const ancienneHeureRappel =
-                tache.heureRappel ||
-                "";
+    typeof tache.heureRappel === "string" &&
+    /^\d{2}:\d{2}$/.test(tache.heureRappel)
+        ? tache.heureRappel
+        : "";
 
 
             entete.innerHTML =
@@ -5738,7 +5821,12 @@ afficherCommentaires();
                         dateModification.value;
 
                     tache.heureRappel =
-                        heureModification.value;
+    heureModification.value &&
+    /^\d{2}:\d{2}$/.test(
+        heureModification.value
+    )
+        ? heureModification.value
+        : "";
 
                     tache.recurrence =
                         selectRecurrence.value;

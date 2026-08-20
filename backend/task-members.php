@@ -435,12 +435,16 @@ if (
 
 
     $taskId =
-        $donnees["task_id"] ??
-        null;
+    $donnees["task_id"] ??
+    null;
 
-    $membreId =
-        $donnees["user_id"] ??
-        null;
+$membreId =
+    $donnees["user_id"] ??
+    null;
+
+$role =
+    $donnees["role"] ??
+    "member_read";
 
 
     if (
@@ -471,6 +475,25 @@ if (
         );
 
     }
+
+    if (
+    !in_array(
+        $role,
+        [
+            "member_read",
+            "member_edit"
+        ],
+        true
+    )
+) {
+    repondre(
+        [
+            "erreur" =>
+                "Permission de partage invalide."
+        ],
+        400
+    );
+}
 
 
     $taskId =
@@ -650,30 +673,33 @@ if (
         $pdo->prepare(
             "
             INSERT INTO task_members
-            (
-                task_id,
-                user_id,
-                role
-            )
-            VALUES
-            (
-                :task_id,
-                :user_id,
-                'member'
-            )
+(
+    task_id,
+    user_id,
+    role
+)
+VALUES
+(
+    :task_id,
+    :user_id,
+    :role
+)
             "
         );
 
 
     $stmt->execute(
-        [
-            ":task_id" =>
-                $taskId,
+    [
+        ":task_id" =>
+            $taskId,
 
-            ":user_id" =>
-                $membreId
-        ]
-    );
+        ":user_id" =>
+            $membreId,
+
+        ":role" =>
+            $role
+    ]
+);
 
 creerNotification(
     $pdo,

@@ -7173,3 +7173,31 @@ h2 {
     font-size: 18px;
     line-height: 1;
 }
+
+.partage-permission {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+}
+
+.partage-permission label {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.partage-permission-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+.partage-permission-affichage {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.75;
+}
